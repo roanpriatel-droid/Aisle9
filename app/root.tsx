@@ -197,15 +197,29 @@ export function ErrorBoundary() {
     errorMessage = error.message;
   }
 
+  const notFound = errorStatus === 404;
+
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
+    <div className="route-error mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 py-20">
+      <p className="label-type text-ink/50">
+        {notFound ? 'AISLE NOT FOUND · CODE 404' : `STORE ERROR · CODE ${errorStatus}`}
+      </p>
+      <h1 className="sign-type text-4xl">
+        {notFound ? 'THIS AISLE DOES NOT EXIST.' : 'SOMETHING FELL OFF A SHELF.'}
+      </h1>
+      <p className="text-ink/70">
+        {notFound
+          ? 'Whatever you were looking for, it is not down here.'
+          : 'An associate has been notified. The associate is also us.'}
+      </p>
+      {!notFound && errorMessage && (
+        <fieldset className="w-full border-2 border-ink p-3">
+          <pre className="overflow-x-auto text-xs">{errorMessage}</pre>
         </fieldset>
       )}
+      <a className="btn" href="/">
+        RETURN TO FRONT OF STORE
+      </a>
     </div>
   );
 }

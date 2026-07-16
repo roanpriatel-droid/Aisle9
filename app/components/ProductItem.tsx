@@ -7,6 +7,10 @@ import type {
 } from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
 
+/**
+ * Product card as shelf talker: white card, ink rule, headline field on top,
+ * price field below — like the paper tag clipped to the shelf edge.
+ */
 export function ProductItem({
   product,
   loading,
@@ -35,10 +39,13 @@ export function ProductItem({
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
+      <span className="shelf-talker">
+        <h4 className="shelf-title">{product.title}</h4>
+        <span className="shelf-price">
+          <Money data={product.priceRange.minVariantPrice} />
+          <span className="shelf-unit">EACH</span>
+        </span>
+      </span>
     </Link>
   );
 }

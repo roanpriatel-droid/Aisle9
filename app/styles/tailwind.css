@@ -1,6 +1,57 @@
 /**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
+ * AISLE 9 design tokens — Tailwind v4 CSS-first configuration.
+ * Palette and type are locked by the Aisle 9 Brand Identity System.
+ * Flat, mass-produced, fluorescent-lit. No gradients, no gloss, no charm.
  */
 
 @import 'tailwindcss';
+
+@theme {
+  /* House colors */
+  --color-linoleum: #f2f1ec; /* base surface */
+  --color-fluorescent: #dde5d8; /* green-tinted panels */
+  --color-signage: #cc2229; /* tags + accents only */
+  --color-ink: #1a1a1a; /* all type */
+  --color-tag: #f7d117; /* clearance stickers ONLY — never general use */
+
+  /* Institutional grotesque. Deliberately characterless. */
+  --font-sans: Arial, 'Helvetica Neue', Helvetica, 'Liberation Sans',
+    sans-serif;
+
+  --tracking-sign: 0.02em;
+  --tracking-label: 0.12em;
+
+  --animate-marquee: marquee 40s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* Sign-shop utility: aisle-sign type — caps, bold, tight */
+@utility sign-type {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-sign);
+  line-height: 1.05;
+}
+
+/* Small institutional label — caps, spaced */
+@utility label-type {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}

@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {COLLECTIONS, VOICE} from '~/lib/brand';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -96,13 +97,15 @@ function CartEmpty({
   return (
     <div hidden={hidden}>
       <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
-      </p>
+      <p>{VOICE.emptyBasket}</p>
       <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        className="btn"
+        to={COLLECTIONS.shopAll}
+        onClick={close}
+        prefetch="viewport"
+      >
+        {VOICE.keepShopping}
       </Link>
     </div>
   );
