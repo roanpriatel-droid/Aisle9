@@ -47,7 +47,11 @@ export default function Collections() {
 
   return (
     <div className="collections">
+      <p className="label-type text-ink/50">OVERHEAD DIRECTORY</p>
       <h1>DEPARTMENTS</h1>
+      <p className="collection-description">
+        Every aisle in the store. There is currently one store.
+      </p>
       <PaginatedResourceSection<CollectionFragment>
         connection={collections}
         resourcesClassName="collections-grid"

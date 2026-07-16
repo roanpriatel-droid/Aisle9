@@ -157,5 +157,9 @@ function SearchResultsProducts({
 }
 
 function SearchResultsEmpty() {
-  return <p>No results, try a different search.</p>;
+  return (
+    <p className="label-type mt-6 text-ink/60">
+      NOT STOCKED. CHECKED THE BACK. TRY DIFFERENT WORDS.
+    </p>
+  );
 }

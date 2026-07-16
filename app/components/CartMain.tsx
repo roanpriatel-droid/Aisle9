@@ -4,7 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
-import {COLLECTIONS, VOICE} from '~/lib/brand';
+import {COLLECTIONS, LADDER, VOICE} from '~/lib/brand';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -81,9 +81,45 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
             })}
           </ul>
         </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
+        {cartHasItems && (
+          <>
+            <LadderNudge quantity={cart?.totalQuantity ?? 0} />
+            <CartSummary cart={cart} layout={layout} />
+          </>
+        )}
       </div>
     </section>
+  );
+}
+
+/**
+ * Bulk-ladder progress: tells the shopper what one more shirt does.
+ * The discount itself is applied at checkout by the store's automatic
+ * discount — this is signage, not math that changes the subtotal here.
+ */
+function LadderNudge({quantity}: {quantity: number}) {
+  if (quantity < 1) return null;
+  const tiers = LADDER.filter((t) => t.discountPct > 0);
+  const current = [...tiers].reverse().find((t) => quantity >= t.qty);
+  const next = tiers.find((t) => t.qty > quantity);
+
+  return (
+    <div className="mt-2 border-2 border-ink bg-fluorescent p-3">
+      {current && (
+        <p className="label-type text-ink">
+          {current.discountPct}% OFF APPLIES AT CHECKOUT.
+        </p>
+      )}
+      {next ? (
+        <p className={`label-type ${current ? 'mt-1 text-ink/60' : 'text-ink'}`}>
+          ADD {next.qty - quantity} MORE — SAVE {next.discountPct}%.
+        </p>
+      ) : (
+        <p className="label-type mt-1 text-ink/60">
+          MAXIMUM DISCOUNT REACHED. THE STORE CONCEDES.
+        </p>
+      )}
+    </div>
   );
 }
 

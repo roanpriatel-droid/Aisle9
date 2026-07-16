@@ -70,8 +70,11 @@ export default function Collection() {
 
   return (
     <div className="collection">
+      <p className="label-type text-ink/50">DEPARTMENT</p>
       <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
+      {collection.description && (
+        <p className="collection-description">{collection.description}</p>
+      )}
       <PaginatedResourceSection<ProductItemFragment>
         connection={collection.products}
         resourcesClassName="products-grid"

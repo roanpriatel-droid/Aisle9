@@ -269,7 +269,7 @@ function SearchResultsPredictiveEmpty({
 
   return (
     <p>
-      No results found for <q>{term.current}</q>
+      Not stocked: <q>{term.current}</q>. We checked the back.
     </p>
   );
 }

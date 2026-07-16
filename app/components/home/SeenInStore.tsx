@@ -1,13 +1,12 @@
 import {BRAND} from '~/lib/brand';
+import {ClearanceSticker} from '~/components/brand/ClearanceSticker';
 
 /**
- * "SEEN IN STORE" — UGC grid.
- * Placeholder tiles until real customer photos exist. Swap PLACEHOLDER_TILES
- * for an embed (or static images in app/assets/ugc/) once photos come in.
+ * "SEEN IN STORE" — UGC program, designed as in-store signage.
+ * No customer photos exist yet, so this is a full CTA band rather than an
+ * empty grid. When real photos come in, add a photo strip above the band
+ * (do not fabricate customers in the meantime).
  */
-
-const PLACEHOLDER_TILES = 6;
-
 export function SeenInStore() {
   return (
     <section
@@ -15,26 +14,32 @@ export function SeenInStore() {
       className="border-b-2 border-ink bg-linoleum"
     >
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <p className="label-type text-ink/50">SECURITY FOOTAGE, BASICALLY</p>
-        <h2 id="seen-in-store-heading" className="sign-type mt-2 text-3xl sm:text-4xl">
-          SEEN IN STORE
-        </h2>
-        <p className="mt-3 max-w-xl text-sm text-ink/70">
-          Tag <span className="font-bold">{BRAND.social}</span> wearing yours.
-          Get featured on the shelf and 10% off your next order.
-        </p>
-
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {Array.from({length: PLACEHOLDER_TILES}).map((_, i) => (
-            <div
-              key={i}
-              aria-hidden
-              className="flex aspect-square flex-col items-center justify-center gap-2 border-2 border-dashed border-ink/30 bg-fluorescent"
-            >
-              <span className="label-type text-ink/40">PHOTO</span>
-              <span className="label-type text-ink/40">PENDING</span>
+        <div className="relative border-2 border-ink bg-white">
+          <div className="grid gap-0 sm:grid-cols-[1fr_auto]">
+            <div className="p-8 sm:p-10">
+              <p className="label-type text-ink/50">
+                SECURITY FOOTAGE, BASICALLY
+              </p>
+              <h2
+                id="seen-in-store-heading"
+                className="sign-type mt-2 text-3xl sm:text-4xl"
+              >
+                SEEN IN STORE
+              </h2>
+              <p className="mt-4 max-w-lg text-sm text-ink/70">
+                Wear the shirt. Photograph the shirt. Tag{' '}
+                <span className="font-bold">{BRAND.social}</span> and the shirt
+                gets featured here, on the official shelf of people who
+                bought something they did not need.
+              </p>
+              <p className="sign-type mt-6 text-lg">
+                TAG {BRAND.social} → GET FEATURED → 10% OFF YOUR NEXT ORDER
+              </p>
             </div>
-          ))}
+            <div className="flex items-center justify-center border-t-2 border-ink bg-fluorescent p-8 sm:border-l-2 sm:border-t-0">
+              <ClearanceSticker topLine="REWARD" bigLine="10% OFF" />
+            </div>
+          </div>
         </div>
       </div>
     </section>

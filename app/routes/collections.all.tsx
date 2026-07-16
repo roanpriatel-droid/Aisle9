@@ -52,7 +52,12 @@ export default function Collection() {
 
   return (
     <div className="collection">
+      <p className="label-type text-ink/50">FULL INVENTORY</p>
       <h1>EVERYTHING ON THE SHELF</h1>
+      <p className="collection-description">
+        The complete stock, in no particular order of importance, because none
+        of it is important.
+      </p>
       <PaginatedResourceSection<CollectionItemFragment>
         connection={products}
         resourcesClassName="products-grid"

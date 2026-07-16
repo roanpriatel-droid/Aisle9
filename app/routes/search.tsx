@@ -42,23 +42,26 @@ export default function SearchPage() {
 
   return (
     <div className="search">
+      <p className="label-type text-ink/50">ASK AN ASSOCIATE</p>
       <h1>PRICE CHECK</h1>
       <SearchForm>
         {({inputRef}) => (
-          <>
+          <div className="mt-4 flex max-w-md">
             <input
+              className="w-full"
               defaultValue={term}
               name="q"
-              placeholder="Search…"
+              placeholder="WHAT ARE YOU LOOKING FOR"
               ref={inputRef}
               type="search"
             />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
+            <button className="btn shrink-0" type="submit">
+              SEARCH
+            </button>
+          </div>
         )}
       </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p className="label-type mt-4 text-signage">{error}</p>}
       {!term || !result?.total ? (
         <SearchResults.Empty />
       ) : (

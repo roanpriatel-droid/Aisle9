@@ -54,7 +54,14 @@ export function CommentCards() {
         </div>
 
         <p className="label-type mt-6 text-ink/50">
-          NO COMMENTS YET. WE JUST OPENED. BUY A SHIRT AND SAY SOMETHING.
+          NO COMMENTS YET. WE JUST OPENED. BUY A SHIRT AND{' '}
+          <a
+            className="text-signage underline underline-offset-2"
+            href="/pages/contact"
+          >
+            SAY SOMETHING
+          </a>
+          .
         </p>
       </div>
     </section>

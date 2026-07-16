@@ -700,15 +700,30 @@ button.reset:hover:not(:has(> *)) {
   grid-gap: 0.5rem;
 }
 
+.product-options h5 {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
+  opacity: 0.6;
+}
+
 .product-options-item,
 .product-options-item:disabled {
   background-color: #fff;
   border: 1px solid var(--ink);
+  cursor: pointer;
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 700;
   padding: 0.35rem 0.65rem;
+  text-decoration: none;
   text-transform: uppercase;
+}
+
+.product-options-item.selected {
+  background-color: var(--ink);
+  color: var(--linoleum);
 }
 
 .product-option-label-swatch {

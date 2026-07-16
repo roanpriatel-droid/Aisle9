@@ -5,10 +5,10 @@ export function MockShopNotice() {
       aria-labelledby="mock-shop-notice-heading"
     >
       <div className="inner">
-        <h2 id="mock-shop-notice-heading">Welcome to Hydrogen!</h2>
+        <h2 id="mock-shop-notice-heading">STAGING SHELVES (DEV NOTICE)</h2>
         <p>
-          You&rsquo;re seeing mocked products because no store is connected to
-          this project yet.
+          These are mock products — no real store is connected to this project
+          yet. This notice disappears once one is.
         </p>
         <p>
           Link a store by running <code>npx shopify hydrogen link</code> in your

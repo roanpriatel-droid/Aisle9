@@ -3,10 +3,11 @@
 Print-on-demand deadpan graphic tees. A big-box store that doesn't exist,
 built on Shopify Hydrogen (React Router + Vite + Tailwind v4).
 
-Brand system is locked by **"Aisle 9 Brand Identity System.pdf"** (repo
-root/docs) — defer to it for any visual decision. Placeholder logo components
-live in `app/components/brand/` and should be swapped for the committed SVGs
-(aisle marker wordmark, clearance sticker, shelf talker, PA bar).
+Brand system is locked by **"Aisle 9 Brand Identity System.pdf"** (to be
+committed to repo root/docs) — defer to it for any visual decision. The brand
+marks (aisle marker wordmark, clearance sticker, PA bar) are implemented as
+final HTML/CSS lockups in `app/components/brand/`; if official SVG exports
+land later, swap the component internals and keep their APIs.
 
 ## Where things live
 
@@ -48,11 +49,17 @@ The catalog currently runs on [mock.shop](https://mock.shop) (no
       Shopify-hosted; not controlled by this repo).
 - [ ] **Contact page** — `app/routes/pages.contact.tsx` has a placeholder
       support email + social handle.
-- [ ] **Reviews / UGC** — CommentCards and SeenInStore render honest empty /
-      placeholder states. Wire a review platform and real photos when they
-      exist. Do not fabricate counts or ratings.
+- [ ] **Contact form** — `app/routes/pages.contact.tsx` posts to a stub
+      action; wire to the real support inbox / helpdesk.
+- [ ] **Reviews / UGC** — CommentCards renders an honest empty state and
+      SeenInStore is a CTA band (no photos yet). Wire a review platform and
+      add real photos when they exist. Do not fabricate counts or ratings.
+- [ ] **UGC discount** — "tag us, get 10% off next order" needs a discount
+      code workflow in admin.
 - [ ] **Free US shipping over $100** — configure the shipping rate in admin.
-- [ ] Swap placeholder brand components for the committed SVGs.
+- [ ] **Size guide** — measurements in `app/routes/pages.size-guide.tsx`
+      assume a standard heavyweight unisex staple tee; verify against the
+      final Printify blank.
 
 ## Development
 

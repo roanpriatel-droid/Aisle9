@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -12,6 +12,7 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {COLLECTIONS, LADDER, PRODUCTION} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -101,24 +102,70 @@ export default function Product() {
     <div className="product">
       <ProductImage image={selectedVariant?.image} />
       <div className="product-main">
+        <nav aria-label="Breadcrumb" className="label-type mb-4 text-ink/50">
+          <Link className="no-underline hover:underline" to="/">
+            AISLE 9
+          </Link>
+          {' / '}
+          <Link
+            className="no-underline hover:underline"
+            to={COLLECTIONS.shopAll}
+          >
+            THE SHELF
+          </Link>
+        </nav>
+
         <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
+        <div className="mt-2 flex items-baseline gap-2">
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+          <span className="label-type text-ink/50">EACH</span>
+        </div>
         <br />
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+
+        {/* Ladder reminder — honored at checkout by the automatic discount */}
+        <div className="mt-4 border-2 border-ink bg-fluorescent p-3">
+          <p className="label-type text-ink/60">BUY MORE, PAY LESS</p>
+          <p className="label-type mt-1.5 text-ink">
+            {LADDER.filter((t) => t.discountPct > 0)
+              .map((t) => `${t.qty} TEES −${t.discountPct}%`)
+              .join(' · ')}
+          </p>
+          <p className="mt-1.5 text-xs text-ink/60">
+            Applies automatically at checkout. Mix and match any designs.
+          </p>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2 border-2 border-ink bg-white p-3">
+          {[PRODUCTION.blank, PRODUCTION.method, PRODUCTION.turnaround, PRODUCTION.returns].map(
+            (fact) => (
+              <p key={fact} className="label-type text-ink/70">
+                ✓ {fact}
+              </p>
+            ),
+          )}
+          <Link
+            className="label-type text-signage underline underline-offset-2"
+            prefetch="intent"
+            to="/pages/size-guide"
+          >
+            SIZE GUIDE →
+          </Link>
+        </div>
+
+        <div className="mt-6">
+          <p className="label-type text-ink/50">SPECIFICATIONS</p>
+          <div
+            className="prose-sm mt-2 text-sm text-ink/80"
+            dangerouslySetInnerHTML={{__html: descriptionHtml}}
+          />
+        </div>
       </div>
       <Analytics.ProductView
         data={{

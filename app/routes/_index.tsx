@@ -13,13 +13,14 @@ import {PriceCheck} from '~/components/home/PriceCheck';
 import {BRAND} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = () => {
+  const description =
+    'Deadpan graphic tees, printed on demand. Buy more, pay less. Every price ends in 9.';
   return [
     {title: `${BRAND.name} — ${BRAND.tagline}`},
-    {
-      name: 'description',
-      content:
-        'Deadpan graphic tees, printed on demand. Buy more, pay less. Every price ends in 9.',
-    },
+    {name: 'description', content: description},
+    {property: 'og:title', content: `${BRAND.name} — ${BRAND.tagline}`},
+    {property: 'og:description', content: description},
+    {property: 'og:type', content: 'website'},
   ];
 };
 

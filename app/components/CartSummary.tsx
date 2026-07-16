@@ -20,9 +20,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
+      <h4 id={summaryId} className="label-type text-ink/50">RECEIPT PREVIEW</h4>
       <dl role="group" className="cart-subtotal">
-        <dt>Subtotal</dt>
+        <dt>SUBTOTAL</dt>
         <dd>
           {cart?.cost?.subtotalAmount?.amount ? (
             <Money data={cart?.cost?.subtotalAmount} />
@@ -78,7 +78,7 @@ function CartDiscounts({
       {/* Have existing discount, display it with a remove option */}
       <dl hidden={!codes.length}>
         <div>
-          <dt id={discountsHeadingId}>Discounts</dt>
+          <dt id={discountsHeadingId} className="label-type text-ink/50">DISCOUNTS</dt>
           <UpdateDiscountForm>
             <div
               className="cart-discount"
@@ -105,7 +105,7 @@ function CartDiscounts({
             id={discountCodeInputId}
             type="text"
             name="discountCode"
-            placeholder="Discount code"
+            placeholder="DISCOUNT CODE"
           />
           &nbsp;
           <button type="submit" aria-label="Apply discount code">
@@ -196,7 +196,7 @@ function CartGiftCard({
     <section aria-label="Gift cards">
       {giftCardCodes && giftCardCodes.length > 0 && (
         <dl>
-          <dt id={giftCardHeadingId}>Applied Gift Card(s)</dt>
+          <dt id={giftCardHeadingId} className="label-type text-ink/50">GIFT CARDS</dt>
           {giftCardCodes.map((giftCard) => (
             <dd key={giftCard.id} className="cart-discount">
               <RemoveGiftCardForm
@@ -229,7 +229,7 @@ function CartGiftCard({
             id={giftCardInputId}
             type="text"
             name="giftCardCode"
-            placeholder="Gift card code"
+            placeholder="GIFT CARD CODE"
             ref={giftCardCodeInput}
           />
           &nbsp;

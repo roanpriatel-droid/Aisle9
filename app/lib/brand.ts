@@ -99,6 +99,14 @@ export const VOICE = {
   menuHeading: 'DEPARTMENTS',
 } as const;
 
+/** Production facts shown on the PDP and FAQ. Keep truthful. */
+export const PRODUCTION = {
+  method: 'PRINTED ON DEMAND',
+  turnaround: 'SHIPS IN 5–7 BUSINESS DAYS',
+  returns: '30-DAY RETURNS',
+  blank: 'HEAVYWEIGHT UNISEX COTTON TEE · S–3XL',
+} as const;
+
 export const FOOTER_SHOP_LINKS = [
   {title: 'SHOP ALL', to: COLLECTIONS.shopAll},
   {title: 'BEST SELLERS', to: COLLECTIONS.bestSellers},
@@ -106,10 +114,16 @@ export const FOOTER_SHOP_LINKS = [
   {title: 'SEARCH', to: '/search'},
 ] as const;
 
+export const FOOTER_INFO_LINKS = [
+  {title: 'ABOUT THE STORE', to: '/pages/about'},
+  {title: 'QUESTIONS', to: '/pages/faq'},
+  {title: 'SIZE GUIDE', to: '/pages/size-guide'},
+  {title: 'CUSTOMER SERVICE', to: '/pages/contact'},
+] as const;
+
 export const FOOTER_POLICY_LINKS = [
   {title: 'SHIPPING', to: '/policies/shipping-policy'},
   {title: 'RETURNS + REFUNDS', to: '/policies/refund-policy'},
   {title: 'PRIVACY', to: '/policies/privacy-policy'},
   {title: 'TERMS', to: '/policies/terms-of-service'},
-  {title: 'CONTACT', to: '/pages/contact'},
 ] as const;
