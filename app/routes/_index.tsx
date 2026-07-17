@@ -68,7 +68,7 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <Hero />
+      <Hero products={data.stockProducts} />
       <MarqueeStrip />
       <TodaysStock products={data.stockProducts} />
       <BulkLadder />

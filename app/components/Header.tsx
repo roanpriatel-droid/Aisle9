@@ -106,7 +106,7 @@ function CartBadge({count}: {count: number}) {
 
   return (
     <a
-      className="basket-link"
+      className={`basket-link${count > 0 ? ' has-items' : ''}`}
       href="/cart"
       onClick={(e) => {
         e.preventDefault();

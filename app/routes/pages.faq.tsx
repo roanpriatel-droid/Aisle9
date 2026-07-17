@@ -91,6 +91,16 @@ export default function FaqPage() {
         </a>
         .
       </p>
+
+      <div className="mt-10 border-2 border-ink bg-white p-6 text-center">
+        <p className="sign-type text-lg">ALL QUESTIONS ANSWERED?</p>
+        <p className="mt-1.5 text-sm text-ink/60">
+          The shelf is still stocked. The discount still applies itself.
+        </p>
+        <a className="btn mt-4" href="/collections/all">
+          WALK THE AISLE
+        </a>
+      </div>
     </div>
   );
 }

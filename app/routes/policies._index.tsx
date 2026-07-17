@@ -26,12 +26,23 @@ export default function Policies() {
 
   return (
     <div className="policies">
+      <p className="label-type text-ink/50">POSTED AT THE RETURNS DESK</p>
       <h1>STORE POLICIES</h1>
-      <div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {policies.map((policy) => (
-          <fieldset key={policy.id}>
-            <Link to={`/policies/${policy.handle}`}>{policy.title}</Link>
-          </fieldset>
+          <Link
+            key={policy.id}
+            className="group border-2 border-ink bg-white p-5 no-underline"
+            prefetch="intent"
+            to={`/policies/${policy.handle}`}
+          >
+            <span className="sign-type text-sm group-hover:text-signage">
+              {policy.title}
+            </span>
+            <span className="label-type mt-2 block text-ink/40">
+              READ THE FINE PRINT →
+            </span>
+          </Link>
         ))}
       </div>
     </div>

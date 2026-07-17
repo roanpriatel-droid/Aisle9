@@ -5,8 +5,8 @@
  */
 :root {
   --aside-width: 400px;
-  --cart-aside-summary-height-with-discount: 300px;
-  --cart-aside-summary-height: 250px;
+  --cart-aside-summary-height-with-discount: 420px;
+  --cart-aside-summary-height: 380px;
   --grid-item-width: 300px;
   --header-height: 64px;
   --announcement-height: 36px;
@@ -420,7 +420,8 @@ button.reset:hover:not(:has(> *)) {
   padding: 0.45rem 0.8rem;
 }
 
-.basket-link:hover {
+.basket-link:hover,
+.basket-link.has-items {
   background: var(--signage);
 }
 
@@ -606,10 +607,48 @@ button.reset:hover:not(:has(> *)) {
   text-decoration: none;
 }
 
+.product-item-media {
+  display: block;
+  position: relative;
+}
+
 .product-item img {
   border-bottom: var(--hairline);
   height: auto;
   width: 100%;
+}
+
+.shelf-badge {
+  background: var(--signage);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  left: 0.5rem;
+  letter-spacing: 0.12em;
+  padding: 0.3rem 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  z-index: 1;
+}
+
+.shelf-cta {
+  color: var(--signage);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0;
+  transition: opacity 120ms;
+}
+
+.product-item:hover .shelf-cta,
+.product-item:focus-visible .shelf-cta {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .shelf-cta {
+    opacity: 1;
+  }
 }
 
 .product-item .shelf-talker {

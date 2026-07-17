@@ -5,7 +5,7 @@ export function TrustBar() {
   return (
     <section
       aria-labelledby="store-policies-heading"
-      className="border-b-2 border-ink bg-linoleum"
+      className="border-b-2 border-ink bg-fluorescent"
     >
       <div className="mx-auto max-w-6xl px-4 py-10">
         <h2 id="store-policies-heading" className="label-type text-ink/50">

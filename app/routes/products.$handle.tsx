@@ -11,8 +11,11 @@ import {
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {AddToCartButton} from '~/components/AddToCartButton';
+import {useAside} from '~/components/Aside';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {COLLECTIONS, LADDER, PRODUCTION} from '~/lib/brand';
+import type {ProductFragment} from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -99,7 +102,7 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product">
+    <div className="product pb-24 md:pb-0">
       <ProductImage image={selectedVariant?.image} />
       <div className="product-main">
         <nav aria-label="Breadcrumb" className="label-type mb-4 text-ink/50">
@@ -167,6 +170,7 @@ export default function Product() {
           />
         </div>
       </div>
+      <StickyBasketBar title={title} selectedVariant={selectedVariant} />
       <Analytics.ProductView
         data={{
           products: [
@@ -182,6 +186,51 @@ export default function Product() {
           ],
         }}
       />
+    </div>
+  );
+}
+
+/**
+ * Mobile-only sticky bar so the buy button never scrolls away.
+ * Desktop already keeps the form in view via the sticky product-main column.
+ */
+function StickyBasketBar({
+  title,
+  selectedVariant,
+}: {
+  title: string;
+  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
+}) {
+  const {open} = useAside();
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-10 flex items-center gap-3 border-t-2 border-ink bg-linoleum p-3 md:hidden">
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-xs font-bold uppercase tracking-wide">
+          {title}
+        </p>
+        <div className="text-sm font-bold">
+          <ProductPrice price={selectedVariant?.price} />
+        </div>
+      </div>
+      <div className="shrink-0">
+        <AddToCartButton
+          disabled={!selectedVariant || !selectedVariant.availableForSale}
+          onClick={() => open('cart')}
+          lines={
+            selectedVariant
+              ? [
+                  {
+                    merchandiseId: selectedVariant.id,
+                    quantity: 1,
+                    selectedVariant,
+                  },
+                ]
+              : []
+          }
+        >
+          {selectedVariant?.availableForSale ? 'ADD TO BASKET' : 'OUT OF STOCK'}
+        </AddToCartButton>
+      </div>
     </div>
   );
 }

@@ -21,6 +21,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   return (
     <div aria-labelledby={summaryId} className={className}>
       <h4 id={summaryId} className="label-type text-ink/50">RECEIPT PREVIEW</h4>
+      <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
       <dl role="group" className="cart-subtotal">
         <dt>SUBTOTAL</dt>
         <dd>
@@ -42,6 +43,48 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         giftCardInputId={giftCardInputId}
       />
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+    </div>
+  );
+}
+
+const FREE_SHIPPING_THRESHOLD = 100;
+
+/**
+ * Progress toward the $100 free-US-shipping threshold, drawn as flat blocks
+ * (a loading bar the store bought secondhand). USD carts only.
+ */
+function FreeShippingMeter({
+  subtotal,
+}: {
+  // loose shape: optimistic carts make money fields optional
+  subtotal?: {amount?: string | null; currencyCode?: string | null};
+}) {
+  if (!subtotal?.amount || subtotal.currencyCode !== 'USD') return null;
+  const amount = parseFloat(subtotal.amount);
+  if (Number.isNaN(amount) || amount <= 0) return null;
+
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - amount);
+  const SEGMENTS = 10;
+  const filled = Math.min(
+    SEGMENTS,
+    Math.floor((amount / FREE_SHIPPING_THRESHOLD) * SEGMENTS),
+  );
+
+  return (
+    <div className="mt-2 border-2 border-ink bg-white p-3">
+      <p className="label-type text-ink">
+        {remaining > 0
+          ? `$${remaining.toFixed(2)} MORE FOR FREE US SHIPPING`
+          : 'FREE US SHIPPING UNLOCKED'}
+      </p>
+      <div aria-hidden className="mt-2 flex gap-0.5">
+        {Array.from({length: SEGMENTS}).map((_, i) => (
+          <span
+            key={i}
+            className={`h-2.5 flex-1 ${i < filled ? 'bg-signage' : 'bg-ink/15'}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -72,6 +72,7 @@ export function TodaysStock({
                         key={product.id}
                         product={product}
                         loading={i < 4 ? 'eager' : 'lazy'}
+                        badge={i < 2 ? 'JUST SHELVED' : undefined}
                       />
                     ))
                   : null}

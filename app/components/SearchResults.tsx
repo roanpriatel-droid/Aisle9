@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
+import {NAV} from '~/lib/brand';
 
 type SearchItems = RegularSearchReturn['result']['items'];
 type PartialSearchResult<ItemType extends keyof SearchItems> = Pick<
@@ -158,8 +159,25 @@ function SearchResultsProducts({
 
 function SearchResultsEmpty() {
   return (
-    <p className="label-type mt-6 text-ink/60">
-      NOT STOCKED. CHECKED THE BACK. TRY DIFFERENT WORDS.
-    </p>
+    <div className="mt-6">
+      <p className="label-type text-ink/60">
+        NOT STOCKED. CHECKED THE BACK. TRY DIFFERENT WORDS.
+      </p>
+      <p className="label-type mt-4 text-ink/50">OR BROWSE A DEPARTMENT:</p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {NAV.filter((item) => item.to.startsWith('/collections')).map(
+          (item) => (
+            <Link
+              key={item.title}
+              className="label-type border-2 border-ink px-3 py-2 no-underline hover:bg-fluorescent"
+              prefetch="intent"
+              to={item.to}
+            >
+              {item.title}
+            </Link>
+          ),
+        )}
+      </div>
+    </div>
   );
 }

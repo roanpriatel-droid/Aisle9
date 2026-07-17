@@ -77,7 +77,7 @@ function CollectionItem({
 }) {
   return (
     <Link
-      className="collection-item"
+      className="collection-item group border-2 border-ink bg-white no-underline"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
@@ -86,12 +86,18 @@ function CollectionItem({
         <Image
           alt={collection.image.altText || collection.title}
           aspectRatio="1/1"
+          className="border-b-2 border-ink"
           data={collection.image}
           loading={index < 3 ? 'eager' : undefined}
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h5>{collection.title}</h5>
+      <span className="flex items-center justify-between px-4 py-3">
+        <h5 className="sign-type text-sm group-hover:text-signage">
+          {collection.title}
+        </h5>
+        <span className="label-type text-ink/40">AISLE →</span>
+      </span>
     </Link>
   );
 }

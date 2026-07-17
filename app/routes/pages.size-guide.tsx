@@ -83,6 +83,16 @@ export default function SizeGuidePage() {
           </p>
         </div>
       </div>
+
+      <div className="mt-10 border-2 border-ink bg-fluorescent p-6 text-center">
+        <p className="sign-type text-lg">KNOW YOUR SIZE NOW?</p>
+        <p className="mt-1.5 text-sm text-ink/60">
+          Remember: 2 tees save 10%. 3 save 20%. 4 save 30%.
+        </p>
+        <a className="btn mt-4" href="/collections/all">
+          PICK YOUR SHIRTS
+        </a>
+      </div>
     </div>
   );
 }
