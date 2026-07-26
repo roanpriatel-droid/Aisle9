@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {PA_ANNOUNCEMENTS} from '~/lib/brand';
+import {ANNOUNCEMENT_BAR} from '~/lib/brand';
 
 /**
  * "ATTENTION SHOPPERS" PA bar. Ink background, linoleum text.
@@ -10,7 +10,7 @@ export function AnnouncementBar() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (PA_ANNOUNCEMENTS.length < 2) return;
+    if (ANNOUNCEMENT_BAR.length < 2) return;
     if (
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -18,7 +18,7 @@ export function AnnouncementBar() {
       return;
     }
     const id = setInterval(
-      () => setIndex((i) => (i + 1) % PA_ANNOUNCEMENTS.length),
+      () => setIndex((i) => (i + 1) % ANNOUNCEMENT_BAR.length),
       6000,
     );
     return () => clearInterval(id);
@@ -31,7 +31,7 @@ export function AnnouncementBar() {
       aria-live="off"
     >
       <p className="label-type truncate text-linoleum">
-        {PA_ANNOUNCEMENTS[index]}
+        {ANNOUNCEMENT_BAR[index]}
       </p>
     </div>
   );

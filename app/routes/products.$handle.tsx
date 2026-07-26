@@ -17,6 +17,8 @@ import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {SizeChartModal} from '~/components/SizeChartModal';
+import {RecentlyViewed, useTrackScanned} from '~/components/RecentlyViewed';
+import {JudgeMeReviews, ProductJsonLd} from '~/components/Reviews';
 import {useAside} from '~/components/Aside';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {
@@ -40,8 +42,17 @@ type PairedData = {
 };
 
 export const meta: Route.MetaFunction = ({data}) => {
+  const title = data?.product.title ?? '';
+  const description =
+    data?.product.seo?.description ||
+    data?.product.description?.slice(0, 160) ||
+    `${title} — a deadpan graphic tee, printed on demand at AISLE 9.`;
   return [
-    {title: `AISLE 9 — ${data?.product.title ?? ''}`},
+    {title: `AISLE 9 — ${title}`},
+    {name: 'description', content: description},
+    {property: 'og:title', content: `AISLE 9 — ${title}`},
+    {property: 'og:description', content: description},
+    {property: 'og:type', content: 'product'},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -144,6 +155,19 @@ export default function Product() {
       ? `${fmtMoney(min)}–${fmtMoney(max)} BY SIZE`
       : undefined;
 
+  const available = selectedVariant?.availableForSale ?? false;
+  const numericProductId = product.id.split('/').pop() ?? product.id;
+
+  // Record this product in "Previously Scanned" (recently viewed).
+  useTrackScanned({
+    handle: product.handle,
+    title: product.title,
+    imageUrl: selectedVariant?.image?.url,
+    imageAlt: selectedVariant?.image?.altText ?? product.title,
+    amount: selectedVariant?.price?.amount ?? min?.amount ?? '0',
+    currencyCode: selectedVariant?.price?.currencyCode ?? min?.currencyCode ?? 'USD',
+  });
+
   return (
     <div className="product pb-24 md:pb-0">
       <ProductImage image={selectedVariant?.image} />
@@ -166,6 +190,11 @@ export default function Product() {
             compareAtPrice={selectedVariant?.compareAtPrice}
             rangeNote={rangeNote}
           />
+          <p className="label-type mt-3 text-signage">
+            {available
+              ? 'IN STOCK · PRINTED TO ORDER · DISCONTINUED WITHOUT CEREMONY'
+              : 'OUT OF STOCK · CHECK BACK, OR DON’T'}
+          </p>
         </div>
 
         <div className="mt-6">
@@ -215,6 +244,20 @@ export default function Product() {
       </div>
 
       <FrequentlyPaired paired={paired} />
+
+      <JudgeMeReviews productId={numericProductId} productTitle={title} />
+
+      <RecentlyViewed excludeHandle={product.handle} />
+
+      <ProductJsonLd
+        title={product.title}
+        description={product.description}
+        image={selectedVariant?.image?.url}
+        url={`/products/${product.handle}`}
+        price={selectedVariant?.price?.amount}
+        currencyCode={selectedVariant?.price?.currencyCode}
+        available={available}
+      />
 
       <StickyBasketBar title={title} selectedVariant={selectedVariant} />
       <Analytics.ProductView

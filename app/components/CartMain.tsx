@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {FreeShippingMeter} from '~/components/FreeShippingMeter';
 import {COLLECTIONS, LADDER, VOICE} from '~/lib/brand';
 
 export type CartLayout = 'page' | 'aside';
@@ -84,8 +85,10 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         {cartHasItems && (
           <>
             <LadderNudge quantity={cart?.totalQuantity ?? 0} />
+            <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
             <CartUpsell />
             <CartSummary cart={cart} layout={layout} />
+            <CartTrustRow />
           </>
         )}
       </div>
@@ -143,6 +146,19 @@ function CartUpsell() {
       >
         {VOICE.cartUpsellCta} →
       </Link>
+    </div>
+  );
+}
+
+/** Trust row under the cart summary — the receipt reassurances. */
+function CartTrustRow() {
+  return (
+    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      {VOICE.cartTrustRow.map((item) => (
+        <div key={item} className="border-2 border-ink bg-white p-2 text-center">
+          <span className="label-type text-ink/70">✓ {item}</span>
+        </div>
+      ))}
     </div>
   );
 }

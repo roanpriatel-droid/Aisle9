@@ -150,6 +150,11 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="theme-color" content="#1A1A1A" />
+        <meta property="og:site_name" content="AISLE 9" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="apple-touch-icon" href={favicon} />
+        <link rel="mask-icon" href={favicon} color="#CC2229" />
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>

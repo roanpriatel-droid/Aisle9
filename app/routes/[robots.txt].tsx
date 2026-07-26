@@ -16,10 +16,11 @@ export function loader({request}: Route.LoaderArgs) {
 
 function robotsTxtData({url}: {url?: string}) {
   const sitemapUrl = url ? `${url}/sitemap.xml` : undefined;
+  const pagesSitemap = url ? `\nSitemap: ${url}/sitemap-pages.xml` : '';
 
   return `
 User-agent: *
-${generalDisallowRules({sitemapUrl})}
+${generalDisallowRules({sitemapUrl})}${pagesSitemap}
 
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google

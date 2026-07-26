@@ -1,105 +1,70 @@
 import type {Route} from './+types/pages.faq';
-import {BRAND} from '~/lib/brand';
+import {SERVICE_DESK} from '~/lib/brand';
+import {Link} from 'react-router';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: `${BRAND.name} — QUESTIONS`},
+    {title: 'AISLE 9 — CUSTOMER SERVICE DESK'},
     {
       name: 'description',
       content:
-        'Shipping, returns, sizing, printing, and the bulk discount, answered in the order received.',
+        'Store policies and answers, numbered for reference. Read in the order received.',
     },
   ];
 };
 
-const FAQS = [
-  {
-    q: 'HOW DOES THE BULK DISCOUNT WORK?',
-    a: 'Put shirts in your basket. Two shirts take 10% off, three take 20% off, four or more take 30% off. It applies automatically at checkout — no code, and you can mix and match any designs. The math happens whether or not you notice it.',
-  },
-  {
-    q: 'WHEN WILL MY ORDER SHIP?',
-    a: 'Every shirt is printed after you order it. Printing takes 2–5 business days, then transit. Most US orders arrive within 5–7 business days of printing. You will get a tracking number when it leaves the facility.',
-  },
-  {
-    q: 'HOW MUCH IS SHIPPING?',
-    a: 'Calculated at checkout by weight and destination. US orders over $100 ship free, which — given the bulk ladder — is achievable if you commit.',
-  },
-  {
-    q: 'WHAT ARE THE SHIRTS LIKE?',
-    a: 'Heavyweight unisex cotton tees, printed with water-based inks. Sizes S through 3XL. Colorways vary by design — generally white, black, and ash grey. See the size guide before guessing.',
-  },
-  {
-    q: 'CAN I RETURN A SHIRT?',
-    a: 'Yes. 30 days from delivery, unworn and unwashed. Start at the customer service desk (the contact page). Refunds go back to the original payment method once the shirt is inspected by someone who takes it more seriously than it deserves.',
-  },
-  {
-    q: 'MY SHIRT ARRIVED DAMAGED OR MISPRINTED.',
-    a: 'Not technically a question, but understood. Send a photo of the problem to customer service within 30 days and a replacement will be printed at no charge. The photo is required. The apology is implied.',
-  },
-  {
-    q: 'HOW DO I WASH IT?',
-    a: 'Inside out, cold water, mild detergent. Hang dry or tumble low. Do not iron the print. Treated properly, the shirt will outlast the phase of your life it describes.',
-  },
-  {
-    q: 'DO YOU RESTOCK?',
-    a: 'New designs shelve weekly. Because everything is printed to order, designs do not "sell out" — but they do get discontinued without ceremony. If you are attached to one, act like it.',
-  },
-  {
-    q: 'IS THE STORE REAL?',
-    a: 'The shirts are real. The prices are real. The store is a concept. If you have further questions about the nature of retail, the customer service desk will read them in the order received.',
-  },
-] as const;
-
 export default function FaqPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">POSTED BY THE ENTRANCE</p>
-      <h1 className="sign-type mt-2 text-4xl">QUESTIONS</h1>
-      <p className="mt-4 text-ink/70">
-        Answered in the order received. Answers are final but polite.
-      </p>
+      <p className="label-type text-ink/50">{SERVICE_DESK.eyebrow}</p>
+      <h1 className="sign-type mt-2 text-4xl">{SERVICE_DESK.heading}</h1>
+      <p className="mt-4 text-ink/70">{SERVICE_DESK.sub}</p>
 
-      <div className="mt-10 flex flex-col gap-2">
-        {FAQS.map((item) => (
-          <details
-            key={item.q}
-            className="group border-2 border-ink bg-white open:bg-fluorescent"
-          >
-            <summary className="cursor-pointer list-none p-4">
-              <span className="sign-type flex items-center justify-between gap-4 text-sm">
-                {item.q}
-                <span
-                  aria-hidden
-                  className="text-lg leading-none text-signage group-open:rotate-45"
-                >
-                  +
-                </span>
-              </span>
-            </summary>
-            <p className="border-t-2 border-ink/20 p-4 text-sm text-ink/80">
-              {item.a}
-            </p>
-          </details>
-        ))}
-      </div>
+      <ul className="mt-10 space-y-3">
+        {SERVICE_DESK.items.map((item, i) => {
+          const num = String(i + 1).padStart(2, '0');
+          return (
+            <li key={item.q}>
+              <details className="group border-2 border-ink bg-white open:bg-fluorescent">
+                <summary className="flex cursor-pointer list-none items-center gap-4 p-4">
+                  <span className="sign-type flex h-8 w-8 shrink-0 items-center justify-center bg-signage text-sm text-linoleum">
+                    {num}
+                  </span>
+                  <span className="sign-type flex-1 text-sm">{item.q}</span>
+                  <span
+                    aria-hidden="true"
+                    className="sign-type shrink-0 text-xl leading-none transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <div className="border-t-2 border-ink p-4 text-sm text-ink/80">
+                  {item.a}
+                </div>
+              </details>
+            </li>
+          );
+        })}
+      </ul>
 
-      <p className="label-type mt-8 text-ink/50">
-        UNANSWERED? TAKE IT TO THE{' '}
-        <a className="text-signage underline" href="/pages/contact">
-          CUSTOMER SERVICE DESK
-        </a>
-        .
-      </p>
-
-      <div className="mt-10 border-2 border-ink bg-white p-6 text-center">
-        <p className="sign-type text-lg">ALL QUESTIONS ANSWERED?</p>
-        <p className="mt-1.5 text-sm text-ink/60">
-          The shelf is still stocked. The discount still applies itself.
+      <div className="mt-12 border-2 border-ink bg-white p-6">
+        <p className="label-type text-ink/50">STILL UNANSWERED?</p>
+        <h2 className="sign-type mt-2 text-2xl">FILE IT AT THE DESK</h2>
+        <p className="mt-3 text-sm text-ink/70">
+          Questions not covered above are read in the order received. Bring the
+          matter to the Customer Service Desk.
         </p>
-        <a className="btn mt-4" href="/collections/all">
-          WALK THE AISLE
-        </a>
+        <Link to="/pages/contact" className="btn mt-5 inline-block">
+          FILE A COMPLAINT
+        </Link>
+        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-1">
+          <Link to="/pages/shipping" className="label-type text-signage">
+            SHIPPING DETAIL &rarr;
+          </Link>
+          <Link to="/pages/size-guide" className="label-type text-signage">
+            SIZING DEPARTMENT &rarr;
+          </Link>
+        </div>
       </div>
     </div>
   );

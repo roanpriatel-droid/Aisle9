@@ -9,17 +9,24 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import {DealStrip} from '~/components/brand/DealStrip';
-import {aisleLabelForHandle, VOICE, COLLECTIONS} from '~/lib/brand';
+import {
+  aisleLabelForHandle,
+  findAisle,
+  VOICE,
+  COLLECTIONS,
+} from '~/lib/brand';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = ({data}) => {
+  const title = data?.collection?.title ?? data?.knownAisle?.title ?? 'AISLE';
   return [
-    {title: `AISLE 9 — ${data?.collection.title ?? ''}`},
+    {title: `AISLE 9 — ${title}`},
     {
       name: 'description',
       content:
-        data?.collection.description ||
-        `Shop ${data?.collection.title ?? 'this aisle'} at AISLE 9.`,
+        data?.collection?.description ||
+        data?.knownAisle?.blurb ||
+        `Shop ${title} at AISLE 9.`,
     },
   ];
 };
@@ -89,12 +96,19 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   ]);
 
   if (!collection) {
+    // A known aisle/department that didn't resolve (unpopulated, or a
+    // best-guess handle mismatch) renders an in-voice "restocking" page with a
+    // 200 — never a 404 for a real nav link. Truly unknown handles 404.
+    const knownAisle = findAisle(handle);
+    if (knownAisle) {
+      return {collection: null, knownAisle};
+    }
     throw new Response(`Collection ${handle} not found`, {status: 404});
   }
 
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
-  return {collection};
+  return {collection, knownAisle: null};
 }
 
 function loadDeferredData({context}: Route.LoaderArgs) {
@@ -102,8 +116,13 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection} = useLoaderData<typeof loader>();
+  const {collection, knownAisle} = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
+
+  // Known aisle that didn't resolve → in-voice restocking page (200, no 404).
+  if (!collection) {
+    return <RestockingAisle aisle={knownAisle} />;
+  }
 
   const label = aisleLabelForHandle(collection.handle, collection.title);
   const activeFilters = searchParams.getAll('filter');
@@ -180,7 +199,9 @@ export default function Collection() {
           <h1 className="sign-type mt-1 text-4xl">{collection.title}</h1>
         </div>
         <span className="label-type border-2 border-ink bg-fluorescent px-3 py-2 text-ink">
-          {countLabel} UNITS {hasActiveFilters ? 'MATCH' : 'IN STOCK'}
+          {hasActiveFilters
+            ? `${countLabel} UNITS MATCH`
+            : `${countLabel} ${VOICE.inStockSuffix}`}
         </span>
       </div>
 
@@ -276,6 +297,7 @@ export default function Collection() {
               key={product.id}
               product={product}
               loading={index < 8 ? 'eager' : 'lazy'}
+              quickAdd
             />
           )}
         </PaginatedResourceSection>
@@ -289,6 +311,58 @@ export default function Collection() {
           },
         }}
       />
+    </div>
+  );
+}
+
+/** In-voice 200 page for a known aisle that didn't resolve to a collection. */
+function RestockingAisle({
+  aisle,
+}: {
+  aisle: {n: number; title: string; handle: string; blurb: string} | null;
+}) {
+  const label = aisle ? `AISLE ${aisle.n} — ${aisle.title}` : 'THIS AISLE';
+  return (
+    <div className="collection mx-auto max-w-6xl px-4 py-10">
+      <nav aria-label="Breadcrumb" className="label-type text-ink/50">
+        <Link className="hover:text-signage" to="/">
+          AISLE 9
+        </Link>
+        {' / '}
+        <Link className="hover:text-signage" to={COLLECTIONS.shopAll}>
+          ALL AISLES
+        </Link>
+        {' / '}
+        <span className="text-ink">{label}</span>
+      </nav>
+
+      <div className="mt-4 border-b-2 border-ink pb-4">
+        <p className="label-type text-signage">{label}</p>
+        <h1 className="sign-type mt-1 text-4xl">{aisle?.title ?? 'AISLE'}</h1>
+      </div>
+
+      {aisle?.blurb && (
+        <p className="mt-4 max-w-2xl text-ink/70">{aisle.blurb}</p>
+      )}
+
+      <div className="mt-8 border-2 border-ink bg-white p-10 text-center">
+        <p className="sign-type text-2xl">{VOICE.restockingHeading}</p>
+        <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
+          {VOICE.restockingBody}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>
+            SHOP BEST SELLERS
+          </Link>
+          <Link
+            className="btn btn-outline"
+            prefetch="intent"
+            to={COLLECTIONS.shopAll}
+          >
+            BROWSE ALL AISLES
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
@@ -337,6 +411,10 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
       url
       width
       height
+    }
+    selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {
+      id
+      availableForSale
     }
     priceRange {
       minVariantPrice {

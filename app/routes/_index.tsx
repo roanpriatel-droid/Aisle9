@@ -5,9 +5,12 @@ import {MarqueeStrip} from '~/components/brand/MarqueeStrip';
 import {Hero} from '~/components/home/Hero';
 import {StoreDirectory} from '~/components/home/StoreDirectory';
 import {BestSellersRow} from '~/components/home/BestSellersRow';
-import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
+import {WeeklyCircularTeaser} from '~/components/home/WeeklyCircularTeaser';
 import {GiftsClearanceBanner} from '~/components/home/GiftsClearanceBanner';
+import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
+import {FreakBehaviorGag} from '~/components/home/FreakBehaviorGag';
 import {BulkLadder} from '~/components/home/BulkLadder';
+import {PAQuoteStrip} from '~/components/home/PAQuoteStrip';
 import {TrustBar} from '~/components/home/TrustBar';
 import {SavingsClub} from '~/components/home/SavingsClub';
 import {BRAND} from '~/lib/brand';
@@ -92,9 +95,12 @@ export default function Homepage() {
       <MarqueeStrip />
       <StoreDirectory />
       <BestSellersRow shelf={data.shelf} />
-      <MatchingSetsPromo />
+      <WeeklyCircularTeaser />
       <GiftsClearanceBanner />
+      <MatchingSetsPromo />
+      <FreakBehaviorGag />
       <BulkLadder />
+      <PAQuoteStrip />
       <TrustBar />
       <SavingsClub />
     </div>
