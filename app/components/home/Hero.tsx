@@ -1,20 +1,16 @@
 import {Suspense} from 'react';
 import {Await, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
-import type {RecommendedProductsQuery} from 'storefrontapi.generated';
 import {AisleMarker} from '~/components/brand/AisleMarker';
 import {COLLECTIONS} from '~/lib/brand';
+import type {ShelfData} from '~/lib/shelf';
 
 /**
  * Hero: aisle sign + deadpan pitch on the left, actual product on the shelf
  * to the right so there is merchandise above the fold. Opening-week framing
  * only — no invented social proof.
  */
-export function Hero({
-  products,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-}) {
+export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
   return (
     <section className="border-b-2 border-ink bg-linoleum">
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 lg:grid-cols-[1.1fr_1fr]">
@@ -51,24 +47,20 @@ export function Hero({
           </div>
         </div>
 
-        <HeroShelf products={products} />
+        <HeroShelf shelf={shelf} />
       </div>
     </section>
   );
 }
 
-/** First item off the newest stock, staged like an endcap display. */
-function HeroShelf({
-  products,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-}) {
+/** First item off the shelf, staged like an endcap display. */
+function HeroShelf({shelf}: {shelf: Promise<ShelfData | null>}) {
   return (
     <div className="hidden pt-10 lg:block">
       <Suspense fallback={<HeroShelfFrame />}>
-        <Await resolve={products} errorElement={<HeroShelfFrame />}>
-          {(response) => {
-            const product = response?.products.nodes[0];
+        <Await resolve={shelf} errorElement={<HeroShelfFrame />}>
+          {(data) => {
+            const product = data?.products?.[0];
             if (!product?.featuredImage) return <HeroShelfFrame />;
             return (
               <Link

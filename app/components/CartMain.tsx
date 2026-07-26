@@ -84,6 +84,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         {cartHasItems && (
           <>
             <LadderNudge quantity={cart?.totalQuantity ?? 0} />
+            <CartUpsell />
             <CartSummary cart={cart} layout={layout} />
           </>
         )}
@@ -119,6 +120,29 @@ function LadderNudge({quantity}: {quantity: number}) {
           MAXIMUM DISCOUNT REACHED. THE STORE CONCEDES.
         </p>
       )}
+    </div>
+  );
+}
+
+/**
+ * Cart upsell slot — the impulse rack by the register. Deadpan cross-sell into
+ * best sellers; no fabricated "you might also like" product data, just a nudge
+ * that rewards one more addition (which the bulk ladder literally does).
+ */
+function CartUpsell() {
+  const {close} = useAside();
+  return (
+    <div className="mt-2 border-2 border-ink bg-white p-3">
+      <p className="label-type text-signage">{VOICE.cartUpsellHeading}</p>
+      <p className="mt-1 text-xs text-ink/60">{VOICE.cartUpsellSub}</p>
+      <Link
+        className="label-type mt-2 inline-block text-ink underline underline-offset-2 hover:text-signage"
+        to={COLLECTIONS.bestSellers}
+        onClick={close}
+        prefetch="intent"
+      >
+        {VOICE.cartUpsellCta} →
+      </Link>
     </div>
   );
 }

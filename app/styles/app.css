@@ -951,3 +951,369 @@ button.reset:hover:not(:has(> *)) {
   letter-spacing: var(--tracking-label, 0.12em);
   font-size: 0.75rem;
 }
+
+/*
+* --------------------------------------------------
+* AISLES mega-menu — the store directory board
+* --------------------------------------------------
+*/
+.aisles-menu {
+  display: inline-flex;
+  align-items: center;
+}
+
+.aisles-trigger {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink);
+}
+
+.aisles-trigger.is-open,
+.aisles-trigger:hover {
+  color: var(--signage);
+}
+
+/* Anchored to .header (position: sticky = a positioning context), so the
+   board spans the header width and never overflows the viewport. */
+.aisles-panel {
+  position: absolute;
+  top: 100%;
+  left: 1rem;
+  right: 1rem;
+  z-index: 20;
+  background: var(--linoleum);
+  border: var(--hairline);
+  border-top: none;
+  box-shadow: 0 12px 0 rgba(26, 26, 26, 0.06);
+}
+
+.aisles-panel[hidden] {
+  display: none;
+}
+
+.aisles-panel-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.aisles-panel-eyebrow {
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+  margin-bottom: 0.75rem;
+}
+
+.aisles-front {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: var(--hairline);
+}
+
+.aisles-front-item {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--linoleum);
+  background: var(--ink);
+  padding: 0.5rem 0.85rem;
+  border: 2px solid var(--ink);
+}
+
+.aisles-front-item:hover {
+  background: var(--signage);
+  border-color: var(--signage);
+}
+
+.aisles-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 40em) {
+  .aisles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64em) {
+  .aisles-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.aisle-cell {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  text-decoration: none;
+  border: 2px solid var(--ink);
+  background: #fff;
+}
+
+.aisle-cell:hover {
+  background: var(--fluorescent);
+}
+
+.aisle-cell-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 3rem;
+  background: var(--signage);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: var(--tracking-sign);
+}
+
+.aisle-cell-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.6rem 0.75rem;
+  min-width: 0;
+}
+
+.aisle-cell-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-sign);
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.1;
+}
+
+.aisle-cell:hover .aisle-cell-title {
+  color: var(--signage);
+}
+
+.aisle-cell-blurb {
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+/* Mobile directory (inside the menu Aside) */
+.aisle-directory-heading {
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  margin: 1.25rem 0 0.25rem;
+}
+
+.aisle-directory-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.aisle-directory-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  background: var(--signage);
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+/*
+* --------------------------------------------------
+* Loading skeletons — empty shelf frames
+* --------------------------------------------------
+*/
+.skeleton-card {
+  border: var(--hairline);
+  background: #fff;
+}
+
+.skeleton-media {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fluorescent);
+  border-bottom: var(--hairline);
+}
+
+.skeleton-note {
+  color: color-mix(in srgb, var(--ink) 35%, transparent);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-talker {
+  padding: 0.75rem;
+}
+
+.skeleton-line {
+  display: block;
+  height: 0.75rem;
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-line-title {
+  width: 80%;
+}
+
+.skeleton-line-price {
+  width: 40%;
+  margin-top: 0.6rem;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-note,
+  .skeleton-line {
+    animation: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* Price tag — PDP shelf-label price
+* --------------------------------------------------
+*/
+.price-tag {
+  position: relative;
+  display: inline-block;
+  min-width: 12rem;
+  border: var(--hairline);
+  background: #fff;
+}
+
+.price-tag-hole {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.7rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--linoleum);
+}
+
+.price-tag-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--ink);
+  color: var(--linoleum);
+  padding: 0.4rem 0.75rem 0.4rem 2.2rem;
+}
+
+.price-tag-sale {
+  background: var(--signage);
+  color: #fff;
+  padding: 0.05rem 0.4rem;
+}
+
+.price-tag-body {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem 0.15rem;
+}
+
+.price-tag-amount {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-sign);
+  color: var(--ink);
+}
+
+.price-tag-unit {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+.price-tag-compare {
+  font-size: 1rem;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+.price-tag-note {
+  padding: 0 0.85rem 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--signage);
+}
+
+/*
+* --------------------------------------------------
+* Size chart modal
+* --------------------------------------------------
+*/
+.size-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(26, 26, 26, 0.6);
+}
+
+.size-modal {
+  width: 100%;
+  max-width: 34rem;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--linoleum);
+  border: var(--hairline);
+  box-shadow: 10px 10px 0 rgba(26, 26, 26, 0.25);
+}
+
+.size-modal-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--linoleum);
+  border-bottom: var(--hairline);
+}
+
+.size-modal-close {
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.size-modal-close:hover {
+  color: var(--signage);
+}
+
+.size-modal-body {
+  padding: 1.25rem;
+}

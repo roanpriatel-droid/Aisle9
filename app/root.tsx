@@ -202,14 +202,16 @@ export function ErrorBoundary() {
   return (
     <div className="route-error mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 py-20">
       <p className="label-type text-ink/50">
-        {notFound ? 'AISLE NOT FOUND · CODE 404' : `STORE ERROR · CODE ${errorStatus}`}
+        {notFound
+          ? 'CODE 404 · CHECK AISLE 9'
+          : `STORE ERROR · CODE ${errorStatus}`}
       </p>
       <h1 className="sign-type text-4xl">
-        {notFound ? 'THIS AISLE DOES NOT EXIST.' : 'SOMETHING FELL OFF A SHELF.'}
+        {notFound ? 'ITEM NOT FOUND — CHECK AISLE 9' : 'SOMETHING FELL OFF A SHELF.'}
       </h1>
       <p className="text-ink/70">
         {notFound
-          ? 'Whatever you were looking for, it is not down here.'
+          ? 'Whatever you scanned did not ring up. It may be discontinued, mis-shelved, or something you imagined. Aisle 9 is where lost items end up.'
           : 'An associate has been notified. The associate is also us.'}
       </p>
       {!notFound && errorMessage && (
@@ -217,9 +219,16 @@ export function ErrorBoundary() {
           <pre className="overflow-x-auto text-xs">{errorMessage}</pre>
         </fieldset>
       )}
-      <a className="btn" href="/">
-        RETURN TO FRONT OF STORE
-      </a>
+      <div className="flex flex-wrap gap-3">
+        <a className="btn" href="/">
+          RETURN TO FRONT OF STORE
+        </a>
+        {notFound && (
+          <a className="btn btn-outline" href="/collections/all">
+            BROWSE ALL AISLES
+          </a>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,20 +1,21 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import type {RecommendedProductsQuery} from 'storefrontapi.generated';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {MarqueeStrip} from '~/components/brand/MarqueeStrip';
 import {Hero} from '~/components/home/Hero';
-import {TodaysStock} from '~/components/home/TodaysStock';
+import {StoreDirectory} from '~/components/home/StoreDirectory';
+import {BestSellersRow} from '~/components/home/BestSellersRow';
+import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
+import {GiftsClearanceBanner} from '~/components/home/GiftsClearanceBanner';
 import {BulkLadder} from '~/components/home/BulkLadder';
-import {CommentCards} from '~/components/home/CommentCards';
-import {SeenInStore} from '~/components/home/SeenInStore';
 import {TrustBar} from '~/components/home/TrustBar';
-import {PriceCheck} from '~/components/home/PriceCheck';
+import {SavingsClub} from '~/components/home/SavingsClub';
 import {BRAND} from '~/lib/brand';
+import type {ShelfData, ShelfSource} from '~/lib/shelf';
 
 export const meta: Route.MetaFunction = () => {
   const description =
-    'Deadpan graphic tees, printed on demand. Buy more, pay less. Every price ends in 9.';
+    'Deadpan graphic tees, printed on demand. Nine aisles of admissions. Buy more, pay less. Every price ends in 9.';
   return [
     {title: `${BRAND.name} — ${BRAND.tagline}`},
     {name: 'description', content: description},
@@ -33,34 +34,53 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 /**
- * STUB: "Price check" email capture.
+ * STUB: Savings Club / email capture.
  * TODO(launch): forward to the real email platform (Shopify Email / Klaviyo)
- * once the real store is connected. Until then this accepts and discards.
+ * and issue the promised 10%-off first-order code. Until then this accepts and
+ * discards the address. See README launch checklist.
  */
 export async function action({request}: Route.ActionArgs) {
   const form = await request.formData();
-  if (form.get('intent') === 'price-check') {
+  const intent = form.get('intent');
+  if (intent === 'savings-club' || intent === 'price-check') {
     return {ok: true};
   }
   return {ok: false};
 }
 
 /**
- * Below-the-fold shelf stock. Deferred so the sign lights up before the
- * shelves are stocked.
+ * The homepage "shelf" — best sellers, with a graceful fallback so the shelf is
+ * never empty just because a smart collection hasn't populated: try
+ * best-sellers, then new-arrivals, then the raw catalog. Deferred so the store
+ * signage paints before the shelves are stocked.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const stockProducts = context.storefront
-    .query(STOCK_PRODUCTS_QUERY)
-    .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
-      console.error(error);
-      return null;
-    });
+  const shelf = loadShelf(context.storefront).catch((error: Error) => {
+    console.error(error);
+    return {source: 'catalog' as ShelfSource, products: []};
+  });
 
-  return {
-    stockProducts,
-  };
+  return {shelf};
+}
+
+async function loadShelf(
+  storefront: Route.LoaderArgs['context']['storefront'],
+): Promise<ShelfData> {
+  for (const handle of ['best-sellers', 'new-arrivals'] as const) {
+    try {
+      const {collection} = await storefront.query(SHELF_COLLECTION_QUERY, {
+        variables: {handle},
+      });
+      const nodes = collection?.products?.nodes ?? [];
+      if (nodes.length) return {source: handle, products: nodes};
+    } catch (error) {
+      // Collection may not exist (e.g. on mock.shop) — fall through.
+      console.error(error);
+    }
+  }
+
+  const {products} = await storefront.query(SHELF_CATALOG_QUERY);
+  return {source: 'catalog', products: products?.nodes ?? []};
 }
 
 export default function Homepage() {
@@ -68,25 +88,30 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <Hero products={data.stockProducts} />
+      <Hero shelf={data.shelf} />
       <MarqueeStrip />
-      <TodaysStock products={data.stockProducts} />
+      <StoreDirectory />
+      <BestSellersRow shelf={data.shelf} />
+      <MatchingSetsPromo />
+      <GiftsClearanceBanner />
       <BulkLadder />
-      <CommentCards />
-      <SeenInStore />
       <TrustBar />
-      <PriceCheck />
+      <SavingsClub />
     </div>
   );
 }
 
-const STOCK_PRODUCTS_QUERY = `#graphql
+const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   fragment RecommendedProduct on Product {
     id
     title
     handle
     priceRange {
       minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
         amount
         currencyCode
       }
@@ -99,7 +124,30 @@ const STOCK_PRODUCTS_QUERY = `#graphql
       height
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+` as const;
+
+const SHELF_COLLECTION_QUERY = `#graphql
+  ${RECOMMENDED_PRODUCT_FRAGMENT}
+  query ShelfCollection(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      id
+      handle
+      products(first: 8, sortKey: BEST_SELLING) {
+        nodes {
+          ...RecommendedProduct
+        }
+      }
+    }
+  }
+` as const;
+
+const SHELF_CATALOG_QUERY = `#graphql
+  ${RECOMMENDED_PRODUCT_FRAGMENT}
+  query ShelfCatalog($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     products(first: 8, sortKey: UPDATED_AT, reverse: true) {
       nodes {

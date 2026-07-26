@@ -8,7 +8,8 @@ import {
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {AisleMarker} from '~/components/brand/AisleMarker';
-import {NAV, VOICE} from '~/lib/brand';
+import {AislesMenu, AisleDirectoryList} from '~/components/AislesMenu';
+import {DEPARTMENTS, VOICE} from '~/lib/brand';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -39,25 +40,24 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
   const className = `header-menu-${viewport}`;
   const {close} = useAside();
 
+  // Mobile: the full store directory as a flat list inside the menu Aside.
+  if (viewport === 'mobile') {
+    return (
+      <nav className={className} role="navigation">
+        <AisleDirectoryList onNavigate={close} />
+      </nav>
+    );
+  }
+
+  // Desktop: AISLES mega-menu + the promoted front-of-store departments.
   return (
     <nav className={className} role="navigation">
-      {viewport === 'mobile' && (
+      <AislesMenu />
+      {DEPARTMENTS.filter((d) => d.handle !== 'new-arrivals').map((item) => (
         <NavLink
           className="header-menu-item"
           end
-          onClick={close}
-          prefetch="intent"
-          to="/"
-        >
-          FRONT OF STORE
-        </NavLink>
-      )}
-      {NAV.map((item) => (
-        <NavLink
-          className="header-menu-item"
-          end
-          key={item.title}
-          onClick={close}
+          key={item.handle}
           prefetch="intent"
           to={item.to}
         >

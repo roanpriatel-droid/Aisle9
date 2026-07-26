@@ -1,5 +1,5 @@
 import type {Route} from './+types/pages.size-guide';
-import {BRAND} from '~/lib/brand';
+import {BRAND, SIZE_CHART} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -12,19 +12,8 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-/**
- * Standard unisex heavyweight staple-tee measurements (garment laid flat,
- * inches). Verify against the final Printify blank before launch and adjust
- * here if the chosen blank differs.
- */
-const SIZES = [
-  {size: 'S', chest: 18, length: 28, sleeve: 8.25},
-  {size: 'M', chest: 20, length: 29, sleeve: 8.63},
-  {size: 'L', chest: 22, length: 30, sleeve: 9},
-  {size: 'XL', chest: 24, length: 31, sleeve: 9.38},
-  {size: '2XL', chest: 26, length: 32, sleeve: 9.75},
-  {size: '3XL', chest: 28, length: 33, sleeve: 10.13},
-] as const;
+/** Measurements live in brand.ts (SIZE_CHART) so the PDP modal matches. */
+const SIZES = SIZE_CHART;
 
 export default function SizeGuidePage() {
   return (
