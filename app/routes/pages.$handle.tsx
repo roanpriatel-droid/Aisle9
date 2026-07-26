@@ -1,9 +1,18 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {BRAND} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `AISLE 9 — ${data?.page.title ?? ''}`}];
+  return [
+    {title: `${BRAND.name} — ${data?.page.title ?? ''}`},
+    {
+      name: 'description',
+      content:
+        data?.page.seo?.description ??
+        `${data?.page.title ?? 'A notice'} from ${BRAND.name}.`,
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -58,11 +67,13 @@ export default function Page() {
   const {page} = useLoaderData<typeof loader>();
 
   return (
-    <div className="page">
-      <header>
-        <h1>{page.title}</h1>
-      </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+    <div className="mx-auto max-w-2xl px-4 py-16">
+      <p className="label-type text-ink/50">POSTED IN AISLE 9</p>
+      <h1 className="sign-type mt-2 text-4xl">{page.title}</h1>
+      <main
+        className="a9-prose mt-8"
+        dangerouslySetInnerHTML={{__html: page.body}}
+      />
     </div>
   );
 }

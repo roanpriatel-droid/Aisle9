@@ -1,6 +1,7 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
+import {BRAND} from '~/lib/brand';
 
 type SelectedPolicies = keyof Pick<
   Shop,
@@ -8,7 +9,7 @@ type SelectedPolicies = keyof Pick<
 >;
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `AISLE 9 — ${data?.policy.title ?? ''}`}];
+  return [{title: `${BRAND.name} — ${data?.policy.title ?? ''}`}];
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {
@@ -45,15 +46,20 @@ export default function Policy() {
   const {policy} = useLoaderData<typeof loader>();
 
   return (
-    <div className="policy">
-      <br />
-      <br />
-      <div>
-        <Link to="/policies">← Back to Policies</Link>
-      </div>
-      <br />
-      <h1>{policy.title}</h1>
-      <div dangerouslySetInnerHTML={{__html: policy.body}} />
+    <div className="mx-auto max-w-2xl px-4 py-16">
+      <Link
+        className="label-type text-ink/50 hover:text-signage"
+        prefetch="intent"
+        to="/policies"
+      >
+        ← BACK TO STORE POLICIES
+      </Link>
+      <p className="label-type mt-4 text-ink/50">POSTED AT THE RETURNS DESK</p>
+      <h1 className="sign-type mt-2 text-4xl">{policy.title}</h1>
+      <div
+        className="a9-prose mt-8"
+        dangerouslySetInnerHTML={{__html: policy.body}}
+      />
     </div>
   );
 }

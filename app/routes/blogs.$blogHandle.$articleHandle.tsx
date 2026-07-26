@@ -1,10 +1,11 @@
-import {useLoaderData} from 'react-router';
+import {Link, useLoaderData, useParams} from 'react-router';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {BRAND} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `AISLE 9 — ${data?.article.title ?? ''}`}];
+  return [{title: `${BRAND.name} — ${data?.article.title ?? ''}`}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -67,6 +68,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export default function Article() {
   const {article} = useLoaderData<typeof loader>();
+  const {blogHandle} = useParams();
   const {title, image, contentHtml, author} = article;
 
   const publishedDate = new Intl.DateTimeFormat('en-US', {
@@ -76,21 +78,38 @@ export default function Article() {
   }).format(new Date(article.publishedAt));
 
   return (
-    <div className="article">
-      <h1>
-        {title}
-        <div>
-          <time dateTime={article.publishedAt}>{publishedDate}</time> &middot;{' '}
-          <address>{author?.name}</address>
-        </div>
-      </h1>
+    <article className="mx-auto max-w-2xl px-4 py-16">
+      <Link
+        className="label-type text-ink/50 hover:text-signage"
+        prefetch="intent"
+        to={blogHandle ? `/blogs/${blogHandle}` : '/blogs'}
+      >
+        ← BACK TO THE BOARD
+      </Link>
 
-      {image && <Image data={image} sizes="90vw" loading="eager" />}
+      <h1 className="sign-type mt-4 text-4xl">{title}</h1>
+      <p className="label-type mt-3 text-ink/50">
+        <time dateTime={article.publishedAt}>{publishedDate}</time>
+        {author?.name ? ` · POSTED BY ${author.name.toUpperCase()}` : null}
+      </p>
+
+      {image && (
+        <div className="mt-8 border-2 border-ink">
+          <Image data={image} sizes="(min-width: 672px) 640px, 100vw" loading="eager" />
+        </div>
+      )}
+
       <div
         dangerouslySetInnerHTML={{__html: contentHtml}}
-        className="article"
+        className="a9-prose mt-10"
       />
-    </div>
+
+      <div className="mt-12 border-t-2 border-ink pt-6">
+        <Link className="btn" prefetch="intent" to="/collections/all">
+          WALK THE AISLE
+        </Link>
+      </div>
+    </article>
   );
 }
 
