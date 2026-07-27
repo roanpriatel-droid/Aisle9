@@ -1557,6 +1557,108 @@ button.reset:hover:not(:has(> *)) {
   clip-path: polygon(0 34%, 52% 34%, 100% 8%, 100% 92%, 52% 66%, 0 66%);
 }
 
+/*
+* --------------------------------------------------
+* Bold-editorial homepage — texture, lighting, shelf
+* --------------------------------------------------
+*/
+
+/* Subtle linoleum speckle (stays within the linoleum surface). */
+.linoleum-speckle {
+  background-color: var(--linoleum);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--ink) 7%, transparent) 1px,
+    transparent 1.6px
+  );
+  background-size: 7px 7px;
+}
+
+/* Overhead fluorescent tube — the ceiling light above the aisle. */
+.fluoro-bar {
+  position: relative;
+  height: 0.9rem;
+  border: 2px solid var(--ink);
+  background: linear-gradient(180deg, #ffffff 0%, var(--fluorescent) 100%);
+  box-shadow: 0 14px 40px -8px color-mix(in srgb, var(--fluorescent) 85%, white);
+}
+
+.fluoro-bar::before,
+.fluoro-bar::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 0.5rem;
+  background: var(--ink);
+}
+.fluoro-bar::before {
+  left: 12%;
+}
+.fluoro-bar::after {
+  right: 12%;
+}
+
+/* Hero stage — tall, lit, textured. */
+.hero-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Product sitting on a shelf edge (hero + endcaps). */
+.shelf-rail {
+  border-bottom: 3px solid var(--ink);
+  box-shadow: 0 6px 0 -2px rgba(26, 26, 26, 0.12);
+}
+
+/* Oversized institutional headline that scales hard. */
+.headline-xl {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-sign);
+  line-height: 0.92;
+  font-size: clamp(2.75rem, 9vw, 6.5rem);
+}
+
+/* Aisle-map chip strip (compact directory). */
+.aisle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.aisle-chip:hover {
+  background: var(--fluorescent);
+}
+.aisle-chip-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  background: var(--signage);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.aisle-chip-num.is-dept {
+  background: var(--ink);
+}
+.aisle-chip-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.aisle-chip:hover .aisle-chip-label {
+  color: var(--signage);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .beaded-strand,
   .beaded-sign {

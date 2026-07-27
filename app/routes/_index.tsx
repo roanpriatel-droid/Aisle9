@@ -1,17 +1,15 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {MockShopNotice} from '~/components/MockShopNotice';
-import {MarqueeStrip} from '~/components/brand/MarqueeStrip';
 import {Hero} from '~/components/home/Hero';
-import {StoreDirectory} from '~/components/home/StoreDirectory';
 import {BestSellersRow} from '~/components/home/BestSellersRow';
+import {AisleMapStrip} from '~/components/home/AisleMapStrip';
 import {WeeklyCircularTeaser} from '~/components/home/WeeklyCircularTeaser';
 import {GiftsClearanceBanner} from '~/components/home/GiftsClearanceBanner';
 import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
 import {FreakBehaviorGag} from '~/components/home/FreakBehaviorGag';
 import {BulkLadder} from '~/components/home/BulkLadder';
 import {PAQuoteStrip} from '~/components/home/PAQuoteStrip';
-import {TrustBar} from '~/components/home/TrustBar';
 import {SavingsClub} from '~/components/home/SavingsClub';
 import {BRAND} from '~/lib/brand';
 import type {ShelfData, ShelfSource} from '~/lib/shelf';
@@ -92,16 +90,14 @@ export default function Homepage() {
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
       <Hero shelf={data.shelf} />
-      <MarqueeStrip />
-      <StoreDirectory />
       <BestSellersRow shelf={data.shelf} />
-      <WeeklyCircularTeaser />
+      <AisleMapStrip />
+      <WeeklyCircularTeaser shelf={data.shelf} />
       <GiftsClearanceBanner />
       <MatchingSetsPromo />
       <FreakBehaviorGag />
       <BulkLadder />
       <PAQuoteStrip />
-      <TrustBar />
       <SavingsClub />
     </div>
   );

@@ -6,107 +6,113 @@ import {COLLECTIONS} from '~/lib/brand';
 import type {ShelfData} from '~/lib/shelf';
 
 /**
- * Hero: aisle sign + deadpan pitch on the left, actual product on the shelf
- * to the right so there is merchandise above the fold. Opening-week framing
- * only — no invented social proof.
+ * Hero — the storefront gateway. An overhead fluorescent tube over a
+ * linoleum-speckled stage: the giant hanging aisle sign, the value line at
+ * display scale, two CTAs, and a real "endcap" product that shows on every
+ * breakpoint (not hidden on mobile). Opening-week framing only — no invented
+ * social proof.
  */
 export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
   return (
-    <section className="border-b-2 border-ink bg-linoleum">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 lg:grid-cols-[1.1fr_1fr]">
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+    <section className="hero-stage linoleum-speckle border-b-2 border-ink">
+      <div className="fluoro-bar" />
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:pt-16">
+        {/* Marquee sign + value line */}
+        <div className="flex flex-col items-center text-center">
           <AisleMarker variant="hero" />
-
-          <h1 className="sign-type mt-10 text-4xl text-ink sm:text-5xl">
-            NOTHING YOU NEED.
-          </h1>
-          <p className="mt-4 max-w-xl text-base text-ink/70 sm:text-lg">
+          <h1 className="headline-xl mt-10 text-ink">NOTHING YOU NEED.</h1>
+          <p className="mt-5 max-w-xl text-base text-ink/70 sm:text-lg">
             Deadpan graphic tees, printed on demand and restocked out of
-            obligation.
+            obligation. Every price ends in 9.
           </p>
-
-          <p className="label-type mt-6 text-ink/50">
-            NOW OPEN · NEW STOCK WEEKLY · EVERY PRICE ENDS IN 9
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              className="btn"
-              prefetch="intent"
-              to={COLLECTIONS.bestSellers}
-            >
+          <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>
               SHOP BEST SELLERS
             </Link>
             <Link
               className="btn btn-outline"
               prefetch="intent"
-              to={COLLECTIONS.newStock}
+              to="/pages/weekly-circular"
             >
-              NEW STOCK
+              THIS WEEK’S CIRCULAR
             </Link>
           </div>
         </div>
 
-        <HeroShelf shelf={shelf} />
+        {/* Endcap — one real product, staged, visible on all breakpoints */}
+        <div className="mt-14">
+          <div className="mb-2 flex items-end justify-between">
+            <span className="label-type text-ink/50">ENDCAP DISPLAY</span>
+            <Link
+              className="label-type text-ink underline underline-offset-4 hover:text-signage"
+              prefetch="intent"
+              to={COLLECTIONS.shopAll}
+            >
+              WALK THE AISLE →
+            </Link>
+          </div>
+          <Suspense fallback={<EndcapFrame />}>
+            <Await resolve={shelf} errorElement={<EndcapFrame />}>
+              {(data) => {
+                const product = data?.products?.[0];
+                if (!product?.featuredImage) return <EndcapFrame />;
+                return (
+                  <Link
+                    className="group grid items-stretch border-2 border-ink bg-white no-underline md:grid-cols-2"
+                    prefetch="intent"
+                    to={`/products/${product.handle}`}
+                  >
+                    <div className="shelf-rail border-b-2 border-ink md:border-b-0 md:border-r-2">
+                      <Image
+                        alt={product.featuredImage.altText || product.title}
+                        aspectRatio="1/1"
+                        data={product.featuredImage}
+                        loading="eager"
+                        sizes="(min-width: 48em) 560px, 100vw"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center gap-4 p-6 sm:p-10">
+                      <span className="label-type bg-signage px-2 py-1 text-white w-fit">
+                        JUST SHELVED
+                      </span>
+                      <h2 className="sign-type text-3xl group-hover:text-signage sm:text-4xl">
+                        {product.title}
+                      </h2>
+                      <span className="flex items-baseline gap-2 text-2xl font-bold">
+                        {formatPrice(product.priceRange.minVariantPrice)}
+                        <span className="label-type text-ink/40">EACH</span>
+                      </span>
+                      <span className="label-type text-ink/50">
+                        PICK A SIZE — THE BULK LADDER DOES THE REST →
+                      </span>
+                    </div>
+                  </Link>
+                );
+              }}
+            </Await>
+          </Suspense>
+        </div>
       </div>
     </section>
   );
 }
 
-/** First item off the shelf, staged like an endcap display. */
-function HeroShelf({shelf}: {shelf: Promise<ShelfData | null>}) {
-  return (
-    <div className="hidden pt-10 lg:block">
-      <Suspense fallback={<HeroShelfFrame />}>
-        <Await resolve={shelf} errorElement={<HeroShelfFrame />}>
-          {(data) => {
-            const product = data?.products?.[0];
-            if (!product?.featuredImage) return <HeroShelfFrame />;
-            return (
-              <Link
-                className="group block no-underline"
-                prefetch="intent"
-                to={`/products/${product.handle}`}
-              >
-                <div className="border-2 border-ink bg-white">
-                  <div className="flex items-center justify-between border-b-2 border-ink bg-fluorescent px-4 py-2">
-                    <span className="label-type text-ink/60">
-                      ENDCAP DISPLAY
-                    </span>
-                    <span className="label-type bg-signage px-2 py-1 text-white">
-                      JUST SHELVED
-                    </span>
-                  </div>
-                  <Image
-                    alt={product.featuredImage.altText || product.title}
-                    aspectRatio="1/1"
-                    data={product.featuredImage}
-                    loading="eager"
-                    sizes="(min-width: 64em) 480px, 0px"
-                  />
-                  <div className="flex items-center justify-between border-t-2 border-ink px-4 py-3">
-                    <span className="sign-type text-sm group-hover:text-signage">
-                      {product.title}
-                    </span>
-                    <span className="label-type text-signage">
-                      HAVE A LOOK →
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          }}
-        </Await>
-      </Suspense>
-    </div>
-  );
+function formatPrice(m: {amount: string; currencyCode: string}) {
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: m.currencyCode,
+    }).format(Number(m.amount));
+  } catch {
+    return `${m.amount} ${m.currencyCode}`;
+  }
 }
 
-/** Empty shelf frame while stock loads (or if the query fails). */
-function HeroShelfFrame() {
+/** Empty endcap frame while stock streams in (or if the query fails). */
+function EndcapFrame() {
   return (
-    <div className="flex aspect-square items-center justify-center border-2 border-ink bg-fluorescent">
-      <span className="label-type text-ink/40">RESTOCKING ...</span>
+    <div className="flex min-h-[16rem] items-center justify-center border-2 border-ink bg-fluorescent">
+      <span className="label-type text-ink/40">RESTOCKING THE ENDCAP…</span>
     </div>
   );
 }
