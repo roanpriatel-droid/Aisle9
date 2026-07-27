@@ -1,5 +1,6 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {SIZE_CHART} from '~/lib/brand';
+import {useFocusTrap} from '~/lib/useFocusTrap';
 
 /**
  * SIZE CHART — a button that opens a modal with the shared measurements table
@@ -8,6 +9,8 @@ import {SIZE_CHART} from '~/lib/brand';
  */
 export function SizeChartModal() {
   const [open, setOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(open, modalRef);
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +51,7 @@ export function SizeChartModal() {
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="size-modal">
+          <div className="size-modal" ref={modalRef} tabIndex={-1}>
             <header className="size-modal-header">
               <div>
                 <p className="label-type text-ink/50">MEASURE TWICE, ADMIT ONCE</p>

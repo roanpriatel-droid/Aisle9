@@ -83,3 +83,36 @@ no fixed-height assumptions; /cart page unaffected (flows naturally); inputs
 
 **Next to consider:** accessibility pass on the drawer + modals (focus trap,
 focus return, Esc consistency); performance/LCP audit; SEO metadata coverage.
+
+---
+
+## Cycle 3 — 2026-07-27 — Lens: ACCESSIBILITY
+
+**Found:** Every modal surface — the cart/search/menu drawer (`Aside`), the
+size-chart modal, and the gallery lightbox — handled Escape but **did not trap
+focus or restore it to the trigger on close**. Keyboard and screen-reader users
+could Tab out of an open overlay into the hidden page behind it. The three
+`Aside` dialogs were also always `role="dialog"` in the DOM even when closed.
+
+**Research:** WAI-ARIA Authoring Practices — a modal dialog must confine Tab
+focus within it, return focus to the invoking element on close, and be removed
+from the accessibility tree when hidden.
+
+**Did:**
+- New `useFocusTrap(active, ref)` hook: cycles Tab/Shift+Tab within the container
+  and restores focus to the previously-focused element on close.
+- Wired it into `Aside` (cart/search/menu), `SizeChartModal`, and the
+  `ProductGallery` lightbox (each container gets `tabIndex={-1}`).
+- `Aside` overlay now `aria-hidden` + its close-outside button `tabindex=-1`
+  when collapsed, so closed drawers leave the a11y tree.
+- Added a visible `:focus-visible` outline (signage red) — app.css loads after
+  the reset, so keyboard focus is now always visible.
+
+**Why:** Keyboard/AT users can operate every overlay without focus leaking into
+hidden content — table-stakes accessibility a world-class store ships.
+
+**Acceptance:** build + typecheck green; focus trap + restore on all three
+overlay types; closed drawers aria-hidden; visible focus ring. ✅
+
+**Next to consider:** SEO structured data (BreadcrumbList, Organization, WebSite);
+performance/LCP; skip-to-content link; prefers-reduced-motion coverage audit.

@@ -3,9 +3,11 @@ import {
   type ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import {useId} from 'react';
+import {useFocusTrap} from '~/lib/useFocusTrap';
 
 type AsideType = 'search' | 'cart' | 'mobile' | 'closed';
 type AsideContextValue = {
@@ -36,6 +38,8 @@ export function Aside({
   const {type: activeType, close} = useAside();
   const expanded = type === activeType;
   const id = useId();
+  const asideRef = useRef<HTMLElement>(null);
+  useFocusTrap(expanded, asideRef);
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -59,9 +63,15 @@ export function Aside({
       className={`overlay ${expanded ? 'expanded' : ''}`}
       role="dialog"
       aria-labelledby={id}
+      aria-hidden={!expanded}
     >
-      <button className="close-outside" onClick={close} />
-      <aside>
+      <button
+        className="close-outside"
+        onClick={close}
+        tabIndex={expanded ? 0 : -1}
+        aria-label="Close"
+      />
+      <aside ref={asideRef} tabIndex={-1}>
         <header>
           <h3 id={id}>{heading}</h3>
           <button className="close reset" onClick={close} aria-label="Close">

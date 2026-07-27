@@ -531,6 +531,19 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+/* Visible keyboard focus (app.css loads after the reset, so this wins). */
+:focus-visible {
+  outline: 2px solid var(--signage);
+  outline-offset: 2px;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--signage);
+  outline-offset: 2px;
+}
+
 .cart-line-quantity {
   display: flex;
 }

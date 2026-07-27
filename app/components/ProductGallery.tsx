@@ -1,5 +1,6 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
+import {useFocusTrap} from '~/lib/useFocusTrap';
 
 export type GalleryImage = {
   id?: string | null;
@@ -44,6 +45,8 @@ export function ProductGallery({
     selectedImage?.url ?? all[0]?.url,
   );
   const [lightbox, setLightbox] = useState(false);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(lightbox, lightboxRef);
 
   // Colorway change → follow the variant image.
   useEffect(() => {
@@ -144,6 +147,8 @@ export function ProductGallery({
           role="dialog"
           aria-modal="true"
           aria-label={`${title} image viewer`}
+          ref={lightboxRef}
+          tabIndex={-1}
           onClick={(e) => {
             if (e.target === e.currentTarget) setLightbox(false);
           }}
