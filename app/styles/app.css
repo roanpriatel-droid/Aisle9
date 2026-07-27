@@ -200,6 +200,8 @@ aside {
   right: calc(-1 * var(--aside-width));
   top: 0;
   transition: transform 200ms ease-in-out;
+  display: flex;
+  flex-direction: column;
 }
 
 aside header {
@@ -239,6 +241,9 @@ aside header h2 {
 aside main {
   margin: 1rem;
   min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 aside p {
@@ -469,14 +474,11 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .cart-main {
-  height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
-  overflow-y: auto;
   width: auto;
 }
 
 .cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
+  width: auto;
 }
 
 .cart-line {
@@ -502,10 +504,31 @@ button.reset:hover:not(:has(> *)) {
 .cart-summary-aside {
   background: var(--linoleum);
   border-top: var(--hairline);
-  bottom: 0;
   padding-top: 0.75rem;
-  position: absolute;
-  width: calc(var(--aside-width) - 40px);
+  width: auto;
+}
+
+/* Sticky, thumb-reachable checkout inside the cart drawer */
+.cart-checkout-actions {
+  margin-top: 0.75rem;
+}
+.cart-summary-aside .cart-checkout-actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--linoleum);
+  padding: 0.6rem 0 0.2rem;
+}
+.cart-checkout-actions .btn {
+  min-height: 3rem;
+}
+
+/* iOS: keep form controls ≥16px on small screens to prevent zoom-on-focus */
+@media (max-width: 480px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 .cart-line-quantity {

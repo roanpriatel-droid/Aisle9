@@ -45,3 +45,41 @@ component powers both). ✅
 **Next to consider:** sticky checkout button pinned to the bottom of the drawer (mobile
 UX lens); make the discounted total visible in-cart if the Shopify automatic discount is
 configured; exit-intent or post-add confirmation.
+
+---
+
+## Cycle 2 — 2026-07-27 — Lens: MOBILE UX
+
+**Found (ranked by impact):**
+1. The cart drawer used a **hard-coded-height, absolutely-positioned summary**
+   (`--cart-aside-summary-height: 380px`) with the scrollable list sized by
+   `calc(100vh - 380px)`. Any content change (like Cycle 1's recommendations)
+   risks the checkout CTA overlapping content, and the primary action isn't
+   reliably thumb-reachable in a full cart.
+2. Form inputs used `text-sm` (14px) → **iOS Safari zooms on focus**, a jarring
+   mobile defect across every capture form (search, email, complaint, notify,
+   discount code).
+
+**Research:** Mobile cart drawers should slide/scroll with a **sticky checkout
+button** always visible, ≥44px tap targets, and one-tap actions. Fixed-height
+drawer regions are an anti-pattern — content length varies.
+
+**Did:**
+- Rebuilt the drawer as a **flex column**: `aside` is `flex-direction: column`,
+  `aside main` is `flex:1; overflow-y:auto; overscroll-behavior:contain`. Removed
+  the fragile `.cart-main` max-height hack and the absolute-positioned summary.
+- **Sticky checkout**: `.cart-checkout-actions` is `position:sticky; bottom:0`
+  inside the drawer, min-height 48px — always thumb-reachable regardless of how
+  much is in the cart. Also improves the /cart page (natural flow, no inner scroll).
+- iOS zoom fix: form controls forced to 16px under 480px.
+
+**Why:** Content-agnostic layout that can't overlap, with the highest-intent
+action (checkout) permanently reachable by thumb. Directly unblocks Cycle 1's
+recommendations from breaking the drawer.
+
+**Acceptance:** build + typecheck green; drawer scrolls with pinned checkout;
+no fixed-height assumptions; /cart page unaffected (flows naturally); inputs
+16px on mobile. ✅
+
+**Next to consider:** accessibility pass on the drawer + modals (focus trap,
+focus return, Esc consistency); performance/LCP audit; SEO metadata coverage.
