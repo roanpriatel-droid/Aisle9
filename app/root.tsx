@@ -135,12 +135,45 @@ function loadDeferredData({context}: Route.LoaderArgs) {
       console.error(error);
       return null;
     });
+
+  // Best-selling products for the cart-drawer cross-sell (one-tap add).
+  // Cached long; the drawer filters out items already in the cart.
+  const cartRecommendations = storefront
+    .query(CART_RECOMMENDATIONS_QUERY, {cache: storefront.CacheLong()})
+    .then((res) => res?.products?.nodes ?? [])
+    .catch((error: Error) => {
+      console.error(error);
+      return [];
+    });
+
   return {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
     footer,
+    cartRecommendations,
   };
 }
+
+const CART_RECOMMENDATIONS_QUERY = `#graphql
+  fragment CartRecProduct on Product {
+    id
+    title
+    handle
+    featuredImage { id url altText width height }
+    priceRange { minVariantPrice { amount currencyCode } }
+    selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {
+      id
+      availableForSale
+      price { amount currencyCode }
+    }
+  }
+  query CartRecommendations($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 8, sortKey: BEST_SELLING) {
+      nodes { ...CartRecProduct }
+    }
+  }
+` as const;
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();

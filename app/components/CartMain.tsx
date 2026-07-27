@@ -4,7 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
-import {FreeShippingMeter} from '~/components/FreeShippingMeter';
+import {CartRecommendations} from '~/components/CartRecommendations';
 import {COLLECTIONS, LADDER, VOICE} from '~/lib/brand';
 
 export type CartLayout = 'page' | 'aside';
@@ -51,6 +51,15 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
   const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
 
+  // Variant ids already in the cart — so recommendations don't suggest them.
+  const cartVariantIds = new Set(
+    (cart?.lines?.nodes ?? [])
+      .map((line) =>
+        'merchandise' in line ? line.merchandise?.id : undefined,
+      )
+      .filter((id): id is string => Boolean(id)),
+  );
+
   return (
     <section
       className={className}
@@ -85,8 +94,10 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         {cartHasItems && (
           <>
             <LadderNudge quantity={cart?.totalQuantity ?? 0} />
-            <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
-            <CartUpsell />
+            <CartRecommendations
+              cartVariantIds={cartVariantIds}
+              quantity={cart?.totalQuantity ?? 0}
+            />
             <CartSummary cart={cart} layout={layout} />
             <CartTrustRow />
           </>
@@ -123,29 +134,6 @@ function LadderNudge({quantity}: {quantity: number}) {
           MAXIMUM DISCOUNT REACHED. THE STORE CONCEDES.
         </p>
       )}
-    </div>
-  );
-}
-
-/**
- * Cart upsell slot — the impulse rack by the register. Deadpan cross-sell into
- * best sellers; no fabricated "you might also like" product data, just a nudge
- * that rewards one more addition (which the bulk ladder literally does).
- */
-function CartUpsell() {
-  const {close} = useAside();
-  return (
-    <div className="mt-2 border-2 border-ink bg-white p-3">
-      <p className="label-type text-signage">{VOICE.cartUpsellHeading}</p>
-      <p className="mt-1 text-xs text-ink/60">{VOICE.cartUpsellSub}</p>
-      <Link
-        className="label-type mt-2 inline-block text-ink underline underline-offset-2 hover:text-signage"
-        to={COLLECTIONS.bestSellers}
-        onClick={close}
-        prefetch="intent"
-      >
-        {VOICE.cartUpsellCta} →
-      </Link>
     </div>
   );
 }
