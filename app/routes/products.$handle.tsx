@@ -892,7 +892,9 @@ function PairSide({
           <Image alt={image.altText || title} aspectRatio="1/1" data={image} loading="lazy" sizes="240px" />
         </div>
       )}
-      <h3 className="sign-type mt-2 text-sm group-hover:text-signage">{title}</h3>
+      <h3 className="sign-type mt-2 line-clamp-2 text-sm group-hover:text-signage">
+        {title}
+      </h3>
       {price && (
         <span className="text-sm font-bold">
           <Money data={price} />
@@ -947,7 +949,7 @@ function FromTheSameAisle({siblings}: {siblings: Promise<SiblingData>}) {
                         </div>
                       )}
                       <div className="p-3">
-                        <h3 className="sign-type text-sm group-hover:text-signage">
+                        <h3 className="sign-type line-clamp-2 text-sm group-hover:text-signage">
                           {p.title}
                         </h3>
                         <span className="mt-1 flex items-baseline gap-1 text-sm font-bold">

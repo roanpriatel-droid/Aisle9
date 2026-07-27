@@ -87,7 +87,7 @@ export function RecentlyViewed({excludeHandle}: {excludeHandle?: string}) {
               </div>
             )}
             <div className="p-3">
-              <h3 className="sign-type text-sm group-hover:text-signage">
+              <h3 className="sign-type line-clamp-2 text-sm group-hover:text-signage">
                 {p.title}
               </h3>
               <span className="mt-1 flex items-baseline gap-1 text-sm font-bold">

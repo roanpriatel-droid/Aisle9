@@ -182,3 +182,28 @@ already reserve matching space via skeletons.
 **Next to consider:** de-defer or preload the hero image if it proves to be LCP
 on mobile (needs live measurement); copy-quality pass on collection descriptions;
 trust-signal consistency; empty-search UX.
+
+---
+
+## Cycle 6 — 2026-07-27 — Lens: EDGE CASES (long titles)
+
+**Found:** Product-card titles had no line-clamp — `.shelf-title` (collection
+grid, best sellers) and the inline `<h3>`s in Frequently Paired, From The Same
+Aisle, Recently Viewed, the Weekly Circular flyer, and the hero endcap. Since
+AISLE 9 sells long-confession-sentence shirts, a long title wraps to many lines
+and **breaks grid alignment** — a store-specific, high-relevance edge case.
+
+**Did:**
+- `.shelf-title`: 2-line clamp + `min-height: 2.1em` so 1- and 2-line cards stay
+  aligned in the grid.
+- `line-clamp-2` on the inline card `<h3>`s (paired, same-aisle, recently viewed,
+  flyer); `line-clamp-3` on the larger hero endcap title.
+
+**Why:** Guarantees consistent, non-broken card layouts regardless of title
+length — directly relevant to this catalog's long titles.
+
+**Acceptance:** build green; clamps applied everywhere product-card titles render;
+grid rows stay even. ✅
+
+**Next to consider:** empty-search state (dead-ends lens); trust-signal
+consistency across PDP/cart/footer; collection description copy quality.

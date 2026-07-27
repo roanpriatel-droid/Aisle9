@@ -183,7 +183,7 @@ function FlyerCell({product}: {product: FlyerProductFragment}) {
         </div>
       )}
       <div className="flex flex-1 flex-col justify-between gap-3 p-3">
-        <h3 className="sign-type text-sm group-hover:text-signage">
+        <h3 className="sign-type line-clamp-2 text-sm group-hover:text-signage">
           {product.title}
         </h3>
         <FlyerPrice price={product.priceRange.minVariantPrice} />

@@ -75,7 +75,7 @@ export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
                       <span className="label-type bg-signage px-2 py-1 text-white w-fit">
                         JUST SHELVED
                       </span>
-                      <h2 className="sign-type text-3xl group-hover:text-signage sm:text-4xl">
+                      <h2 className="sign-type line-clamp-3 text-3xl group-hover:text-signage sm:text-4xl">
                         {product.title}
                       </h2>
                       <span className="flex items-baseline gap-2 text-2xl font-bold">

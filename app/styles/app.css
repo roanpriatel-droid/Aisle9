@@ -724,6 +724,13 @@ summary:focus-visible,
   letter-spacing: 0.04em;
   margin: 0;
   text-transform: uppercase;
+  /* Clamp long confession titles so cards stay aligned in the grid. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.1em;
 }
 
 .product-item .shelf-price {
