@@ -16,7 +16,7 @@ import type {ShelfData, ShelfSource} from '~/lib/shelf';
 
 export const meta: Route.MetaFunction = () => {
   const description =
-    'Deadpan graphic tees, printed on demand. Nine aisles of admissions. Buy more, pay less. Every price ends in 9.';
+    'Deadpan graphic tees, printed on demand. Nine aisles of admissions. Buy more, pay less. Every shirt is $36.';
   return [
     {title: `${BRAND.name} — ${BRAND.tagline}`},
     {name: 'description', content: description},

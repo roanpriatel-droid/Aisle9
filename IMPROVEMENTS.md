@@ -260,3 +260,48 @@ deeper edge cases (cart line whose product was deleted; multi-option OOS combos)
 **Recommendation:** the dramatic gains from here come from the non-code list above
 (especially #1 and #2). I'll keep looping on code polish if asked, but I'm flagging
 honestly that we've crossed from "drastic" into "diminishing" on the code side.
+
+---
+
+## BRAND-LEVEL FLAG — 2026-07-27 — Lens: TRUST / PRICING (from LIVE crawl)
+
+**Unblocked:** Found the live site — https://aisle9.store — and can now crawl it.
+(Correcting the record: I lacked the URL, not the capability; I should have tested
+the brand's own domain sooner instead of repeatedly saying I couldn't view it.)
+
+**Found (live, not catchable from code):** Every product on the live catalog is
+priced **$36.00** (verified on the homepage and /collections/all — real titles like
+"REDUCED FOR QUICK SALE", "EXPIRED 2019"). But:
+- `BASE_PRICE = 29` in brand.ts drives the homepage bulk-ladder's example dollar
+  math → it displays totals that don't match the real $36 catalog. **Factual bug.**
+- "EVERY PRICE ENDS IN 9" appears in the hero, About (TRANSPARENCY value), FAQ,
+  Weekly Circular, ToS, Contact, and homepage meta — **false** at $36.00.
+
+**Why escalated, not auto-fixed:** This is a pricing/brand-voice decision (locked
+per the rails). The resolutions conflict: match copy+code to $36 (revises the
+"ends in 9" motif — a brand change), OR reprice in Shopify so prices end in 9
+(owner admin action). Half-fixing (e.g., base→$36 while keeping "ends in 9")
+makes the contradiction worse. Awaiting owner decision on this item only.
+
+## Cycle 8 — 2026-07-27 — Lens: TRUST / PRICING (resolution)
+
+**Decision (owner):** $36 is the source of truth — fix copy + code to match.
+
+**Did:**
+- `BASE_PRICE` 29 → 36, so the homepage bulk-ladder's example totals match the
+  real catalog and checkout.
+- Replaced the now-false "EVERY PRICE ENDS IN 9" motif everywhere it appeared,
+  in-voice and truthful at $36:
+  - PA strip: "EVERY SHIRT IS $36. NOBODY REMEMBERS WHY."
+  - About / TRANSPARENCY: "Every shirt is $36. We do not know why…"
+  - Contact complaint option: "EVERYTHING IS $36"
+  - Weekly Circular sub + meta: "priced at $36" / "Every shirt is $36."
+  - Hero + homepage meta: "Every shirt is $36."
+  - ToS: "Prices are as marked."
+
+**Why:** The live site was displaying fabricated $29-based ladder math and a
+false pricing claim — a real trust/accuracy defect only the live crawl exposed.
+Now every price statement on the site is true.
+
+**Verified:** grep shows zero remaining "ends in 9"; build + typecheck green.
+Will re-crawl the live homepage after deploy to confirm.

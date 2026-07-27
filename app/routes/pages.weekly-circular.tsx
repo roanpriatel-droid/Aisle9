@@ -16,7 +16,7 @@ export const meta: Route.MetaFunction = () => {
     {
       name: 'description',
       content:
-        'The AISLE 9 weekly circular. Every department, laid out with price tags, like the mailer nobody asked for. Prices end in 9. The bulk discount applies itself.',
+        'The AISLE 9 weekly circular. Every department, laid out with price tags, like the mailer nobody asked for. Every shirt is $36. The bulk discount applies itself.',
     },
     {property: 'og:title', content: 'AISLE 9 — WEEKLY CIRCULAR'},
     {property: 'og:type', content: 'website'},

@@ -23,7 +23,7 @@ export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
           <h1 className="headline-xl mt-10 text-ink">NOTHING YOU NEED.</h1>
           <p className="mt-5 max-w-xl text-base text-ink/70 sm:text-lg">
             Deadpan graphic tees, printed on demand and restocked out of
-            obligation. Every price ends in 9.
+            obligation. Every shirt is $36.
           </p>
           <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>

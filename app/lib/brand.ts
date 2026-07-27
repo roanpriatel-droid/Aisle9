@@ -193,7 +193,7 @@ export const PA_ANNOUNCEMENTS = [
   'ATTENTION SHOPPERS: NEW STOCK WEEKLY. NO OCCASION.',
   'CLEANUP ON AISLE 9. AGAIN.',
   'THE OWNER OF A LIFE LEFT UNEXAMINED, PLEASE RETURN TO AISLE 3.',
-  'ATTENTION SHOPPERS: EVERY PRICE ENDS IN 9. NOBODY REMEMBERS WHY.',
+  'ATTENTION SHOPPERS: EVERY SHIRT IS $36. NOBODY REMEMBERS WHY.',
   'WILL THE CUSTOMER WHO KNOWS WHAT THEY WANT PLEASE REPORT TO ANY REGISTER.',
 ] as const;
 
@@ -210,7 +210,7 @@ export const MARQUEE_ITEMS = [
  * discount (quantity price break / "Buy X get Y" tiers) configured in the
  * store admin. See README "Launch checklist".
  */
-export const BASE_PRICE = 29;
+export const BASE_PRICE = 36;
 
 export const LADDER = [
   {qty: 1, discountPct: 0, label: 'LIST PRICE'},
@@ -422,7 +422,7 @@ export const STORE_INFO = {
   values: [
     {title: 'INTEGRITY', body: 'The shirt will be the shirt shown. This is the entire promise.'},
     {title: 'SYNERGY', body: 'Two shirts cost less per shirt than one shirt costs per shirt. This is mathematics, which we call synergy.'},
-    {title: 'TRANSPARENCY', body: 'Every price ends in 9. We do not know why. We have stopped asking.'},
+    {title: 'TRANSPARENCY', body: 'Every shirt is $36. We do not know why. We have stopped asking.'},
     {title: 'SUSTAINABILITY', body: 'Nothing is printed until you order it, so we maintain a warehouse of zero regrets and one printer.'},
   ],
   orgTitle: 'ORGANIZATIONAL CHART',
@@ -464,7 +464,7 @@ export const CONTACT = {
   natures: [
     'MY ORDER',
     'A SIZING DISPUTE',
-    'THE PRICES END IN 9',
+    'EVERYTHING IS $36',
     'A SHIRT SAID SOMETHING TRUE',
     'GENERAL GRIEVANCE',
     'A COMPLIMENT (RARE)',
@@ -537,7 +537,7 @@ export const SERVICE_DESK = {
 export const WEEKLY_CIRCULAR = {
   eyebrow: 'THIS WEEK ONLY · WHILE SUPPLIES CONCEPTUALLY LAST',
   heading: 'WEEKLY CIRCULAR',
-  sub: 'The AISLE 9 flyer. Everything below is available now, priced to end in 9, and subject to the bulk ladder the moment a second shirt joins the first.',
+  sub: 'The AISLE 9 flyer. Everything below is available now, priced at $36, and subject to the bulk ladder the moment a second shirt joins the first.',
   validity: 'PRICES VALID: THIS WEEK, LAST WEEK, PROBABLY NEXT WEEK',
   disclaimer:
     'No rain checks. No substitutions we would not have made anyway. Prices as marked. The bulk discount applies itself at checkout.',
@@ -602,7 +602,7 @@ export const POLICY_FALLBACKS: Record<
     bodyHtml: `
       <p>By using this store you agree to buy shirts under the following terms, which are ordinary and, where possible, boring.</p>
       <h2>ORDERS</h2>
-      <p>Placing an order is an offer to purchase. We may decline or cancel an order for reasons including stock, pricing errors, or suspected fraud. Prices are as marked and end in 9.</p>
+      <p>Placing an order is an offer to purchase. We may decline or cancel an order for reasons including stock, pricing errors, or suspected fraud. Prices are as marked.</p>
       <h2>THE BULK LADDER</h2>
       <p>Quantity discounts (2 tees −10%, 3 −20%, 4+ −30%) are applied automatically at checkout and cannot be combined with certain promotions. The ladder is the promotion.</p>
       <h2>INTELLECTUAL PROPERTY</h2>
