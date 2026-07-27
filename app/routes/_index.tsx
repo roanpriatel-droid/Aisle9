@@ -23,6 +23,7 @@ export const meta: Route.MetaFunction = () => {
     {property: 'og:title', content: `${BRAND.name} — ${BRAND.tagline}`},
     {property: 'og:description', content: description},
     {property: 'og:type', content: 'website'},
+    {rel: 'canonical', href: '/'},
   ];
 };
 

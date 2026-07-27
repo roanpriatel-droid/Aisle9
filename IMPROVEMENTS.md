@@ -116,3 +116,37 @@ overlay types; closed drawers aria-hidden; visible focus ring. ✅
 
 **Next to consider:** SEO structured data (BreadcrumbList, Organization, WebSite);
 performance/LCP; skip-to-content link; prefers-reduced-motion coverage audit.
+
+---
+
+## Cycle 4 — 2026-07-27 — Lens: SEO
+
+**Found:** Only the PDP carried a canonical or structured data beyond `Product`.
+Missing: sitewide Organization/WebSite schema, BreadcrumbList on collections and
+PDPs, and canonicals on collections (facet/sort params → duplicate-content risk)
+and the homepage.
+
+**Research:** Google rich-result guidance — Organization + WebSite (with a
+SearchAction) enable brand knowledge-panel + sitelinks search box; BreadcrumbList
+yields breadcrumb SERP display; self-referencing canonicals consolidate faceted
+collection URLs.
+
+**Did:**
+- New `StructuredData.tsx`: `SiteJsonLd` (Organization + WebSite + SearchAction →
+  /search) rendered sitewide from root; `BreadcrumbJsonLd` (absolute URLs via a
+  new `origin` field on the root loader).
+- BreadcrumbList on collection pages (AISLE 9 › Collection) and PDPs
+  (AISLE 9 › Aisle › Product).
+- Canonicals: collections self-canonical to `/collections/<handle>` (no query
+  params); homepage to `/`. Added og:title/og:type to collections.
+
+**Why:** Gives search engines the brand graph, breadcrumb trails, and clean
+canonical signals — standard SEO infrastructure a world-class store ships, and
+it compounds as products/collections get indexed.
+
+**Acceptance:** build + typecheck green; JSON-LD emitted sitewide + per template;
+canonicals param-free. (Validate live via Google Rich Results Test once the URL
+is reachable.) ✅. Never removed existing Product structured data or analytics.
+
+**Next to consider:** performance/LCP audit; copy-quality pass on collection
+descriptions; trust signals (returns/PoD messaging consistency); empty-search UX.

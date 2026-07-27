@@ -8,6 +8,7 @@ import type {
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
+import {BreadcrumbJsonLd} from '~/components/StructuredData';
 import {DealStrip} from '~/components/brand/DealStrip';
 import {
   aisleLabelForHandle,
@@ -17,7 +18,7 @@ import {
 } from '~/lib/brand';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 
-export const meta: Route.MetaFunction = ({data}) => {
+export const meta: Route.MetaFunction = ({data, params}) => {
   const title = data?.collection?.title ?? data?.knownAisle?.title ?? 'AISLE';
   return [
     {title: `AISLE 9 — ${title}`},
@@ -28,6 +29,10 @@ export const meta: Route.MetaFunction = ({data}) => {
         data?.knownAisle?.blurb ||
         `Shop ${title} at AISLE 9.`,
     },
+    {property: 'og:title', content: `AISLE 9 — ${title}`},
+    {property: 'og:type', content: 'website'},
+    // Self-canonical without facet/sort params to avoid duplicate content.
+    {rel: 'canonical', href: `/collections/${params.handle}`},
   ];
 };
 
@@ -302,6 +307,13 @@ export default function Collection() {
           )}
         </PaginatedResourceSection>
       )}
+
+      <BreadcrumbJsonLd
+        items={[
+          {name: 'AISLE 9', path: '/'},
+          {name: collection.title, path: `/collections/${collection.handle}`},
+        ]}
+      />
 
       <Analytics.CollectionView
         data={{

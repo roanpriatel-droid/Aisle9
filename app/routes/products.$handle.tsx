@@ -33,6 +33,7 @@ import {
   ProductJsonLd,
   type VariantOffer,
 } from '~/components/Reviews';
+import {BreadcrumbJsonLd} from '~/components/StructuredData';
 import {useAside} from '~/components/Aside';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {describeProduct} from '~/lib/product-copy';
@@ -344,6 +345,21 @@ export default function Product() {
         currencyCode={selectedVariant?.price?.currencyCode}
         available={available}
         offers={offers}
+      />
+
+      <BreadcrumbJsonLd
+        items={[
+          {name: 'AISLE 9', path: '/'},
+          ...(firstCollection
+            ? [
+                {
+                  name: firstCollection.title,
+                  path: `/collections/${firstCollection.handle}`,
+                },
+              ]
+            : []),
+          {name: product.title, path: `/products/${product.handle}`},
+        ]}
       />
 
       <Analytics.ProductView

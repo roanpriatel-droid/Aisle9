@@ -17,6 +17,7 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {SiteJsonLd} from './components/StructuredData';
 
 export type RootLoader = typeof loader;
 
@@ -78,6 +79,7 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ...criticalData,
+    origin: new URL(args.request.url).origin,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
@@ -216,6 +218,7 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
+      <SiteJsonLd />
       <PageLayout {...data}>
         <Outlet />
       </PageLayout>
