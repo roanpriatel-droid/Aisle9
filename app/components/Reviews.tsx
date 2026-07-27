@@ -9,25 +9,81 @@
  *   then it shows an honest empty state.
  */
 
+export type VariantOffer = {
+  sku?: string;
+  name?: string;
+  price: string;
+  currencyCode: string;
+  available: boolean;
+};
+
+/**
+ * schema.org Product markup. When per-variant offers are supplied it emits an
+ * AggregateOffer with one Offer per variant (lowPrice/highPrice + offerCount);
+ * otherwise a single Offer. No aggregateRating/review until real reviews exist.
+ */
 export function ProductJsonLd({
   title,
   description,
   image,
   url,
-  price,
   currencyCode,
   available,
+  offers,
   brand = 'AISLE 9',
 }: {
   title: string;
   description?: string;
   image?: string;
   url: string;
-  price?: string;
   currencyCode?: string;
   available?: boolean;
+  /** Per-variant offers; if 2+, rendered as an AggregateOffer. */
+  offers?: VariantOffer[];
   brand?: string;
 }) {
+  const list = (offers ?? []).filter((o) => o.price && o.currencyCode);
+  let offerBlock: Record<string, unknown> | undefined;
+
+  if (list.length > 0) {
+    const currency = list[0].currencyCode;
+    const prices = list.map((o) => Number(o.price)).filter(Number.isFinite);
+    const low = Math.min(...prices);
+    const high = Math.max(...prices);
+    const anyAvailable = list.some((o) => o.available);
+    const offerItems = list.map((o) => ({
+      '@type': 'Offer',
+      url,
+      price: o.price,
+      priceCurrency: o.currencyCode,
+      ...(o.sku ? {sku: o.sku} : {}),
+      ...(o.name ? {name: o.name} : {}),
+      availability: o.available
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    }));
+    offerBlock = {
+      '@type': 'AggregateOffer',
+      priceCurrency: currency,
+      lowPrice: low.toFixed(2),
+      highPrice: high.toFixed(2),
+      offerCount: list.length,
+      availability: anyAvailable
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      offers: offerItems,
+    };
+  } else if (currencyCode) {
+    offerBlock = {
+      '@type': 'Offer',
+      url,
+      priceCurrency: currencyCode,
+      availability: available
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    };
+  }
+
   const data = {
     '@context': 'https://schema.org/',
     '@type': 'Product',
@@ -35,19 +91,7 @@ export function ProductJsonLd({
     brand: {'@type': 'Brand', name: brand},
     ...(description ? {description} : {}),
     ...(image ? {image: [image]} : {}),
-    ...(price && currencyCode
-      ? {
-          offers: {
-            '@type': 'Offer',
-            url,
-            price,
-            priceCurrency: currencyCode,
-            availability: available
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock',
-          },
-        }
-      : {}),
+    ...(offerBlock ? {offers: offerBlock} : {}),
   };
 
   return (

@@ -2,22 +2,17 @@ import {Money} from '@shopify/hydrogen';
 import type {MoneyV2} from '@shopify/hydrogen/storefront-api-types';
 
 /**
- * PRICE TAG — the price rendered as a supermarket shelf label / price tag: a
- * white card with an ink rule, a punched hole, a "SHELF PRICE" strip, the big
- * live price (updates with the selected variant), and a per-unit line. Tag
- * yellow stays reserved for the clearance sticker; this is white/ink/signage.
- *
- * `rangeNote` (e.g. "$25–$29 BY SIZE") appears when a product's variants span
- * more than one price, so the shopper knows the number moves with the size.
+ * PRICE TAG — the price as a price-gun shelf tag. This is the one sanctioned
+ * use of price-tag yellow (#F7D117): a punched yellow tag, ink type, the live
+ * variant price, the deadpan unit-pricing line ("$25.00 · $25.00/SHIRT"), and
+ * a "WAS" strikethrough when there's a compare-at. Updates with the variant.
  */
 export function PriceTag({
   price,
   compareAtPrice,
-  rangeNote,
 }: {
   price?: MoneyV2;
   compareAtPrice?: MoneyV2 | null;
-  rangeNote?: string;
 }) {
   const onSale = Boolean(
     compareAtPrice &&
@@ -26,24 +21,35 @@ export function PriceTag({
   );
 
   return (
-    <div className="price-tag" aria-label="Price">
-      <span aria-hidden className="price-tag-hole" />
-      <div className="price-tag-strip">
-        <span className="label-type">AISLE 9 · SHELF PRICE</span>
-        {onSale && <span className="label-type price-tag-sale">ROLLBACK</span>}
-      </div>
-      <div className="price-tag-body">
-        <div className="price-tag-amount">
+    <div
+      className="pricetag"
+      aria-label={price ? `Price ${price.amount} ${price.currencyCode}` : 'Price'}
+    >
+      <span aria-hidden className="pricetag-hole" />
+      <div className="pricetag-inner">
+        {onSale && compareAtPrice ? (
+          <span className="pricetag-was">
+            WAS{' '}
+            <s>
+              <Money data={compareAtPrice} />
+            </s>
+          </span>
+        ) : null}
+        <div className="pricetag-amount">
           {price ? <Money data={price} /> : <span>&mdash;</span>}
-          <span className="price-tag-unit">EACH</span>
         </div>
-        {onSale && compareAtPrice && (
-          <s className="price-tag-compare">
-            <Money data={compareAtPrice} />
-          </s>
-        )}
+        <div className="pricetag-unit">
+          {price ? (
+            <>
+              <Money data={price} /> <span aria-hidden>·</span>{' '}
+              <Money data={price} />
+              /SHIRT
+            </>
+          ) : (
+            'UNIT PRICE ON REQUEST'
+          )}
+        </div>
       </div>
-      {rangeNote && <p className="price-tag-note">{rangeNote}</p>}
     </div>
   );
 }
