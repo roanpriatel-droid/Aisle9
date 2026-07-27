@@ -108,11 +108,18 @@ function formatPrice(m: {amount: string; currencyCode: string}) {
   }
 }
 
-/** Empty endcap frame while stock streams in (or if the query fails). */
+/**
+ * Endcap placeholder while stock streams in (or if the query fails). Mirrors the
+ * loaded endcap's exact box model — a 2-col grid with a square image cell — so
+ * there's no layout shift (CLS) when the real product resolves.
+ */
 function EndcapFrame() {
   return (
-    <div className="flex min-h-[16rem] items-center justify-center border-2 border-ink bg-fluorescent">
-      <span className="label-type text-ink/40">RESTOCKING THE ENDCAP…</span>
+    <div className="grid items-stretch border-2 border-ink bg-white md:grid-cols-2">
+      <div className="flex aspect-square items-center justify-center border-b-2 border-ink bg-fluorescent md:border-b-0 md:border-r-2">
+        <span className="label-type text-ink/40">RESTOCKING THE ENDCAP…</span>
+      </div>
+      <div className="min-h-[11rem] p-6 sm:p-10 md:min-h-0" aria-hidden />
     </div>
   );
 }

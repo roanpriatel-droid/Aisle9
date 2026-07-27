@@ -150,3 +150,35 @@ is reachable.) ✅. Never removed existing Product structured data or analytics.
 
 **Next to consider:** performance/LCP audit; copy-quality pass on collection
 descriptions; trust signals (returns/PoD messaging consistency); empty-search UX.
+
+---
+
+## Cycle 5 — 2026-07-27 — Lens: PERFORMANCE (Core Web Vitals / CLS)
+
+**Found:** The homepage hero's "endcap" product is behind a deferred Suspense
+boundary. Its loading fallback (`min-h-[16rem]`, one box) had a completely
+different height than the loaded state (a 2-col grid with a full square image +
+text panel). When stock streams in, the hero jumped ~256px → ~560px — a
+guaranteed **CLS** hit on the highest-traffic, above-the-fold element.
+
+**Reasoned (not measured — no Lighthouse on this box):** CLS is caused by
+inserting content without reserving its space. The fix is deterministic: make
+the placeholder occupy the same box model as the resolved content.
+
+**Did:** Rewrote `EndcapFrame` to mirror the loaded endcap exactly — a
+`md:grid-cols-2` grid with an `aspect-square` image cell (reserves the image
+space at every breakpoint) and a text-panel cell with `min-h-[11rem]` on mobile
+(reserves the stacked text height). The section no longer resizes when the
+product resolves.
+
+**Why:** CLS is a Core Web Vital and this was the worst offender on the store's
+most-visited page. Deterministic, zero-risk (placeholder-only change).
+
+**Acceptance:** build green; fallback and loaded endcap share dimensions at
+mobile + desktop; no change to the resolved UI. ✅ Verified below-fold deferred
+boundaries (Best Sellers grid, Weekly Circular mailer, PDP Frequently Paired)
+already reserve matching space via skeletons.
+
+**Next to consider:** de-defer or preload the hero image if it proves to be LCP
+on mobile (needs live measurement); copy-quality pass on collection descriptions;
+trust-signal consistency; empty-search UX.
