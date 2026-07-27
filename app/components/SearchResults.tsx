@@ -157,13 +157,18 @@ function SearchResultsProducts({
   );
 }
 
-function SearchResultsEmpty() {
+function SearchResultsEmpty({term}: {term?: string}) {
+  const searched = Boolean(term && term.trim());
   return (
     <div className="mt-6">
       <p className="label-type text-ink/60">
-        NOT STOCKED. CHECKED THE BACK. TRY DIFFERENT WORDS.
+        {searched
+          ? 'NOT STOCKED. CHECKED THE BACK. TRY DIFFERENT WORDS.'
+          : 'ENTER A TERM ABOVE. AN ASSOCIATE WILL CHECK THE SHELVES.'}
       </p>
-      <p className="label-type mt-4 text-ink/50">OR BROWSE A DEPARTMENT:</p>
+      <p className="label-type mt-4 text-ink/50">
+        {searched ? 'OR BROWSE A DEPARTMENT:' : 'OR HEAD STRAIGHT TO A DEPARTMENT:'}
+      </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {NAV.filter((item) => item.to.startsWith('/collections')).map(
           (item) => (

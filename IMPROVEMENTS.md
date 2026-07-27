@@ -207,3 +207,56 @@ grid rows stay even. ✅
 
 **Next to consider:** empty-search state (dead-ends lens); trust-signal
 consistency across PDP/cart/footer; collection description copy quality.
+
+---
+
+## Cycle 7 — 2026-07-27 — Lens: DEAD ENDS / EMPTY STATES
+
+**Found:** The search empty state was already strong and in-voice (done earlier).
+The one real defect: a fresh `/search` visit with no query showed
+"NOT STOCKED. CHECKED THE BACK." — misleading, since nothing was searched.
+
+**Did:** `SearchResultsEmpty` now branches on whether a term was entered:
+no-term → "ENTER A TERM ABOVE. AN ASSOCIATE WILL CHECK THE SHELVES."; searched →
+the "not stocked" copy. Passed `term` through from the route.
+
+**Why:** Correct message for the state; a fresh search page is no longer a
+false dead end.
+
+**Acceptance:** build + typecheck green. ✅
+
+---
+
+## DIMINISHING RETURNS — 2026-07-27 (honest checkpoint, per the operating system)
+
+Cycles 1–4 were structural and high-impact (cart AOV engine, mobile drawer,
+a11y focus management, SEO schema). Cycles 5–7 were genuine but polish-tier
+(CLS, title clamp, search copy), and cycle 7's target was already handled. That
+is the OS's "consecutive non-structural cycles" signal. Rather than manufacture
+progressively trivial code changes, here is the honest picture.
+
+**Highest-leverage work now is NON-CODE (needs owner/admin input I can't self-serve):**
+1. **Live URL + Lighthouse/CWV measurement.** The perf lens is capped without it;
+   this box can't reach the Oxygen URL or run Lighthouse. Biggest unlock.
+2. **Configure the Shopify automatic bulk-ladder discount.** The whole site sells
+   "buy more, pay less," but without the admin automatic discount, checkout charges
+   list price. This is the #1 gap between promise and reality — a conversion +
+   trust problem no code here can fix.
+3. **Real product data + photography.** The templates (PDP gallery, flyer, cards)
+   are built and empty-safe, but they shine only with real Printify colorway images.
+4. **Real reviews (Judge.me content).** Social proof is a top conversion lever; the
+   wiring + JSON-LD are in place, but stars must be earned, not fabricated.
+5. **Verify best-guess collection handles** against the live store (i-collection,
+   typod, all-vs-all-products). Wrong ones show the in-voice "restocking" page, not
+   the real aisle.
+6. **Wire the email platform** (Savings Club / notify-me / complaint form are stubs)
+   and issue the promised 10% code.
+
+**Lower-leverage code work that remains** (real, but marginal — will pick up if the
+loop continues): trust-signal wording consistency across PDP/cart/footer; a
+copy-quality pass on any generic collection descriptions; visual-polish details;
+deeper edge cases (cart line whose product was deleted; multi-option OOS combos).
+
+**Recommendation:** the dramatic gains from here come from the non-code list above
+(especially #1 and #2). I'll keep looping on code polish if asked, but I'm flagging
+honestly that we've crossed from "drastic" into "diminishing" on the code side.
