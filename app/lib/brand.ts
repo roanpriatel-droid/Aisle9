@@ -166,6 +166,29 @@ export const COLLECTION_PAIRS: Record<string, string> = {
 
 export const PAIR_FALLBACK_HANDLE = 'best-sellers';
 
+/**
+ * Aisle handle → the product TAG that populates it (verified against the live
+ * catalog: products are tagged, but the themed collections don't exist as
+ * Shopify collections). So aisle pages filter products by tag rather than by a
+ * collection. `null` = no tag filter — best-sellers/new-arrivals are the whole
+ * catalog by sort. Note the I❤ aisle's real tag is `i-love-collection`.
+ */
+export const AISLE_TAG: Record<string, string | null> = {
+  'i-collection': 'i-love-collection',
+  'down-bad': 'down-bad',
+  'the-confessions': 'the-confessions',
+  'freak-behavior': 'freak-behavior',
+  'warning-labels': 'warning-labels',
+  'minor-crimes': 'minor-crimes',
+  'liver-damage': 'liver-damage',
+  typod: 'typod',
+  'gifts-for-idiots': 'gifts-for-idiots',
+  'matching-sets': 'matching-sets',
+  'best-sellers': null,
+  'new-arrivals': null,
+  all: null,
+};
+
 export const NAV = [
   {title: 'AISLES', to: COLLECTIONS.shopAll},
   {title: 'BEST SELLERS', to: COLLECTIONS.bestSellers},

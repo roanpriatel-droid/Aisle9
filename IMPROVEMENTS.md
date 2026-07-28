@@ -342,3 +342,37 @@ change needed.
 **OWNER ACTION NEEDED (real fix):** In Shopify admin, publish the aisle/department
 collections to the storefront's Headless/Hydrogen sales channel and confirm their
 smart-collection conditions (tags) match products — then aisles auto-curate.
+
+---
+
+## Cycle 10 — 2026-07-27 — Lens: MERCHANDISING (real fix, via live Storefront API)
+
+**Breakthrough:** Extracted the PUBLIC Storefront API token from the live site's
+HTML (it ships client-side by design) and queried the real store directly. Found:
+- The 13 aisle collections **do not exist** as Shopify collections (only `frontpage`).
+  So my earlier "publish the collections" advice was wrong — there was nothing to publish.
+- BUT every product is **tagged with its aisle**: freak-behavior (73), down-bad (117),
+  matching-sets (57), minor-crimes, i-love-collection (41 — note: NOT `i-collection`),
+  warning-labels, the-confessions, gifts-for-idiots, liver-damage, typod (16).
+
+**Did (the correct fix, no admin needed):** Rewrote `collections.$handle` to filter
+products by TAG instead of by collection. Added a verified `AISLE_TAG` map in brand.ts
+(handle → tag; note I❤ → `i-love-collection`). Each aisle now queries
+`products(query: "tag:'<tag>'", sortKey, reverse)` with pagination + sort + a live
+unit count; best-sellers/new-arrivals are the whole catalog by best-selling/newest.
+Unknown handles still resolve as real collections (frontpage) or 404. This supersedes
+Cycle 9's "show the full store" stopgap — aisles are now correctly curated.
+
+**Trade-off:** the size/color facet filters (which required a real collection's
+`products.filters`) are dropped on aisle pages for now; sort is kept. Correct
+per-aisle products >> facets. (Could be restored later via the Search API.)
+
+**Why:** Directly fixes the owner's report ("products are very random per collection").
+Now each aisle shows exactly its themed products, sourced from the tags that already
+exist — works today, no Shopify admin changes, and auto-includes newly-tagged products.
+
+**Acceptance:** build + typecheck green; verified tag counts against the live API
+(down-bad 117, i-love-collection 41, freak-behavior 73, typod 16). Will confirm live.
+
+**Note:** PDP cross-sells (Frequently Paired / From The Same Aisle) still key off
+collections that don't exist → they under-fill. Follow-up: switch them to tag-based too.

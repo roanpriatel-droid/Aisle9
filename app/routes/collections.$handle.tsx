@@ -1,73 +1,54 @@
 import {Link, redirect, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import type {
-  ProductFilter,
-  ProductCollectionSortKeys,
-} from '@shopify/hydrogen/storefront-api-types';
+import type {ProductSortKeys} from '@shopify/hydrogen/storefront-api-types';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import {BreadcrumbJsonLd} from '~/components/StructuredData';
 import {DealStrip} from '~/components/brand/DealStrip';
 import {
   aisleLabelForHandle,
   findAisle,
+  AISLE_TAG,
   VOICE,
   COLLECTIONS,
 } from '~/lib/brand';
 import type {
   ProductItemFragment,
-  CollectionCatalogQuery,
+  AisleProductsQuery,
 } from 'storefrontapi.generated';
 
-type CatalogConnection = CollectionCatalogQuery['products'];
+type ProductsConnection = AisleProductsQuery['products'];
 
 export const meta: Route.MetaFunction = ({data, params}) => {
-  const title = data?.collection?.title ?? data?.knownAisle?.title ?? 'AISLE';
+  const title = data?.title ?? 'AISLE';
   return [
     {title: `AISLE 9 — ${title}`},
     {
       name: 'description',
-      content:
-        data?.collection?.description ||
-        data?.knownAisle?.blurb ||
-        `Shop ${title} at AISLE 9.`,
+      content: data?.description || `Shop ${title} at AISLE 9.`,
     },
     {property: 'og:title', content: `AISLE 9 — ${title}`},
     {property: 'og:type', content: 'website'},
-    // Self-canonical without facet/sort params to avoid duplicate content.
     {rel: 'canonical', href: `/collections/${params.handle}`},
   ];
 };
 
-/** URL ?sort= value → Storefront sortKey + reverse. */
+/** URL ?sort= → Storefront ProductSortKeys. */
 const SORT_OPTIONS = [
-  {value: 'featured', label: 'FEATURED', sortKey: 'COLLECTION_DEFAULT', reverse: false},
-  {value: 'newest', label: 'NEWEST', sortKey: 'CREATED', reverse: true},
+  {value: 'featured', label: 'FEATURED', sortKey: 'BEST_SELLING', reverse: false},
+  {value: 'newest', label: 'NEWEST', sortKey: 'CREATED_AT', reverse: true},
   {value: 'price-low', label: 'PRICE ↑', sortKey: 'PRICE', reverse: false},
   {value: 'price-high', label: 'PRICE ↓', sortKey: 'PRICE', reverse: true},
-  {value: 'best-selling', label: 'BEST SELLING', sortKey: 'BEST_SELLING', reverse: false},
   {value: 'title', label: 'A–Z', sortKey: 'TITLE', reverse: false},
 ] as const;
 
-function resolveSort(value: string | null) {
+function resolveSort(value: string | null | undefined) {
   return SORT_OPTIONS.find((o) => o.value === value) ?? SORT_OPTIONS[0];
 }
 
-/** Shape of a Storefront product filter facet (typed loosely; JSON input). */
-type FacetValue = {id: string; label: string; count: number; input: unknown};
-type FacetGroup = {
-  id: string;
-  label: string;
-  type: string;
-  values: FacetValue[];
-};
-
 export async function loader(args: Route.LoaderArgs) {
-  const deferredData = loadDeferredData(args);
-  const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
+  return loadCriticalData(args);
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -75,105 +56,70 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {pageBy: 24});
 
-  if (!handle) {
-    throw redirect('/collections');
+  if (!handle) throw redirect('/collections');
+
+  const aisle = findAisle(handle);
+  if (!aisle) {
+    // Not a known aisle — resolve as a real Shopify collection (e.g. frontpage).
+    const {collection} = await storefront.query(COLLECTION_QUERY, {
+      variables: {handle, ...paginationVariables},
+    });
+    if (!collection) {
+      throw new Response(`Collection ${handle} not found`, {status: 404});
+    }
+    return {
+      isAisle: false,
+      handle,
+      title: collection.title,
+      label: collection.title,
+      description: collection.description ?? null,
+      products: collection.products as ProductsConnection,
+      count: collection.products.nodes.length,
+      currentSort: 'featured',
+    };
   }
 
+  // Known aisle: filter products by the aisle's tag (collections don't exist).
   const url = new URL(request.url);
-  const sort = resolveSort(url.searchParams.get('sort'));
-  // Selected facet filters arrive as repeated ?filter=<json> params.
-  const filters: ProductFilter[] = url.searchParams
-    .getAll('filter')
-    .map((raw) => {
-      try {
-        return JSON.parse(raw) as ProductFilter;
-      } catch {
-        return null;
-      }
-    })
-    .filter((f): f is ProductFilter => f !== null);
+  const sortParam =
+    url.searchParams.get('sort') ??
+    (handle === 'new-arrivals' ? 'newest' : 'featured');
+  const sort = resolveSort(sortParam);
 
-  const [{collection}] = await Promise.all([
-    storefront.query(COLLECTION_QUERY, {
+  const tag = AISLE_TAG[handle] ?? null;
+  const query = tag ? `tag:'${tag}'` : null;
+
+  const [{products}, countData] = await Promise.all([
+    storefront.query(AISLE_PRODUCTS_QUERY, {
       variables: {
-        handle,
-        filters,
-        sortKey: sort.sortKey as ProductCollectionSortKeys,
+        query,
+        sortKey: sort.sortKey as ProductSortKeys,
         reverse: sort.reverse,
         ...paginationVariables,
       },
     }),
+    storefront.query(AISLE_COUNT_QUERY, {variables: {query}}),
   ]);
 
-  if (!collection) {
-    // A known aisle/department that didn't resolve (collection not published to
-    // the storefront's sales channel, or a best-guess handle mismatch). Rather
-    // than an empty dead end, show the full catalog with an honest banner so the
-    // aisle is still browseable. Truly unknown handles 404.
-    const knownAisle = findAisle(handle);
-    if (knownAisle) {
-      const {products: catalog} = await storefront.query(CATALOG_QUERY, {
-        variables: {...paginationVariables},
-      });
-      return {collection: null, knownAisle, catalog: catalog ?? null};
-    }
-    throw new Response(`Collection ${handle} not found`, {status: 404});
-  }
-
-  redirectIfHandleIsLocalized(request, {handle, data: collection});
-
-  return {collection, knownAisle: null, catalog: null};
-}
-
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
+  return {
+    isAisle: true,
+    handle,
+    title: aisle.title,
+    label: aisleLabelForHandle(handle, aisle.title),
+    description: aisle.blurb,
+    products,
+    count: countData.products?.nodes?.length ?? products.nodes.length,
+    currentSort: sort.value,
+  };
 }
 
 export default function Collection() {
-  const {collection, knownAisle, catalog} = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
+  const {label, title, description, products, count, isAisle, handle} = data;
 
-  // Known aisle whose collection isn't published/queryable → show the full
-  // catalog with an honest banner instead of an empty dead end.
-  if (!collection) {
-    return <RestockingAisle aisle={knownAisle} catalog={catalog} />;
-  }
-
-  const label = aisleLabelForHandle(collection.handle, collection.title);
-  const activeFilters = searchParams.getAll('filter');
-  const hasActiveFilters = activeFilters.length > 0;
-  const currentSort = resolveSort(searchParams.get('sort')).value;
-
-  const rawCount = collection.productCount?.nodes?.length ?? 0;
-  const countLabel = rawCount >= 250 ? '250+' : String(rawCount);
-
-  const products = collection.products?.nodes ?? [];
-  const isEmpty = products.length === 0;
-
-  // Only LIST-type facets (Size, Color/colorway, Availability, …).
-  const filterGroups = (
-    (collection.products?.filters ?? []) as FacetGroup[]
-  ).filter((g) => g.type === 'LIST' && g.values.length > 0);
-
-  /** Build a URL that toggles a filter input, resetting pagination. */
-  function toggleFilterHref(inputStr: string) {
-    const p = new URLSearchParams(searchParams);
-    p.delete('cursor');
-    p.delete('direction');
-    const existing = p.getAll('filter');
-    p.delete('filter');
-    let removed = false;
-    for (const f of existing) {
-      if (f === inputStr) {
-        removed = true;
-        continue;
-      }
-      p.append('filter', f);
-    }
-    if (!removed) p.append('filter', inputStr);
-    const qs = p.toString();
-    return qs ? `?${qs}` : '?';
-  }
+  const countLabel = count >= 250 ? '250+' : String(count);
+  const isEmpty = products.nodes.length === 0;
 
   function sortHref(value: string) {
     const p = new URLSearchParams(searchParams);
@@ -181,15 +127,6 @@ export default function Collection() {
     p.delete('direction');
     p.set('sort', value);
     return `?${p.toString()}`;
-  }
-
-  function clearFiltersHref() {
-    const p = new URLSearchParams(searchParams);
-    p.delete('filter');
-    p.delete('cursor');
-    p.delete('direction');
-    const qs = p.toString();
-    return qs ? `?${qs}` : '?';
   }
 
   return (
@@ -211,100 +148,66 @@ export default function Collection() {
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-b-2 border-ink pb-4">
         <div>
           <p className="label-type text-signage">{label}</p>
-          <h1 className="sign-type mt-1 text-4xl">{collection.title}</h1>
+          <h1 className="sign-type mt-1 text-4xl">{title}</h1>
         </div>
-        <span className="label-type border-2 border-ink bg-fluorescent px-3 py-2 text-ink">
-          {hasActiveFilters
-            ? `${countLabel} UNITS MATCH`
-            : `${countLabel} ${VOICE.inStockSuffix}`}
-        </span>
+        {!isEmpty && (
+          <span className="label-type border-2 border-ink bg-fluorescent px-3 py-2 text-ink">
+            {countLabel} {VOICE.inStockSuffix}
+          </span>
+        )}
       </div>
 
-      {collection.description && (
-        <p className="mt-4 max-w-2xl text-ink/70">{collection.description}</p>
+      {description && (
+        <p className="mt-4 max-w-2xl text-ink/70">{description}</p>
       )}
 
       <div className="mt-6">
         <DealStrip />
       </div>
 
-      {/* Controls: filters + sort */}
-      {(filterGroups.length > 0 || !isEmpty) && (
-        <div className="mb-8 flex flex-col gap-4 border-2 border-ink bg-white p-4">
-          {filterGroups.map((group) => (
-            <div key={group.id} className="flex flex-wrap items-center gap-2">
-              <span className="label-type w-full text-ink/50 sm:w-auto sm:min-w-24">
-                {group.label.toUpperCase()}
-              </span>
-              {group.values.map((value) => {
-                const inputStr = String(value.input);
-                const active = activeFilters.includes(inputStr);
-                return (
-                  <Link
-                    key={value.id}
-                    to={toggleFilterHref(inputStr)}
-                    preventScrollReset
-                    aria-pressed={active}
-                    className={`label-type border-2 border-ink px-3 py-1.5 no-underline ${
-                      active
-                        ? 'bg-ink text-linoleum'
-                        : 'bg-white text-ink hover:bg-fluorescent'
-                    }`}
-                  >
-                    {value.label}
-                    {typeof value.count === 'number' ? (
-                      <span className={active ? 'text-linoleum/60' : 'text-ink/40'}>
-                        {' '}
-                        ({value.count})
-                      </span>
-                    ) : null}
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
-
-          <div className="flex flex-wrap items-center gap-2 border-t-2 border-ink/15 pt-3">
-            <span className="label-type text-ink/50 sm:min-w-24">SORT</span>
-            {SORT_OPTIONS.map((opt) => {
-              const active = currentSort === opt.value;
-              return (
-                <Link
-                  key={opt.value}
-                  to={sortHref(opt.value)}
-                  preventScrollReset
-                  aria-pressed={active}
-                  className={`label-type border-2 px-3 py-1.5 no-underline ${
-                    active
-                      ? 'border-signage bg-signage text-white'
-                      : 'border-ink bg-white text-ink hover:bg-fluorescent'
-                  }`}
-                >
-                  {opt.label}
-                </Link>
-              );
-            })}
-            {hasActiveFilters && (
+      {/* Sort controls (tag-based aisles) */}
+      {isAisle && !isEmpty && (
+        <div className="mb-8 flex flex-wrap items-center gap-2 border-2 border-ink bg-white p-4">
+          <span className="label-type text-ink/50 sm:min-w-24">SORT</span>
+          {SORT_OPTIONS.map((opt) => {
+            const active = data.currentSort === opt.value;
+            return (
               <Link
-                to={clearFiltersHref()}
+                key={opt.value}
+                to={sortHref(opt.value)}
                 preventScrollReset
-                className="label-type ml-auto text-signage underline underline-offset-2"
+                aria-pressed={active}
+                className={`label-type border-2 px-3 py-1.5 no-underline ${
+                  active
+                    ? 'border-signage bg-signage text-white'
+                    : 'border-ink bg-white text-ink hover:bg-fluorescent'
+                }`}
               >
-                {VOICE.clearFilters}
+                {opt.label}
               </Link>
-            )}
-          </div>
+            );
+          })}
         </div>
       )}
 
       {isEmpty ? (
-        <CollectionEmpty
-          hasActiveFilters={hasActiveFilters}
-          clearHref={clearFiltersHref()}
-        />
+        <div className="border-2 border-ink bg-white p-10 text-center">
+          <p className="sign-type text-2xl">{VOICE.outOfStockHeading}</p>
+          <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
+            {VOICE.outOfStockBody}
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link className="btn" prefetch="intent" to={COLLECTIONS.shopAll}>
+              BROWSE ALL PRODUCTS
+            </Link>
+            <Link className="btn btn-outline" prefetch="intent" to="/search">
+              SEARCH THE SHELVES
+            </Link>
+          </div>
+        </div>
       ) : (
         <PaginatedResourceSection<ProductItemFragment>
-          connection={collection.products}
+          connection={products}
           resourcesClassName="products-grid"
         >
           {({node: product, index}) => (
@@ -321,134 +224,13 @@ export default function Collection() {
       <BreadcrumbJsonLd
         items={[
           {name: 'AISLE 9', path: '/'},
-          {name: collection.title, path: `/collections/${collection.handle}`},
+          {name: title, path: `/collections/${handle}`},
         ]}
       />
 
       <Analytics.CollectionView
-        data={{
-          collection: {
-            id: collection.id,
-            handle: collection.handle,
-          },
-        }}
+        data={{collection: {id: `aisle:${handle}`, handle}}}
       />
-    </div>
-  );
-}
-
-/**
- * Known aisle whose collection isn't published/queryable yet. Instead of an
- * empty dead end, show the full catalog (so the aisle is browseable now) under
- * an honest banner. When even the catalog is empty, fall back to a plain notice.
- */
-function RestockingAisle({
-  aisle,
-  catalog,
-}: {
-  aisle: {n: number; title: string; handle: string; blurb: string} | null;
-  catalog: CatalogConnection | null;
-}) {
-  const label = aisle ? `AISLE ${aisle.n} — ${aisle.title}` : 'THIS AISLE';
-  const products = catalog?.nodes ?? [];
-
-  return (
-    <div className="collection mx-auto max-w-6xl px-4 py-10">
-      <nav aria-label="Breadcrumb" className="label-type text-ink/50">
-        <Link className="hover:text-signage" to="/">
-          AISLE 9
-        </Link>
-        {' / '}
-        <Link className="hover:text-signage" to={COLLECTIONS.shopAll}>
-          ALL AISLES
-        </Link>
-        {' / '}
-        <span className="text-ink">{label}</span>
-      </nav>
-
-      <div className="mt-4 border-b-2 border-ink pb-4">
-        <p className="label-type text-signage">{label}</p>
-        <h1 className="sign-type mt-1 text-4xl">{aisle?.title ?? 'AISLE'}</h1>
-      </div>
-
-      {aisle?.blurb && (
-        <p className="mt-4 max-w-2xl text-ink/70">{aisle.blurb}</p>
-      )}
-
-      {products.length > 0 ? (
-        <>
-          {/* Honest banner: this aisle isn't curated yet, showing everything. */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-2 border-ink bg-fluorescent px-4 py-2.5">
-            <span className="label-type text-signage">AISLE BEING STOCKED</span>
-            <span className="label-type text-ink">
-              SHOWING THE FULL STORE FOR NOW
-            </span>
-          </div>
-          <div className="mt-6">
-            <PaginatedResourceSection<ProductItemFragment>
-              connection={catalog!}
-              resourcesClassName="products-grid"
-            >
-              {({node: product, index}) => (
-                <ProductItem
-                  key={product.id}
-                  product={product}
-                  loading={index < 8 ? 'eager' : 'lazy'}
-                  quickAdd
-                />
-              )}
-            </PaginatedResourceSection>
-          </div>
-        </>
-      ) : (
-        <div className="mt-8 border-2 border-ink bg-white p-10 text-center">
-          <p className="sign-type text-2xl">{VOICE.restockingHeading}</p>
-          <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
-            {VOICE.restockingBody}
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              className="btn"
-              prefetch="intent"
-              to={COLLECTIONS.shopAll}
-            >
-              BROWSE ALL PRODUCTS
-            </Link>
-            <Link className="btn btn-outline" prefetch="intent" to="/search">
-              SEARCH THE SHELVES
-            </Link>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function CollectionEmpty({
-  hasActiveFilters,
-  clearHref,
-}: {
-  hasActiveFilters: boolean;
-  clearHref: string;
-}) {
-  return (
-    <div className="border-2 border-ink bg-white p-10 text-center">
-      <p className="sign-type text-2xl">
-        {hasActiveFilters ? VOICE.noMatchHeading : VOICE.outOfStockHeading}
-      </p>
-      <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
-        {hasActiveFilters ? VOICE.noMatchBody : VOICE.outOfStockBody}
-      </p>
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
-        {hasActiveFilters ? (
-          <Link className="btn" to={clearHref} preventScrollReset>
-            {VOICE.clearFilters}
-          </Link>
-        ) : null}
-        <Link className="btn btn-outline" prefetch="intent" to={COLLECTIONS.shopAll}>
-          BROWSE ALL AISLES
-        </Link>
-      </div>
     </div>
   );
 }
@@ -484,72 +266,15 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
   }
 ` as const;
 
-// NOTE: https://shopify.dev/docs/api/storefront/latest/objects/collection
-const COLLECTION_QUERY = `#graphql
+/** Tag-filtered (or whole-catalog) products for an aisle. */
+const AISLE_PRODUCTS_QUERY = `#graphql
   ${PRODUCT_ITEM_FRAGMENT}
-  query Collection(
-    $handle: String!
+  query AisleProducts(
     $country: CountryCode
     $language: LanguageCode
-    $filters: [ProductFilter!]
-    $sortKey: ProductCollectionSortKeys!
+    $query: String
+    $sortKey: ProductSortKeys
     $reverse: Boolean
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      title
-      description
-      productCount: products(first: 250, filters: $filters) {
-        nodes {
-          id
-        }
-      }
-      products(
-        first: $first,
-        last: $last,
-        before: $startCursor,
-        after: $endCursor,
-        filters: $filters,
-        sortKey: $sortKey,
-        reverse: $reverse
-      ) {
-        nodes {
-          ...ProductItem
-        }
-        filters {
-          id
-          label
-          type
-          values {
-            id
-            label
-            count
-            input
-          }
-        }
-        pageInfo {
-          hasPreviousPage
-          hasNextPage
-          endCursor
-          startCursor
-        }
-      }
-    }
-  }
-` as const;
-
-// Full-catalog fallback used when a known aisle's collection isn't queryable
-// (e.g. the collection isn't published to the storefront's sales channel).
-const CATALOG_QUERY = `#graphql
-  ${PRODUCT_ITEM_FRAGMENT}
-  query CollectionCatalog(
-    $country: CountryCode
-    $language: LanguageCode
     $first: Int
     $last: Int
     $startCursor: String
@@ -560,7 +285,9 @@ const CATALOG_QUERY = `#graphql
       last: $last,
       before: $startCursor,
       after: $endCursor,
-      sortKey: BEST_SELLING
+      query: $query,
+      sortKey: $sortKey,
+      reverse: $reverse
     ) {
       nodes {
         ...ProductItem
@@ -570,6 +297,57 @@ const CATALOG_QUERY = `#graphql
         hasNextPage
         endCursor
         startCursor
+      }
+    }
+  }
+` as const;
+
+const AISLE_COUNT_QUERY = `#graphql
+  query AisleCount(
+    $country: CountryCode
+    $language: LanguageCode
+    $query: String
+  ) @inContext(country: $country, language: $language) {
+    products(first: 250, query: $query) {
+      nodes {
+        id
+      }
+    }
+  }
+` as const;
+
+// Real Shopify collection fallback (e.g. frontpage / future collections).
+const COLLECTION_QUERY = `#graphql
+  ${PRODUCT_ITEM_FRAGMENT}
+  query Collection(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      id
+      handle
+      title
+      description
+      products(
+        first: $first,
+        last: $last,
+        before: $startCursor,
+        after: $endCursor
+      ) {
+        nodes {
+          ...ProductItem
+        }
+        pageInfo {
+          hasPreviousPage
+          hasNextPage
+          endCursor
+          startCursor
+        }
       }
     }
   }
