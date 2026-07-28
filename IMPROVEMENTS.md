@@ -305,3 +305,40 @@ Now every price statement on the site is true.
 
 **Verified:** grep shows zero remaining "ends in 9"; build + typecheck green.
 Will re-crawl the live homepage after deploy to confirm.
+
+---
+
+## Cycle 9 — 2026-07-27 — Lens: DEAD ENDS / MERCHANDISING (from LIVE crawl)
+
+**Reported by owner:** collection pages don't show products.
+
+**Diagnosed (live crawl of aisle9.store):**
+- 309 products exist and ARE published (visible on /collections/all and /products/*).
+- Shopify's collection sitemap contains only `frontpage`. Both `/collections/best-sellers`
+  and `/collections/down-bad` return the null-collection "restocking" state.
+- Root cause: the 13 aisle/department collections are **not queryable by the storefront**
+  — they aren't published to the Headless sales channel (or weren't created). The
+  products are published; the collections are not. This is a **Shopify admin fix**
+  (publish each collection to the Hydrogen storefront's sales channel + ensure smart-
+  collection rules/tags match products). I can't do admin changes.
+
+**Did (code, to make the store usable NOW):**
+- When a known aisle's collection is null, `collections.$handle` now queries the full
+  catalog (`CATALOG_QUERY`) and renders it under an honest banner ("AISLE BEING STOCKED
+  · SHOWING THE FULL STORE FOR NOW") — so every aisle is browseable with real products
+  and quick-add instead of an empty dead end. Falls back to a notice only if the catalog
+  itself is empty; its CTAs now point to working pages (/collections/all, /search) not
+  the empty best-sellers.
+- Raised per-page product counts: aisles 12 → 24, /collections/all 8 → 24 (with
+  load-more), so the working pages show far more of the 309 products at once.
+
+**Why:** Turns 13 empty pages into browseable product pages immediately, honestly framed,
+without masking the real cause (which is called out for the owner to fix in admin). Once
+the collections are published, the normal curated path takes over automatically — no code
+change needed.
+
+**Acceptance:** build + typecheck green. Will verify live after deploy.
+
+**OWNER ACTION NEEDED (real fix):** In Shopify admin, publish the aisle/department
+collections to the storefront's Headless/Hydrogen sales channel and confirm their
+smart-collection conditions (tags) match products — then aisles auto-curate.

@@ -16,7 +16,12 @@ import {
   VOICE,
   COLLECTIONS,
 } from '~/lib/brand';
-import type {ProductItemFragment} from 'storefrontapi.generated';
+import type {
+  ProductItemFragment,
+  CollectionCatalogQuery,
+} from 'storefrontapi.generated';
+
+type CatalogConnection = CollectionCatalogQuery['products'];
 
 export const meta: Route.MetaFunction = ({data, params}) => {
   const title = data?.collection?.title ?? data?.knownAisle?.title ?? 'AISLE';
@@ -68,7 +73,7 @@ export async function loader(args: Route.LoaderArgs) {
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
-  const paginationVariables = getPaginationVariables(request, {pageBy: 12});
+  const paginationVariables = getPaginationVariables(request, {pageBy: 24});
 
   if (!handle) {
     throw redirect('/collections');
@@ -101,19 +106,23 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   ]);
 
   if (!collection) {
-    // A known aisle/department that didn't resolve (unpopulated, or a
-    // best-guess handle mismatch) renders an in-voice "restocking" page with a
-    // 200 — never a 404 for a real nav link. Truly unknown handles 404.
+    // A known aisle/department that didn't resolve (collection not published to
+    // the storefront's sales channel, or a best-guess handle mismatch). Rather
+    // than an empty dead end, show the full catalog with an honest banner so the
+    // aisle is still browseable. Truly unknown handles 404.
     const knownAisle = findAisle(handle);
     if (knownAisle) {
-      return {collection: null, knownAisle};
+      const {products: catalog} = await storefront.query(CATALOG_QUERY, {
+        variables: {...paginationVariables},
+      });
+      return {collection: null, knownAisle, catalog: catalog ?? null};
     }
     throw new Response(`Collection ${handle} not found`, {status: 404});
   }
 
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
-  return {collection, knownAisle: null};
+  return {collection, knownAisle: null, catalog: null};
 }
 
 function loadDeferredData({context}: Route.LoaderArgs) {
@@ -121,12 +130,13 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection, knownAisle} = useLoaderData<typeof loader>();
+  const {collection, knownAisle, catalog} = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
 
-  // Known aisle that didn't resolve → in-voice restocking page (200, no 404).
+  // Known aisle whose collection isn't published/queryable → show the full
+  // catalog with an honest banner instead of an empty dead end.
   if (!collection) {
-    return <RestockingAisle aisle={knownAisle} />;
+    return <RestockingAisle aisle={knownAisle} catalog={catalog} />;
   }
 
   const label = aisleLabelForHandle(collection.handle, collection.title);
@@ -327,13 +337,21 @@ export default function Collection() {
   );
 }
 
-/** In-voice 200 page for a known aisle that didn't resolve to a collection. */
+/**
+ * Known aisle whose collection isn't published/queryable yet. Instead of an
+ * empty dead end, show the full catalog (so the aisle is browseable now) under
+ * an honest banner. When even the catalog is empty, fall back to a plain notice.
+ */
 function RestockingAisle({
   aisle,
+  catalog,
 }: {
   aisle: {n: number; title: string; handle: string; blurb: string} | null;
+  catalog: CatalogConnection | null;
 }) {
   const label = aisle ? `AISLE ${aisle.n} — ${aisle.title}` : 'THIS AISLE';
+  const products = catalog?.nodes ?? [];
+
   return (
     <div className="collection mx-auto max-w-6xl px-4 py-10">
       <nav aria-label="Breadcrumb" className="label-type text-ink/50">
@@ -357,24 +375,51 @@ function RestockingAisle({
         <p className="mt-4 max-w-2xl text-ink/70">{aisle.blurb}</p>
       )}
 
-      <div className="mt-8 border-2 border-ink bg-white p-10 text-center">
-        <p className="sign-type text-2xl">{VOICE.restockingHeading}</p>
-        <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
-          {VOICE.restockingBody}
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>
-            SHOP BEST SELLERS
-          </Link>
-          <Link
-            className="btn btn-outline"
-            prefetch="intent"
-            to={COLLECTIONS.shopAll}
-          >
-            BROWSE ALL AISLES
-          </Link>
+      {products.length > 0 ? (
+        <>
+          {/* Honest banner: this aisle isn't curated yet, showing everything. */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-2 border-ink bg-fluorescent px-4 py-2.5">
+            <span className="label-type text-signage">AISLE BEING STOCKED</span>
+            <span className="label-type text-ink">
+              SHOWING THE FULL STORE FOR NOW
+            </span>
+          </div>
+          <div className="mt-6">
+            <PaginatedResourceSection<ProductItemFragment>
+              connection={catalog!}
+              resourcesClassName="products-grid"
+            >
+              {({node: product, index}) => (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  loading={index < 8 ? 'eager' : 'lazy'}
+                  quickAdd
+                />
+              )}
+            </PaginatedResourceSection>
+          </div>
+        </>
+      ) : (
+        <div className="mt-8 border-2 border-ink bg-white p-10 text-center">
+          <p className="sign-type text-2xl">{VOICE.restockingHeading}</p>
+          <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
+            {VOICE.restockingBody}
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link
+              className="btn"
+              prefetch="intent"
+              to={COLLECTIONS.shopAll}
+            >
+              BROWSE ALL PRODUCTS
+            </Link>
+            <Link className="btn btn-outline" prefetch="intent" to="/search">
+              SEARCH THE SHELVES
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -493,6 +538,38 @@ const COLLECTION_QUERY = `#graphql
           endCursor
           startCursor
         }
+      }
+    }
+  }
+` as const;
+
+// Full-catalog fallback used when a known aisle's collection isn't queryable
+// (e.g. the collection isn't published to the storefront's sales channel).
+const CATALOG_QUERY = `#graphql
+  ${PRODUCT_ITEM_FRAGMENT}
+  query CollectionCatalog(
+    $country: CountryCode
+    $language: LanguageCode
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  ) @inContext(country: $country, language: $language) {
+    products(
+      first: $first,
+      last: $last,
+      before: $startCursor,
+      after: $endCursor,
+      sortKey: BEST_SELLING
+    ) {
+      nodes {
+        ...ProductItem
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
       }
     }
   }
