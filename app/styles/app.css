@@ -2059,6 +2059,66 @@ summary:focus-visible,
   right: 0.5rem;
 }
 
+/*
+* --------------------------------------------------
+* Pagination — prominent "Load more" shelf button
+* --------------------------------------------------
+*/
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: fit-content;
+  min-width: 16rem;
+  margin: 2.5rem auto 0.5rem;
+  padding: 1.1rem 2.5rem;
+  border: 3px solid var(--ink);
+  background: var(--ink);
+  color: var(--linoleum);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 rgba(26, 26, 26, 0.25);
+  transition:
+    background 120ms ease,
+    transform 80ms ease,
+    box-shadow 80ms ease;
+}
+
+.pagination-btn:hover {
+  background: var(--signage);
+  border-color: var(--signage);
+  color: #fff;
+}
+
+.pagination-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 rgba(26, 26, 26, 0.25);
+}
+
+/* "Load previous" is the quieter, outline sibling. */
+.pagination-btn-prev {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 rgba(26, 26, 26, 0.15);
+}
+
+.pagination-btn-prev:hover {
+  background: var(--fluorescent);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination-btn {
+    transition: none;
+  }
+}
+
 /* Cart drawer recommendations (one-tap add) */
 .cart-rec {
   display: flex;

@@ -376,3 +376,23 @@ exist — works today, no Shopify admin changes, and auto-includes newly-tagged 
 
 **Note:** PDP cross-sells (Frequently Paired / From The Same Aisle) still key off
 collections that don't exist → they under-fill. Follow-up: switch them to tag-based too.
+
+---
+
+## Cycle 11 — 2026-07-27 — Lens: VISUAL POLISH (owner request)
+
+**Request:** make the "Load more" button on collection pages more distinct/noticeable.
+
+**Found:** `PaginatedResourceSection` rendered PreviousLink/NextLink as unstyled inline
+text ("Load more ↓") — easy to miss under a 24-item grid.
+
+**Did:** Styled them as prominent shelf buttons (shared component → applies to
+collections, aisles, /collections/all, blogs, search). NextLink is a big centered
+ink button ("LOAD MORE UNITS ↓", 16rem min, 3px border, offset shadow, signage-red
+hover, press animation); PreviousLink is the quieter white/outline sibling. In-voice
+loading state ("STOCKING MORE SHELVES…"). Respects reduced-motion.
+
+**Why:** Clear, unmissable primary action for browsing beyond the first page — directly
+as requested, within the locked palette.
+
+**Acceptance:** build green. Will confirm live.
