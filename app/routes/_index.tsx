@@ -2,6 +2,7 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {Hero} from '~/components/home/Hero';
+import {TrustStrip} from '~/components/home/TrustStrip';
 import {BestSellersRow} from '~/components/home/BestSellersRow';
 import {AisleMapStrip} from '~/components/home/AisleMapStrip';
 import {WeeklyCircularTeaser} from '~/components/home/WeeklyCircularTeaser';
@@ -91,6 +92,7 @@ export default function Homepage() {
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
       <Hero shelf={data.shelf} />
+      <TrustStrip />
       <BestSellersRow shelf={data.shelf} />
       <AisleMapStrip />
       <WeeklyCircularTeaser shelf={data.shelf} />
