@@ -396,3 +396,40 @@ loading state ("STOCKING MORE SHELVES…"). Respects reduced-motion.
 as requested, within the locked palette.
 
 **Acceptance:** build green. Will confirm live.
+
+---
+
+## Cycle 12 — 2026-07-28 — Lens: "MAKE IT 8-FIGURE" (owner mandate, autonomous)
+
+Broad mandate: upgrade everything, fix conversion/visual/speed bugs until it reads
+like a brand doing 8 figures. Worked in batches, all deployed + verified live.
+
+**Functional bugs fixed (were actively broken):**
+- PDP cross-sells (Frequently Paired / From The Same Aisle) keyed off the
+  nonexistent themed collections → under-filled. Switched to the product's own
+  aisle TAG (primaryAisleTag + TAG_PAIRS). PDP breadcrumb + BreadcrumbList now
+  derive the aisle from tags too. VERIFIED live: a warning-labels PDP shows
+  warning-labels siblings + correct "AISLE 5 — WARNING LABELS" breadcrumb.
+- Best Sellers / New Arrivals dumped the whole 300+ catalog. Now a curated TOP-24
+  (best-selling / newest), no load-more. VERIFIED live ("TOP 24").
+- Homepage "Best Sellers" row sorted by newest-date via a dead collection fallback;
+  now sorts the catalog by BEST_SELLING (actual top sellers).
+
+**Visual / conversion polish (within the locked look):**
+- Product cards: hover lift with ink offset shadow + slow image zoom; divider moved
+  to media container so the zoom clips cleanly. Tactile button press. Brand
+  ::selection, smooth anchor scroll w/ header offset, no tap-highlight flash.
+- NavProgress: slim signage-red top progress bar on route loads (perceived speed).
+- Trust strip under the hero: real policies (returns/free-ship/secure/delivery),
+  no fabricated stats.
+- Prominent "Load more" shelf button (earlier this session, cycle 11).
+
+**SEO/social:** collections now emit og:image (first product) + twitter card.
+
+**Honest limits (not "perfect" yet, and why):** I can't render the site on this box
+(no browser/dev server), so overall visual composition can't be eyeballed — card/
+button/motion polish is principled but unverified visually. Real product photography
+(Printify) and real reviews are owner-side. Homepage OG needs a designed 1200×630
+asset. Aisle size/color facet filters remain off (need Search API to restore).
+
+Build + typecheck green throughout; brand system untouched; nothing reverted.
