@@ -69,21 +69,10 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 async function loadShelf(
   storefront: Route.LoaderArgs['context']['storefront'],
 ): Promise<ShelfData> {
-  for (const handle of ['best-sellers', 'new-arrivals'] as const) {
-    try {
-      const {collection} = await storefront.query(SHELF_COLLECTION_QUERY, {
-        variables: {handle},
-      });
-      const nodes = collection?.products?.nodes ?? [];
-      if (nodes.length) return {source: handle, products: nodes};
-    } catch (error) {
-      // Collection may not exist (e.g. on mock.shop) — fall through.
-      console.error(error);
-    }
-  }
-
+  // Real best sellers: the themed collections don't exist, so sort the catalog
+  // by best-selling directly.
   const {products} = await storefront.query(SHELF_CATALOG_QUERY);
-  return {source: 'catalog', products: products?.nodes ?? []};
+  return {source: 'best-sellers', products: products?.nodes ?? []};
 }
 
 export default function Homepage() {
@@ -131,30 +120,11 @@ const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   }
 ` as const;
 
-const SHELF_COLLECTION_QUERY = `#graphql
-  ${RECOMMENDED_PRODUCT_FRAGMENT}
-  query ShelfCollection(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      products(first: 8, sortKey: BEST_SELLING) {
-        nodes {
-          ...RecommendedProduct
-        }
-      }
-    }
-  }
-` as const;
-
 const SHELF_CATALOG_QUERY = `#graphql
   ${RECOMMENDED_PRODUCT_FRAGMENT}
   query ShelfCatalog($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 8, sortKey: BEST_SELLING) {
       nodes {
         ...RecommendedProduct
       }

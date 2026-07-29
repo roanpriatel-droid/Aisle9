@@ -22,6 +22,7 @@ type ProductsConnection = AisleProductsQuery['products'];
 
 export const meta: Route.MetaFunction = ({data, params}) => {
   const title = data?.title ?? 'AISLE';
+  const ogImage = data?.products?.nodes?.[0]?.featuredImage?.url;
   return [
     {title: `AISLE 9 — ${title}`},
     {
@@ -30,6 +31,8 @@ export const meta: Route.MetaFunction = ({data, params}) => {
     },
     {property: 'og:title', content: `AISLE 9 — ${title}`},
     {property: 'og:type', content: 'website'},
+    ...(ogImage ? [{property: 'og:image', content: ogImage}] : []),
+    {name: 'twitter:card', content: 'summary_large_image'},
     {rel: 'canonical', href: `/collections/${params.handle}`},
   ];
 };
