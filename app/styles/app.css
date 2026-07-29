@@ -2060,6 +2060,134 @@ summary:focus-visible,
 }
 
 /*
+* ==================================================
+* VISUAL POLISH — premium depth, motion, detail
+* (within the locked institutional / offset-shadow look)
+* ==================================================
+*/
+
+/* Product cards: lift with an ink offset shadow + slow image zoom on hover. */
+.product-item {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+.product-item .product-item-media {
+  overflow: hidden;
+  border-bottom: var(--hairline);
+}
+.product-item .product-item-media img {
+  border-bottom: none;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+@media (hover: hover) {
+  .product-item:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .product-item:hover .product-item-media img {
+    transform: scale(1.05);
+  }
+}
+
+/* Tactile buttons — subtle press. */
+.btn,
+button.btn,
+.btn-outline,
+button.btn-outline {
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease,
+    transform 90ms ease;
+}
+.btn:active,
+button.btn:active,
+.btn-outline:active,
+button.btn-outline:active {
+  transform: translateY(1px);
+}
+
+/* Top navigation progress bar. */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 60;
+  pointer-events: none;
+  background: transparent;
+}
+.nav-progress-bar {
+  height: 100%;
+  background: var(--signage);
+  transform-origin: left center;
+  box-shadow: 0 0 8px rgba(204, 34, 41, 0.5);
+}
+.nav-progress-bar.is-loading {
+  animation: nav-progress-grow 1.4s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+.nav-progress-bar.is-done {
+  width: 100%;
+  animation: nav-progress-finish 0.26s ease forwards;
+}
+@keyframes nav-progress-grow {
+  0% {
+    width: 0;
+  }
+  60% {
+    width: 72%;
+  }
+  100% {
+    width: 92%;
+  }
+}
+@keyframes nav-progress-finish {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Brand text selection + tap highlight. */
+::selection {
+  background: var(--signage);
+  color: #fff;
+}
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth in-page anchor scrolling, offset for the sticky header. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 1rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .product-item,
+  .product-item .product-item-media img,
+  .btn,
+  button.btn {
+    transition: none;
+  }
+  .product-item:hover {
+    transform: none;
+  }
+  .product-item:hover .product-item-media img {
+    transform: none;
+  }
+}
+
+/*
 * --------------------------------------------------
 * Pagination — prominent "Load more" shelf button
 * --------------------------------------------------

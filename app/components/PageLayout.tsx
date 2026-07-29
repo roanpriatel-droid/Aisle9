@@ -15,6 +15,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {AnnouncementBar} from '~/components/brand/AnnouncementBar';
+import {NavProgress} from '~/components/NavProgress';
 import {VOICE} from '~/lib/brand';
 
 interface PageLayoutProps {
@@ -36,6 +37,7 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
+      <NavProgress />
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside />
