@@ -167,6 +167,60 @@ export const COLLECTION_PAIRS: Record<string, string> = {
 export const PAIR_FALLBACK_HANDLE = 'best-sellers';
 
 /**
+ * Themed aisle tags (the ones that represent a shopping theme). Used to detect a
+ * product's primary aisle from its tags. Excludes merchandising tags like
+ * `all-products` and the department tags that aren't themes.
+ */
+export const THEMED_AISLE_TAGS = [
+  'i-love-collection',
+  'down-bad',
+  'the-confessions',
+  'freak-behavior',
+  'warning-labels',
+  'minor-crimes',
+  'liver-damage',
+  'typod',
+  'gifts-for-idiots',
+  'matching-sets',
+] as const;
+
+/** Tag → the tag we cross-sell from ("frequently paired"). Deadpan logic. */
+export const TAG_PAIRS: Record<string, string> = {
+  'i-love-collection': 'down-bad',
+  'down-bad': 'the-confessions',
+  'the-confessions': 'down-bad',
+  'freak-behavior': 'warning-labels',
+  'warning-labels': 'freak-behavior',
+  'minor-crimes': 'liver-damage',
+  'liver-damage': 'minor-crimes',
+  typod: 'warning-labels',
+  'gifts-for-idiots': 'matching-sets',
+  'matching-sets': 'i-love-collection',
+};
+
+/** The tag → its aisle handle (for building links/labels from a product tag). */
+export const TAG_TO_HANDLE: Record<string, string> = {
+  'i-love-collection': 'i-collection',
+  'down-bad': 'down-bad',
+  'the-confessions': 'the-confessions',
+  'freak-behavior': 'freak-behavior',
+  'warning-labels': 'warning-labels',
+  'minor-crimes': 'minor-crimes',
+  'liver-damage': 'liver-damage',
+  typod: 'typod',
+  'gifts-for-idiots': 'gifts-for-idiots',
+  'matching-sets': 'matching-sets',
+};
+
+/** Pick a product's primary themed aisle tag from its tag list (or null). */
+export function primaryAisleTag(tags: readonly string[]): string | null {
+  for (const t of THEMED_AISLE_TAGS) {
+    if (tags.includes(t)) return t;
+  }
+  return null;
+}
+
+/**
  * Aisle handle → the product TAG that populates it (verified against the live
  * catalog: products are tagged, but the themed collections don't exist as
  * Shopify collections). So aisle pages filter products by tag rather than by a

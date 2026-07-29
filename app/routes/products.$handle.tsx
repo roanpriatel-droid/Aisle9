@@ -39,8 +39,9 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {describeProduct} from '~/lib/product-copy';
 import {
   COLLECTIONS,
-  COLLECTION_PAIRS,
-  PAIR_FALLBACK_HANDLE,
+  TAG_PAIRS,
+  TAG_TO_HANDLE,
+  primaryAisleTag,
   LADDER,
   PRODUCTION,
   SIZE_CHART,
@@ -125,35 +126,27 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
 /** FREQUENTLY PAIRED (paired collection) + FROM THE SAME AISLE (own collection). */
 function loadDeferredData({context}: Route.LoaderArgs, product: ProductFragment) {
-  const firstCollection = product.collections?.nodes?.[0]?.handle;
-  const pairHandle =
-    (firstCollection && COLLECTION_PAIRS[firstCollection]) || PAIR_FALLBACK_HANDLE;
+  // Products are organized by TAG (the themed collections don't exist), so both
+  // cross-sell rails key off the product's own aisle tag.
+  const tags = (product.tags ?? []) as string[];
+  const myTag = primaryAisleTag(tags);
+  const pairedTag = myTag ? TAG_PAIRS[myTag] : null;
 
-  const paired = context.storefront
-    .query(COLLECTION_SIBLINGS_QUERY, {variables: {handle: pairHandle}})
-    .then((res) => ({
-      handle: pairHandle,
-      title: res.collection?.title ?? '',
-      products: (res.collection?.products?.nodes ?? [])
-        .filter((p) => p.handle !== product.handle)
-        .slice(0, 4),
-    }))
-    .catch(() => ({handle: pairHandle, title: '', products: []}));
+  const byTag = (tag: string | null) =>
+    tag
+      ? context.storefront
+          .query(PRODUCTS_BY_TAG_QUERY, {variables: {query: `tag:'${tag}'`}})
+          .then((res) => ({
+            handle: TAG_TO_HANDLE[tag] ?? '',
+            title: '',
+            products: (res.products?.nodes ?? [])
+              .filter((p) => p.handle !== product.handle)
+              .slice(0, 4),
+          }))
+          .catch(() => ({handle: '', title: '', products: []}))
+      : Promise.resolve({handle: '', title: '', products: []});
 
-  const siblings = firstCollection
-    ? context.storefront
-        .query(COLLECTION_SIBLINGS_QUERY, {variables: {handle: firstCollection}})
-        .then((res) => ({
-          handle: firstCollection,
-          title: res.collection?.title ?? '',
-          products: (res.collection?.products?.nodes ?? [])
-            .filter((p) => p.handle !== product.handle)
-            .slice(0, 4),
-        }))
-        .catch(() => ({handle: firstCollection, title: '', products: []}))
-    : Promise.resolve({handle: '', title: '', products: []});
-
-  return {paired, siblings};
+  return {paired: byTag(pairedTag), siblings: byTag(myTag)};
 }
 
 export default function Product() {
@@ -174,13 +167,13 @@ export default function Product() {
   const copy = useMemo(() => describeProduct(title), [title]);
   const itemNo = itemNumber(product.id);
 
-  const firstCollection = product.collections?.nodes?.[0];
-  const aisleLabel = firstCollection
-    ? aisleLabelForHandle(firstCollection.handle, firstCollection.title)
-    : 'THE SHELF';
-  const aisleTo = firstCollection
-    ? `/collections/${firstCollection.handle}`
-    : COLLECTIONS.shopAll;
+  // The product's aisle comes from its tags (themed collections don't exist).
+  const aisleHandle = useMemo(() => {
+    const tag = primaryAisleTag((product.tags ?? []) as string[]);
+    return tag ? TAG_TO_HANDLE[tag] ?? null : null;
+  }, [product.tags]);
+  const aisleLabel = aisleHandle ? aisleLabelForHandle(aisleHandle) : 'THE SHELF';
+  const aisleTo = aisleHandle ? `/collections/${aisleHandle}` : COLLECTIONS.shopAll;
 
   const available = selectedVariant?.availableForSale ?? false;
   const numericProductId = product.id.split('/').pop() ?? product.id;
@@ -350,13 +343,8 @@ export default function Product() {
       <BreadcrumbJsonLd
         items={[
           {name: 'AISLE 9', path: '/'},
-          ...(firstCollection
-            ? [
-                {
-                  name: firstCollection.title,
-                  path: `/collections/${firstCollection.handle}`,
-                },
-              ]
+          ...(aisleHandle
+            ? [{name: aisleLabel, path: `/collections/${aisleHandle}`}]
             : []),
           {name: product.title, path: `/products/${product.handle}`},
         ]}
@@ -1021,11 +1009,9 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
+    tags
     images(first: 12) {
       nodes { id url altText width height }
-    }
-    collections(first: 3) {
-      nodes { handle title }
     }
     priceRange {
       minVariantPrice { amount currencyCode }
@@ -1067,7 +1053,7 @@ const PRODUCT_QUERY = `#graphql
   ${PRODUCT_FRAGMENT}
 ` as const;
 
-const COLLECTION_SIBLINGS_QUERY = `#graphql
+const PRODUCTS_BY_TAG_QUERY = `#graphql
   fragment PairedProduct on Product {
     id
     title
@@ -1080,18 +1066,13 @@ const COLLECTION_SIBLINGS_QUERY = `#graphql
       price { amount currencyCode }
     }
   }
-  query PairedCollection(
-    $handle: String!
+  query ProductsByTag(
+    $query: String
     $country: CountryCode
     $language: LanguageCode
   ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      title
-      handle
-      products(first: 6, sortKey: BEST_SELLING) {
-        nodes { ...PairedProduct }
-      }
+    products(first: 8, query: $query, sortKey: BEST_SELLING) {
+      nodes { ...PairedProduct }
     }
   }
 ` as const;

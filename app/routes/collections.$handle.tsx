@@ -69,6 +69,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     }
     return {
       isAisle: false,
+      curated: false,
       handle,
       title: collection.title,
       label: collection.title,
@@ -85,6 +86,31 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     url.searchParams.get('sort') ??
     (handle === 'new-arrivals' ? 'newest' : 'featured');
   const sort = resolveSort(sortParam);
+
+  // Best Sellers / New Arrivals have no tag — present them as a curated top set
+  // (best-selling / newest) rather than the entire catalog with a load-more.
+  const isCurated = handle === 'best-sellers' || handle === 'new-arrivals';
+  if (isCurated) {
+    const {products} = await storefront.query(AISLE_PRODUCTS_QUERY, {
+      variables: {
+        query: null,
+        sortKey: sort.sortKey as ProductSortKeys,
+        reverse: sort.reverse,
+        first: 24,
+      },
+    });
+    return {
+      isAisle: true,
+      curated: true,
+      handle,
+      title: aisle.title,
+      label: aisleLabelForHandle(handle, aisle.title),
+      description: aisle.blurb,
+      products,
+      count: products.nodes.length,
+      currentSort: sort.value,
+    };
+  }
 
   const tag = AISLE_TAG[handle] ?? null;
   const query = tag ? `tag:'${tag}'` : null;
@@ -103,6 +129,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   return {
     isAisle: true,
+    curated: false,
     handle,
     title: aisle.title,
     label: aisleLabelForHandle(handle, aisle.title),
@@ -116,9 +143,13 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 export default function Collection() {
   const data = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const {label, title, description, products, count, isAisle, handle} = data;
+  const {label, title, description, products, count, isAisle, handle, curated} =
+    data;
 
   const countLabel = count >= 250 ? '250+' : String(count);
+  const countText = curated
+    ? `TOP ${count}`
+    : `${countLabel} ${VOICE.inStockSuffix}`;
   const isEmpty = products.nodes.length === 0;
 
   function sortHref(value: string) {
@@ -152,7 +183,7 @@ export default function Collection() {
         </div>
         {!isEmpty && (
           <span className="label-type border-2 border-ink bg-fluorescent px-3 py-2 text-ink">
-            {countLabel} {VOICE.inStockSuffix}
+            {countText}
           </span>
         )}
       </div>
@@ -165,8 +196,8 @@ export default function Collection() {
         <DealStrip />
       </div>
 
-      {/* Sort controls (tag-based aisles) */}
-      {isAisle && !isEmpty && (
+      {/* Sort controls (tag-based aisles; not the curated top sets) */}
+      {isAisle && !curated && !isEmpty && (
         <div className="mb-8 flex flex-wrap items-center gap-2 border-2 border-ink bg-white p-4">
           <span className="label-type text-ink/50 sm:min-w-24">SORT</span>
           {SORT_OPTIONS.map((opt) => {
@@ -204,6 +235,17 @@ export default function Collection() {
               SEARCH THE SHELVES
             </Link>
           </div>
+        </div>
+      ) : curated ? (
+        <div className="products-grid">
+          {products.nodes.map((product, index) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              loading={index < 8 ? 'eager' : 'lazy'}
+              quickAdd
+            />
+          ))}
         </div>
       ) : (
         <PaginatedResourceSection<ProductItemFragment>
