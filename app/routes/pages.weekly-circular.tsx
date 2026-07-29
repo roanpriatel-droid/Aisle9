@@ -3,12 +3,7 @@ import {Image, Money} from '@shopify/hydrogen';
 import type {CurrencyCode} from '@shopify/hydrogen/storefront-api-types';
 import type {Route} from './+types/pages.weekly-circular';
 import type {FlyerProductFragment} from 'storefrontapi.generated';
-import {
-  ALL_AISLES,
-  WEEKLY_CIRCULAR,
-  LADDER,
-  aisleLabelForHandle,
-} from '~/lib/brand';
+import {WEEKLY_CIRCULAR, LADDER, aisleLabelForHandle} from '~/lib/brand';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -25,27 +20,34 @@ export const meta: Route.MetaFunction = () => {
 
 type Section = {handle: string; title: string; products: FlyerProductFragment[]};
 
-/** Order index for a collection handle by its aisle number (unknowns last). */
-function aisleOrder(handle: string) {
-  const i = ALL_AISLES.findIndex((a) => a.handle === handle);
-  return i === -1 ? 999 : i;
-}
+/** The flyer's departments, in order, with the product tag that fills each. */
+const CIRCULAR_AISLES = [
+  {alias: 'a1', handle: 'i-collection', title: 'I ❤'},
+  {alias: 'a2', handle: 'down-bad', title: 'DOWN BAD'},
+  {alias: 'a3', handle: 'the-confessions', title: 'THE CONFESSIONS'},
+  {alias: 'a4', handle: 'freak-behavior', title: 'FREAK BEHAVIOR'},
+  {alias: 'a5', handle: 'warning-labels', title: 'WARNING LABELS'},
+  {alias: 'a6', handle: 'minor-crimes', title: 'MINOR CRIMES'},
+  {alias: 'a7', handle: 'liver-damage', title: 'LIVER DAMAGE'},
+  {alias: 'a8', handle: 'gifts-for-idiots', title: 'GIFTS FOR IDIOTS'},
+] as const;
 
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
-  const {collections} = await storefront.query(CIRCULAR_QUERY, {
-    variables: {first: 14, productsFirst: 4},
-  });
+  // Build the flyer from TAGS (the themed collections don't exist), one section
+  // per aisle, in a single aliased query.
+  const data = (await storefront.query(CIRCULAR_QUERY)) as unknown as Record<
+    string,
+    {nodes: FlyerProductFragment[]} | null | undefined
+  >;
 
-  let sections: Section[] = (collections?.nodes ?? [])
-    .map((c) => ({
-      handle: c.handle,
-      title: c.title,
-      products: c.products?.nodes ?? [],
-    }))
+  let sections: Section[] = CIRCULAR_AISLES.map((a) => ({
+    handle: a.handle,
+    title: a.title,
+    products: data?.[a.alias]?.nodes ?? [],
+  }))
     .filter((s) => s.products.length > 0)
-    .sort((a, b) => aisleOrder(a.handle) - aisleOrder(b.handle))
     .slice(0, 6);
 
   // Fallback so the flyer is never blank: one "THIS WEEK" section from catalog.
@@ -238,24 +240,16 @@ const FLYER_PRODUCT_FRAGMENT = `#graphql
 
 const CIRCULAR_QUERY = `#graphql
   ${FLYER_PRODUCT_FRAGMENT}
-  query WeeklyCircular(
-    $country: CountryCode
-    $language: LanguageCode
-    $first: Int
-    $productsFirst: Int
-  ) @inContext(country: $country, language: $language) {
-    collections(first: $first) {
-      nodes {
-        id
-        handle
-        title
-        products(first: $productsFirst, sortKey: BEST_SELLING) {
-          nodes {
-            ...FlyerProduct
-          }
-        }
-      }
-    }
+  query WeeklyCircular($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    a1: products(first: 4, query: "tag:'i-love-collection'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a2: products(first: 4, query: "tag:'down-bad'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a3: products(first: 4, query: "tag:'the-confessions'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a4: products(first: 4, query: "tag:'freak-behavior'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a5: products(first: 4, query: "tag:'warning-labels'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a6: products(first: 4, query: "tag:'minor-crimes'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a7: products(first: 4, query: "tag:'liver-damage'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a8: products(first: 4, query: "tag:'gifts-for-idiots'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
   }
 ` as const;
 
