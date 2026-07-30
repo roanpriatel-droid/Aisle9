@@ -76,26 +76,35 @@ export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
   );
 }
 
-/** The wall of shirts revealed behind the doors. */
+/** Number of small square tiles in the wall (cycled from available products). */
+const WALL_TILES = 54;
+
+/**
+ * The wall of shirts revealed behind the doors — many small SQUARE tiles so the
+ * (square) product images stay crisp and undistorted, and the grid fills densely
+ * regardless of how many products came back (tiles cycle through them).
+ */
 function ProductWall({products}: {products: ShelfData['products']}) {
-  const items = products.slice(0, 9).filter((p) => p.featuredImage);
-  if (items.length === 0) return <WallFallback />;
+  const src = products.filter((p) => p.featuredImage);
+  if (src.length === 0) return <WallFallback />;
+  const tiles = Array.from({length: WALL_TILES}, (_, i) => src[i % src.length]);
   return (
     <div className="entrance-wall">
-      {items.map((p, i) => (
+      {tiles.map((p, i) => (
         <Link
-          key={p.id}
+          key={i}
           to={`/products/${p.handle}`}
           prefetch="intent"
           className="entrance-wall-cell"
           aria-label={p.title}
+          tabIndex={-1}
         >
           <Image
-            alt={p.featuredImage!.altText || p.title}
+            alt=""
             aspectRatio="1/1"
             data={p.featuredImage!}
-            loading={i < 6 ? 'eager' : 'lazy'}
-            sizes="(min-width: 64em) 380px, 45vw"
+            loading={i < 12 ? 'eager' : 'lazy'}
+            sizes="130px"
           />
         </Link>
       ))}
@@ -107,7 +116,7 @@ function ProductWall({products}: {products: ShelfData['products']}) {
 function WallFallback() {
   return (
     <div className="entrance-wall entrance-wall-fallback" aria-hidden>
-      {Array.from({length: 9}).map((_, i) => (
+      {Array.from({length: WALL_TILES}).map((_, i) => (
         <span key={i} className="entrance-wall-cell" />
       ))}
     </div>

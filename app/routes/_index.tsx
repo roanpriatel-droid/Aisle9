@@ -124,7 +124,7 @@ const SHELF_CATALOG_QUERY = `#graphql
   ${RECOMMENDED_PRODUCT_FRAGMENT}
   query ShelfCatalog($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: BEST_SELLING) {
+    products(first: 24, sortKey: BEST_SELLING) {
       nodes {
         ...RecommendedProduct
       }
