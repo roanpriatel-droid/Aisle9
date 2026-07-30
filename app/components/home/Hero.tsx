@@ -76,8 +76,11 @@ export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
   );
 }
 
-/** Number of small square tiles in the wall (cycled from available products). */
-const WALL_TILES = 54;
+/**
+ * Number of tiles in the wall. Divisible by every column count (6 / 9 / 12), so
+ * every breakpoint gets COMPLETE, equal rows (6, 4, or 3 rows respectively).
+ */
+const WALL_TILES = 36;
 
 /**
  * The wall of shirts revealed behind the doors — many small SQUARE tiles so the
@@ -104,7 +107,7 @@ function ProductWall({products}: {products: ShelfData['products']}) {
             aspectRatio="1/1"
             data={p.featuredImage!}
             loading={i < 12 ? 'eager' : 'lazy'}
-            sizes="130px"
+            sizes="(min-width: 64em) 9vw, (min-width: 48em) 12vw, 17vw"
           />
         </Link>
       ))}
