@@ -1,36 +1,69 @@
 import {Suspense} from 'react';
 import {Await, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
-import {AisleMarker} from '~/components/brand/AisleMarker';
 import {COLLECTIONS} from '~/lib/brand';
 import type {ShelfData} from '~/lib/shelf';
 
 /**
- * Hero — the storefront gateway. An overhead fluorescent tube over a
- * linoleum-speckled stage: the giant hanging aisle sign, the value line at
- * display scale, two CTAs, and a real "endcap" product that shows on every
- * breakpoint (not hidden on mobile). Opening-week framing only — no invented
- * social proof.
+ * Hero — "THE ENTRANCE". The homepage first-screen is the store's automatic
+ * doors: a lit marquee sign, then two frosted doors that slide apart on load to
+ * reveal a wall of real best-selling shirts, over a bold copy band. Deadpan,
+ * institutional, in-palette — you're literally walking into Aisle 9.
  */
 export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
   return (
-    <section className="hero-stage linoleum-speckle border-b-2 border-ink">
-      <div className="fluoro-bar" />
-      <div className="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:pt-16">
-        {/* Marquee sign + value line */}
-        <div className="flex flex-col items-center text-center">
-          <AisleMarker variant="hero" />
-          <h1 className="headline-xl mt-10 text-ink">NOTHING YOU NEED.</h1>
-          <p className="mt-5 max-w-xl text-base text-ink/70 sm:text-lg">
+    <section className="hero-entrance border-b-2 border-ink">
+      {/* Lit storefront marquee */}
+      <div className="entrance-sign" aria-hidden>
+        <span className="entrance-sign-dot" />
+        <div className="entrance-sign-track">
+          <span className="entrance-sign-text">
+            AISLE 9 · NOW OPEN · NOTHING YOU NEED · EVERY SHIRT $36 · NEW STOCK
+            WEEKLY · WELCOME, ALLEGEDLY ·&nbsp;
+          </span>
+          <span className="entrance-sign-text">
+            AISLE 9 · NOW OPEN · NOTHING YOU NEED · EVERY SHIRT $36 · NEW STOCK
+            WEEKLY · WELCOME, ALLEGEDLY ·&nbsp;
+          </span>
+        </div>
+      </div>
+
+      {/* Door frame — product wall behind, doors slide apart to reveal it */}
+      <div className="entrance-frame">
+        <span className="entrance-fluoro" aria-hidden />
+        <Suspense fallback={<WallFallback />}>
+          <Await resolve={shelf} errorElement={<WallFallback />}>
+            {(data) => <ProductWall products={data?.products ?? []} />}
+          </Await>
+        </Suspense>
+
+        <div className="entrance-door entrance-door-left" aria-hidden>
+          <DoorFace />
+        </div>
+        <div className="entrance-door entrance-door-right" aria-hidden>
+          <DoorFace />
+        </div>
+      </div>
+
+      {/* Copy band — the welcome sign under the doorway */}
+      <div className="entrance-copy">
+        <div className="mx-auto max-w-4xl px-4 py-10 text-center sm:py-12">
+          <span className="entrance-open-chip">● NOW OPEN · 24 HRS</span>
+          <h1 className="headline-xl mt-5 text-linoleum">NOTHING YOU NEED.</h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-linoleum/70 sm:text-lg">
             Deadpan graphic tees, printed on demand and restocked out of
             obligation. Every shirt is $36.
           </p>
-          <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>
-              SHOP BEST SELLERS
+          <div className="mt-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:justify-center">
+            <Link
+              className="btn btn-invert"
+              prefetch="intent"
+              to={COLLECTIONS.shopAll}
+            >
+              ENTER THE STORE
             </Link>
             <Link
-              className="btn btn-outline"
+              className="btn btn-ghost-light"
               prefetch="intent"
               to="/pages/weekly-circular"
             >
@@ -38,88 +71,58 @@ export function Hero({shelf}: {shelf: Promise<ShelfData | null>}) {
             </Link>
           </div>
         </div>
-
-        {/* Endcap — one real product, staged, visible on all breakpoints */}
-        <div className="mt-14">
-          <div className="mb-2 flex items-end justify-between">
-            <span className="label-type text-ink/50">ENDCAP DISPLAY</span>
-            <Link
-              className="label-type text-ink underline underline-offset-4 hover:text-signage"
-              prefetch="intent"
-              to={COLLECTIONS.shopAll}
-            >
-              WALK THE AISLE →
-            </Link>
-          </div>
-          <Suspense fallback={<EndcapFrame />}>
-            <Await resolve={shelf} errorElement={<EndcapFrame />}>
-              {(data) => {
-                const product = data?.products?.[0];
-                if (!product?.featuredImage) return <EndcapFrame />;
-                return (
-                  <Link
-                    className="group grid items-stretch border-2 border-ink bg-white no-underline md:grid-cols-2"
-                    prefetch="intent"
-                    to={`/products/${product.handle}`}
-                  >
-                    <div className="shelf-rail border-b-2 border-ink md:border-b-0 md:border-r-2">
-                      <Image
-                        alt={product.featuredImage.altText || product.title}
-                        aspectRatio="1/1"
-                        data={product.featuredImage}
-                        loading="eager"
-                        sizes="(min-width: 48em) 560px, 100vw"
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center gap-4 p-6 sm:p-10">
-                      <span className="label-type bg-signage px-2 py-1 text-white w-fit">
-                        JUST SHELVED
-                      </span>
-                      <h2 className="sign-type line-clamp-3 text-3xl group-hover:text-signage sm:text-4xl">
-                        {product.title}
-                      </h2>
-                      <span className="flex items-baseline gap-2 text-2xl font-bold">
-                        {formatPrice(product.priceRange.minVariantPrice)}
-                        <span className="label-type text-ink/40">EACH</span>
-                      </span>
-                      <span className="label-type text-ink/50">
-                        PICK A SIZE — THE BULK LADDER DOES THE REST →
-                      </span>
-                    </div>
-                  </Link>
-                );
-              }}
-            </Await>
-          </Suspense>
-        </div>
       </div>
     </section>
   );
 }
 
-function formatPrice(m: {amount: string; currencyCode: string}) {
-  try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: m.currencyCode,
-    }).format(Number(m.amount));
-  } catch {
-    return `${m.amount} ${m.currencyCode}`;
-  }
+/** The wall of shirts revealed behind the doors. */
+function ProductWall({products}: {products: ShelfData['products']}) {
+  const items = products.slice(0, 9).filter((p) => p.featuredImage);
+  if (items.length === 0) return <WallFallback />;
+  return (
+    <div className="entrance-wall">
+      {items.map((p, i) => (
+        <Link
+          key={p.id}
+          to={`/products/${p.handle}`}
+          prefetch="intent"
+          className="entrance-wall-cell"
+          aria-label={p.title}
+        >
+          <Image
+            alt={p.featuredImage!.altText || p.title}
+            aspectRatio="1/1"
+            data={p.featuredImage!}
+            loading={i < 6 ? 'eager' : 'lazy'}
+            sizes="(min-width: 64em) 380px, 45vw"
+          />
+        </Link>
+      ))}
+    </div>
+  );
 }
 
-/**
- * Endcap placeholder while stock streams in (or if the query fails). Mirrors the
- * loaded endcap's exact box model — a 2-col grid with a square image cell — so
- * there's no layout shift (CLS) when the real product resolves.
- */
-function EndcapFrame() {
+/** Frosted-cell placeholder wall while stock streams in. */
+function WallFallback() {
   return (
-    <div className="grid items-stretch border-2 border-ink bg-white md:grid-cols-2">
-      <div className="flex aspect-square items-center justify-center border-b-2 border-ink bg-fluorescent md:border-b-0 md:border-r-2">
-        <span className="label-type text-ink/40">RESTOCKING THE ENDCAP…</span>
-      </div>
-      <div className="min-h-[11rem] p-6 sm:p-10 md:min-h-0" aria-hidden />
+    <div className="entrance-wall entrance-wall-fallback" aria-hidden>
+      {Array.from({length: 9}).map((_, i) => (
+        <span key={i} className="entrance-wall-cell" />
+      ))}
     </div>
+  );
+}
+
+/** One automatic-door face: frosted panel, decals, handle rail, hazard stripe. */
+function DoorFace() {
+  return (
+    <>
+      <span className="door-decal-top">AUTOMATIC</span>
+      <span className="door-open">OPEN</span>
+      <span className="door-decal-bottom">DO NOT FORCE</span>
+      <span className="door-handle" aria-hidden />
+      <span className="door-hazard" aria-hidden />
+    </>
   );
 }
