@@ -134,7 +134,9 @@ function ProductOptionSwatch({
         backgroundColor: color || 'transparent',
       }}
     >
-      {!!image && <img src={image} alt={name} />}
+      {!!image && (
+        <img src={image} alt={name} width={44} height={44} loading="lazy" />
+      )}
     </div>
   );
 }

@@ -37,6 +37,9 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
+      <a href="#main-content" className="skip-to-content">
+        SKIP TO PRODUCTS
+      </a>
       <NavProgress />
       <CartAside cart={cart} />
       <SearchAside />
@@ -50,7 +53,9 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+      <main id="main-content" tabIndex={-1}>
+        {children}
+      </main>
       <Footer
         footer={footer}
         header={header}

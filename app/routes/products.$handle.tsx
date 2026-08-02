@@ -443,7 +443,13 @@ function BuyControls({
                   aria-hidden
                 >
                   {v.swatch?.image?.previewImage?.url && (
-                    <img src={v.swatch.image.previewImage.url} alt="" />
+                    <img
+                      src={v.swatch.image.previewImage.url}
+                      alt=""
+                      width={28}
+                      height={28}
+                      loading="lazy"
+                    />
                   )}
                 </span>
                 <span className="swatch-label">{v.name.toUpperCase()}</span>
