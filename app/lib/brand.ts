@@ -47,7 +47,7 @@ export const AISLES = [
   {
     n: 1,
     title: 'I ❤',
-    handle: 'i-collection', // ⚠️ emoji stripped by Shopify; could be i-heart-collection / i-love-collection
+    handle: 'i-love-collection', // ✔ verified against the live store 2026-08-01 (was 'i-collection', which 404s)
     blurb: 'Devotion, printed plainly. You said it, we set it in Arial.',
   },
   {
@@ -89,7 +89,7 @@ export const AISLES = [
   {
     n: 8,
     title: 'TYPO’D',
-    handle: 'typod', // ⚠️ apostrophe dropped by Shopify; could be typo-d
+    handle: 'typod', // ✔ verified against the live store 2026-08-01
     blurb: 'Errors we kept on purpose. The mistake is the design. No refunds on irony.',
   },
   {
@@ -487,23 +487,99 @@ export const PAYMENT_METHODS = [
  * it's signage, sentence case in body prose. Never winks.
  * ============================================================ */
 
-/** STORE INFORMATION — the About page as a corporate-policy document. */
+/**
+ * STORE INFORMATION — the About page as a controlled corporate document.
+ *
+ * Structured like a real internal policy doc: masthead with document control
+ * fields, numbered sections, a live store directory, and a revision history.
+ * Section order here IS the order on the page and IS the section index —
+ * adding an entry to `sections` and rendering it is the only coupling.
+ */
 export const STORE_INFO = {
   eyebrow: 'CORPORATE · DOCUMENT 09',
   heading: 'STORE INFORMATION',
+  subheading:
+    'The complete public record of AISLE 9: what we sell, where it is, who is responsible, and how many of it there are. Figures on this page are read from the sales floor and are current as of the moment you loaded it.',
   effective: 'EFFECTIVE: THE MOMENT YOU ARRIVED',
+
+  /** Document-control strip. Reads as bureaucracy, functions as a masthead. */
+  control: [
+    {k: 'DOCUMENT', v: '09'},
+    {k: 'REVISION', v: '4'},
+    {k: 'CLASSIFICATION', v: 'PUBLIC'},
+    {k: 'PAGE', v: '1 OF 1'},
+  ],
+
+  /** Section index — anchors are generated from `id`. */
+  sections: [
+    {id: 'mission', n: 1, title: 'MISSION STATEMENT'},
+    {id: 'values', n: 2, title: 'CORPORATE VALUES'},
+    {id: 'directory', n: 3, title: 'STORE DIRECTORY'},
+    {id: 'hours', n: 4, title: 'HOURS OF OPERATION'},
+    {id: 'premises', n: 5, title: 'THE PREMISES'},
+    {id: 'org', n: 6, title: 'ORGANIZATIONAL CHART'},
+    {id: 'facts', n: 7, title: 'STORE FACTS'},
+    {id: 'revisions', n: 8, title: 'REVISION HISTORY'},
+  ],
+  indexTitle: 'CONTENTS',
+
   mission: {
     title: 'MISSION STATEMENT',
     body: 'AISLE 9 exists to provide shoppers with garments that meet or exceed the expectation that they will be garments. We are committed to leveraging cotton to deliver value-adjacent experiences across the apparel vertical, end to end, at scale, in sizes S through 3XL. Our mission is ongoing, unfalsifiable, and subject to change without notice.',
+    stamp: 'APPROVED',
+    stampNote: 'BY MANAGEMENT',
   },
+
   values: [
     {title: 'INTEGRITY', body: 'The shirt will be the shirt shown. This is the entire promise.'},
     {title: 'SYNERGY', body: 'Two shirts cost less per shirt than one shirt costs per shirt. This is mathematics, which we call synergy.'},
     {title: 'TRANSPARENCY', body: 'Every shirt is $36. We do not know why. We have stopped asking.'},
     {title: 'SUSTAINABILITY', body: 'Nothing is printed until you order it, so we maintain a warehouse of zero regrets and one printer.'},
   ],
+
+  /** §3 — the live directory. Counts come from the storefront at request time. */
+  directoryTitle: 'STORE DIRECTORY',
+  directoryNote:
+    'All departments, numbered as posted. Counts are live and will disagree with this sentence eventually.',
+  directoryCols: {n: 'NO.', dept: 'DEPARTMENT', stock: 'ON SHELF', go: ''},
+  directoryGo: 'VISIT',
+  directoryEmpty: 'COUNT UNAVAILABLE',
+  directoryFooter:
+    'A department with no count is not closed. The count is simply not available, which is different, and worse.',
+
+  /** §4 — hours. The joke is that a website has none. */
+  hoursTitle: 'HOURS OF OPERATION',
+  hours: [
+    {d: 'MONDAY', v: 'OPEN'},
+    {d: 'TUESDAY', v: 'OPEN'},
+    {d: 'WEDNESDAY', v: 'OPEN'},
+    {d: 'THURSDAY', v: 'OPEN'},
+    {d: 'FRIDAY', v: 'OPEN'},
+    {d: 'SATURDAY', v: 'OPEN'},
+    {d: 'SUNDAY', v: 'OPEN'},
+    {d: 'STATUTORY HOLIDAYS', v: 'ALSO OPEN'},
+  ],
+  hoursNote:
+    'AISLE 9 is a website. It does not close, dim its lights, or ask you to bring your final purchases to the front. The table above is a formality and has been included because documents of this kind contain one.',
+
+  /** §5 — premises. Deadpan facilities inventory. */
+  premisesTitle: 'THE PREMISES',
+  premises: [
+    {k: 'FLOOR AREA', v: 'UNMEASURED'},
+    {k: 'AISLES', v: '13'},
+    {k: 'EXITS', v: '1 (THE BACK BUTTON)'},
+    {k: 'LIGHTING', v: 'FLUORESCENT'},
+    {k: 'FLOORING', v: 'LINOLEUM, ASSUMED'},
+    {k: 'MUSIC', v: 'NONE. YOU ARE WELCOME.'},
+    {k: 'CARTS', v: 'ONE PER VISITOR'},
+    {k: 'LOST & FOUND', v: 'AISLE 9'},
+    {k: 'PARKING', v: 'AMPLE'},
+    {k: 'GREETER', v: 'POSITION VACANT'},
+  ],
+
   orgTitle: 'ORGANIZATIONAL CHART',
-  orgNote: 'AISLE 9 maintains a flat management structure.',
+  orgNote:
+    'AISLE 9 maintains a flat management structure. The chart below is presented vertically because charts are.',
   org: [
     {role: 'FOUNDER & CEO', name: 'MANAGEMENT'},
     {role: 'HEAD OF OPERATIONS', name: 'MANAGEMENT'},
@@ -511,17 +587,55 @@ export const STORE_INFO = {
     {role: 'CUSTODIAL (AISLE 9)', name: 'MANAGEMENT'},
     {role: 'INTERN', name: 'ALSO MANAGEMENT'},
   ],
-  facts: [
-    {k: 'ESTABLISHED', v: 'RECENTLY'},
-    {k: 'HEADQUARTERS', v: 'AISLE 9'},
-    {k: 'EMPLOYEES', v: '1 (SEE ORG CHART)'},
-    {k: 'ANNUAL FOOT TRAFFIC', v: 'YOU, JUST NOW'},
-    {k: 'RETURN POLICY', v: '30 DAYS'},
-    {k: 'DRESS CODE', v: 'OUR SHIRTS, IDEALLY'},
+  orgFooter: 'ALL POSITIONS REPORT TO MANAGEMENT. MANAGEMENT REPORTS TO NO ONE.',
+
+  factsTitle: 'STORE FACTS',
+  factsNote: 'Figures marked LIVE are read from the sales floor on page load.',
+
+  /** §8 — revision history. Document authenticity, played straight. */
+  revisionsTitle: 'REVISION HISTORY',
+  revisions: [
+    {rev: '1', change: 'Document created. Filed. Not read.'},
+    {rev: '2', change: 'Corporate values added. The values themselves were not changed, having not previously existed.'},
+    {rev: '3', change: 'Organizational chart amended to reflect the promotion of MANAGEMENT to MANAGEMENT.'},
+    {rev: '4', change: 'Store directory connected to the sales floor. The numbers now update without anyone being asked.'},
   ],
+  revisionCols: {rev: 'REV.', change: 'NATURE OF AMENDMENT'},
+
+  /** Acknowledgement block — the flourish that sells the whole conceit. */
+  ackTitle: 'ACKNOWLEDGEMENT',
+  ackBody: 'I have read the above document in full and understand that doing so has changed nothing.',
+  ackSignature: 'SIGNATURE OF SHOPPER',
+  ackDate: 'DATE',
+  ackNote:
+    'This signature is not collected, transmitted, or stored. The line is decorative. So, on reflection, is the document.',
+
   statement:
     'AISLE 9 is a store that does not exist selling shirts that do. That distinction is the whole business model. Everything else on this page is filler, formatted to look official, which is itself a kind of honesty.',
+  exitCta: 'PROCEED TO THE SALES FLOOR',
+  printCta: 'PRINT THIS DOCUMENT',
 } as const;
+
+/**
+ * STORE FACTS, merged with whatever the storefront reported. Live figures fall
+ * back to a deadpan string rather than a zero, so a failed query never renders
+ * "0 ITEMS" on a store with 375 of them.
+ */
+export function storeFacts(live: {items?: number; departments?: number}) {
+  const n = (v: number | undefined) =>
+    typeof v === 'number' && v > 0 ? v.toLocaleString('en-US') : 'BEING COUNTED';
+  return [
+    {k: 'ESTABLISHED', v: 'RECENTLY', live: false},
+    {k: 'HEADQUARTERS', v: 'AISLE 9', live: false},
+    {k: 'ITEMS ON THE FLOOR', v: n(live.items), live: true},
+    {k: 'DEPARTMENTS', v: n(live.departments), live: true},
+    {k: 'PRICE OF EVERY ITEM', v: `$${BASE_PRICE}`, live: false},
+    {k: 'EMPLOYEES', v: '1 (SEE §6)', live: false},
+    {k: 'ANNUAL FOOT TRAFFIC', v: 'YOU, JUST NOW', live: false},
+    {k: 'RETURN POLICY', v: '30 DAYS', live: false},
+    {k: 'DRESS CODE', v: 'OUR SHIRTS, IDEALLY', live: false},
+  ];
+}
 
 /** CAREERS — free brand, one line. */
 export const CAREERS = {

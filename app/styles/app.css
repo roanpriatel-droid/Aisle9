@@ -92,6 +92,38 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+/* Keyboard skip link — off-screen until focused, then a signage-red tab. */
+.skip-to-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transform: translateY(-120%);
+  background: var(--signage);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform 0.15s ease;
+}
+.skip-to-content:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--ink);
+  outline-offset: -4px;
+}
+/* Programmatic focus target shouldn't paint an outline. */
+#main-content:focus {
+  outline: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skip-to-content {
+    transition: none;
+  }
+}
+
 /* Standard-issue button: ink block, linoleum type */
 .btn,
 button.btn {
@@ -2622,6 +2654,89 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .beaded-strand,
   .beaded-sign {
+    transition: none;
+  }
+}
+
+/* ============================================================
+ * STORE INFORMATION (/pages/about) — the corporate document.
+ * Appended last on purpose: app.css defines some classes twice
+ * and the later rule wins.
+ * ============================================================ */
+
+/* Approval stamp on the mission statement. Rotated, ink-starved,
+   drawn with a double border so it reads as rubber, not as a button. */
+.a9-stamp {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border: 3px solid var(--color-signage);
+  outline: 1px solid var(--color-signage);
+  outline-offset: 2px;
+  color: var(--color-signage);
+  text-align: center;
+  opacity: 0.85;
+  transform: rotate(-6deg);
+}
+
+/* The section index is navigation, not content: keep it off the page
+   when the document is printed or read by a narrow viewport. */
+@media print {
+  .a9-doc-index,
+  .a9-doc-exit,
+  header[role='banner'],
+  footer {
+    display: none !important;
+  }
+
+  /* Print as a document: white stock, black ink, no panel tints. */
+  .a9-doc,
+  .a9-doc * {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  .a9-doc {
+    max-width: none;
+    padding: 0;
+    font-size: 10.5pt;
+  }
+
+  .a9-doc .bg-ink,
+  .a9-doc .bg-signage {
+    border: 2px solid #000 !important;
+  }
+
+  /* Keep the stamp, but as line art. */
+  .a9-stamp {
+    border-color: #000 !important;
+    outline-color: #000 !important;
+    opacity: 1;
+  }
+
+  /* Sections should not be split across sheets mid-table. */
+  .a9-doc-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    padding-top: 1.25rem;
+  }
+
+  .a9-doc table {
+    break-inside: auto;
+  }
+
+  .a9-doc tr {
+    break-inside: avoid;
+  }
+
+  /* Resolve internal links to nothing; print the aisle name only. */
+  .a9-doc a {
+    text-decoration: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a9-doc-index a {
     transition: none;
   }
 }
