@@ -670,7 +670,9 @@ export const CONTACT = {
   bodyPlaceholder: 'Begin. We are, in a manner of speaking, listening.',
   submit: 'SUBMIT TO THE DESK',
   success: 'COMPLAINT LOGGED. TICKET FILED UNDER "NOTED." RESPONSE TIME: EVENTUALLY.',
-  deskEmail: 'complaints@aisle9.store',
+  /** The real, monitored inbox. Every customer-facing email on the site and in
+   *  the Shopify policies points here — keep them in sync. */
+  deskEmail: 'aisle9@stratosync.solutions',
   deskNote: 'Prefer email? The desk also reads',
 } as const;
 
