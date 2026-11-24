@@ -89,7 +89,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     };
   }
 
-  // Known aisle: filter products by the aisle's tag (collections don't exist).
+  // Known aisle: filter products by the aisle's tag (the same tag defines its smart collection, so results match).
   const url = new URL(request.url);
   const sortParam =
     url.searchParams.get('sort') ??

@@ -35,7 +35,7 @@ const CIRCULAR_AISLES = [
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
-  // Build the flyer from TAGS (the themed collections don't exist), one section
+  // Build the flyer from TAGS (each themed smart collection is defined by the same tag), one section
   // per aisle, in a single aliased query.
   const data = (await storefront.query(CIRCULAR_QUERY)) as unknown as Record<
     string,

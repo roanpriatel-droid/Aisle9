@@ -81,7 +81,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 async function loadShelf(
   storefront: Route.LoaderArgs['context']['storefront'],
 ): Promise<ShelfData> {
-  // Real best sellers: the themed collections don't exist, so sort the catalog
+  // Real best sellers: sort the catalog
   // by best-selling directly.
   const {products} = await storefront.query(SHELF_CATALOG_QUERY);
   return {source: 'best-sellers', products: products?.nodes ?? []};

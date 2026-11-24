@@ -145,7 +145,7 @@ function loadDeferredData(
   {context}: Route.LoaderArgs,
   product: ProductFragment,
 ) {
-  // Products are organized by TAG (the themed collections don't exist), so both
+  // Products are organized by TAG (each aisle's smart collection is defined by that tag), so both
   // cross-sell rails key off the product's own aisle tag.
   const tags = (product.tags ?? []) as string[];
   const myTag = primaryAisleTag(tags);
@@ -186,7 +186,7 @@ export default function Product() {
   const copy = useMemo(() => describeProduct(title), [title]);
   const itemNo = itemNumber(product.id);
 
-  // The product's aisle comes from its tags (themed collections don't exist).
+  // The product's aisle comes from its tags (the tag also defines its smart collection).
   const aisleHandle = useMemo(() => {
     const tag = primaryAisleTag((product.tags ?? []) as string[]);
     return tag ? (TAG_TO_HANDLE[tag] ?? null) : null;
