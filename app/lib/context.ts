@@ -1,3 +1,4 @@
+import type {CountryCode} from '@shopify/hydrogen/storefront-api-types';
 import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
@@ -21,6 +22,13 @@ declare global {
   // Augment HydrogenCustomCartFragment with the codegen'd cart fragment type so
   // that context.cart.get() and all cart mutations return the extended cart type.
   interface HydrogenCustomCartFragment extends CartApiQueryFragment {}
+}
+
+const COUNTRY_RE = /^[A-Z]{2}$/;
+
+function buyerCountry(request: Request): CountryCode {
+  const header = request.headers.get('oxygen-buyer-country')?.toUpperCase();
+  return header && COUNTRY_RE.test(header) ? (header as CountryCode) : 'US';
 }
 
 /**
@@ -52,8 +60,11 @@ export async function createHydrogenRouterContext(
       cache,
       waitUntil,
       session,
-      // Or detect from URL path based on locale subpath, cookies, or any other strategy
-      i18n: {language: 'EN', country: 'US'},
+      // Price, availability and checkout follow the shopper's real market:
+      // Oxygen geolocates every request (oxygen-buyer-country). Falls back to
+      // the US, the store's primary audience, when the header is absent
+      // (local dev, bots).
+      i18n: {language: 'EN', country: buyerCountry(request)},
       cart: {
         queryFragment: CART_QUERY_FRAGMENT,
       },
