@@ -8,18 +8,15 @@ import {
   storeFacts,
 } from '~/lib/brand';
 import {BreadcrumbJsonLd} from '~/components/StructuredData';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `${BRAND.name} — STORE INFORMATION`},
-    {
-      name: 'description',
-      content:
-        'Corporate document 09. Mission statement, corporate values, a live store directory, hours, the premises, organizational chart, store facts, and revision history — formatted to look official.',
-    },
-    {property: 'og:title', content: `${BRAND.name} — STORE INFORMATION`},
-    {property: 'og:type', content: 'website'},
-  ];
+  return seoMeta({
+    title: 'About AISLE 9 — The Store That Does Not Exist',
+    description:
+      'AISLE 9 is a big-box store that does not exist, selling deadpan graphic tees that do. Printed to order in the USA. Every shirt is $36.',
+    path: '/pages/about',
+  });
 };
 
 /**
@@ -333,10 +330,7 @@ export default function AboutPage() {
                   className="flex w-full flex-col items-center"
                 >
                   {i > 0 && (
-                    <div
-                      className="h-7 w-0.5 bg-ink"
-                      aria-hidden="true"
-                    />
+                    <div className="h-7 w-0.5 bg-ink" aria-hidden="true" />
                   )}
                   <div className="w-full max-w-xs border-2 border-ink bg-linoleum px-5 py-4 text-center">
                     <p className="label-type text-ink/50">{node.role}</p>

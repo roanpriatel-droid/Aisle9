@@ -2,16 +2,15 @@ import type {Route} from './+types/pages.contact';
 import {useFetcher} from 'react-router';
 import {CONTACT} from '~/lib/brand';
 import {fileComplaint, isEmail} from '~/lib/admin.server';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'AISLE 9 — FILE A COMPLAINT'},
-    {
-      name: 'description',
-      content:
-        'Submit a complaint, compliment, or statement to Customer Relations. Read in the order received. Estimated response time: eventually.',
-    },
-  ];
+  return seoMeta({
+    title: 'Contact Customer Service',
+    description:
+      'Contact AISLE 9 Customer Relations about orders, sizing or general grievances. Email aisle9@stratosync.solutions. Response time: eventually.',
+    path: '/pages/contact',
+  });
 };
 
 export async function action({request, context}: Route.ActionArgs) {

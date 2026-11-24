@@ -1,5 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
+import {seoMeta} from '~/lib/seo';
 import {isEmail, subscribeEmail} from '~/lib/admin.server';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {Hero} from '~/components/home/Hero';
@@ -17,16 +18,13 @@ import {BRAND} from '~/lib/brand';
 import type {ShelfData, ShelfSource} from '~/lib/shelf';
 
 export const meta: Route.MetaFunction = () => {
-  const description =
-    'Deadpan graphic tees, printed on demand. Nine aisles of admissions. Buy more, pay less. Every shirt is $36.';
-  return [
-    {title: `${BRAND.name} — ${BRAND.tagline}`},
-    {name: 'description', content: description},
-    {property: 'og:title', content: `${BRAND.name} — ${BRAND.tagline}`},
-    {property: 'og:description', content: description},
-    {property: 'og:type', content: 'website'},
-    {rel: 'canonical', href: '/'},
-  ];
+  return seoMeta({
+    title: 'Funny T-Shirts & Ironic Graphic Tees | AISLE 9',
+    fullTitle: true,
+    description:
+      'Deadpan funny t-shirts from a big-box store that does not exist. 375 ironic graphic tees, $36 each, printed to order. Buy 2 save 10%, 4+ save 30%.',
+    path: '/',
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

@@ -53,6 +53,14 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
   return (
     <nav className={className} role="navigation">
       <AislesMenu />
+      <NavLink
+        className="header-menu-item text-signage"
+        end
+        prefetch="intent"
+        to="/pages/gift-guide"
+      >
+        GIFTS
+      </NavLink>
       {DEPARTMENTS.filter((d) => d.handle !== 'new-arrivals').map((item) => (
         <NavLink
           className="header-menu-item"

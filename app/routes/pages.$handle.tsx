@@ -2,17 +2,16 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {BRAND} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [
-    {title: `${BRAND.name} — ${data?.page.title ?? ''}`},
-    {
-      name: 'description',
-      content:
-        data?.page.seo?.description ??
-        `${data?.page.title ?? 'A notice'} from ${BRAND.name}.`,
-    },
-  ];
+export const meta: Route.MetaFunction = ({data, params}) => {
+  const page = data?.page;
+  return seoMeta({
+    title: page?.seo?.title || page?.title || 'Notice',
+    fullTitle: false,
+    description: page?.seo?.description,
+    path: `/pages/${params.handle}`,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

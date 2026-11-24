@@ -1,16 +1,15 @@
 import type {Route} from './+types/pages.shipping';
 import {SHIPPING, PRODUCTION} from '~/lib/brand';
 import {Link} from 'react-router';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'AISLE 9 — SHIPPING & RECEIVING'},
-    {
-      name: 'description',
-      content:
-        'How the shirt gets to you, and how it gets back if it must. Printed on demand. Processing, transit, rates, returns, and misprints — posted at the dock.',
-    },
-  ];
+  return seoMeta({
+    title: 'Shipping & Returns',
+    description:
+      'Printed to order in 2–5 business days, most US orders arrive 5–7 business days later. Free US shipping over $100. 30-day returns.',
+    path: '/pages/shipping',
+  });
 };
 
 /** Quick facts pulled from PRODUCTION so they match the PDP and FAQ. */
@@ -43,10 +42,7 @@ export default function ShippingPage() {
       {/* POSTED POLICIES — numbered dock document */}
       <div className="mt-12 space-y-4">
         {SHIPPING.sections.map((section, i) => (
-          <div
-            key={section.title}
-            className="border-2 border-ink bg-white p-5"
-          >
+          <div key={section.title} className="border-2 border-ink bg-white p-5">
             <div className="flex items-baseline gap-3">
               <span className="label-type bg-signage px-2 py-1 text-linoleum">
                 {String(i + 1).padStart(2, '0')}

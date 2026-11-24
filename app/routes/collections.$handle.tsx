@@ -4,9 +4,11 @@ import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import type {ProductSortKeys} from '@shopify/hydrogen/storefront-api-types';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
-import {BreadcrumbJsonLd} from '~/components/StructuredData';
+import {BreadcrumbJsonLd, ItemListJsonLd} from '~/components/StructuredData';
+import {seoMeta} from '~/lib/seo';
 import {DealStrip} from '~/components/brand/DealStrip';
 import {
+  GIFT_DEPARTMENTS,
   aisleLabelForHandle,
   findAisle,
   AISLE_TAG,
@@ -21,25 +23,25 @@ import type {
 type ProductsConnection = AisleProductsQuery['products'];
 
 export const meta: Route.MetaFunction = ({data, params}) => {
-  const title = data?.title ?? 'AISLE';
+  const title = data?.title ?? 'Aisle';
   const ogImage = data?.products?.nodes?.[0]?.featuredImage?.url;
-  return [
-    {title: `AISLE 9 — ${title}`},
-    {
-      name: 'description',
-      content: data?.description || `Shop ${title} at AISLE 9.`,
-    },
-    {property: 'og:title', content: `AISLE 9 — ${title}`},
-    {property: 'og:type', content: 'website'},
-    ...(ogImage ? [{property: 'og:image', content: ogImage}] : []),
-    {name: 'twitter:card', content: 'summary_large_image'},
-    {rel: 'canonical', href: `/collections/${params.handle}`},
-  ];
+  return seoMeta({
+    title: data?.seo?.title || `${title} Shirts | AISLE 9`,
+    fullTitle: true,
+    description: data?.seo?.description || data?.description,
+    path: `/collections/${params.handle}`,
+    image: ogImage,
+  });
 };
 
 /** URL ?sort= → Storefront ProductSortKeys. */
 const SORT_OPTIONS = [
-  {value: 'featured', label: 'FEATURED', sortKey: 'BEST_SELLING', reverse: false},
+  {
+    value: 'featured',
+    label: 'FEATURED',
+    sortKey: 'BEST_SELLING',
+    reverse: false,
+  },
   {value: 'newest', label: 'NEWEST', sortKey: 'CREATED_AT', reverse: true},
   {value: 'price-low', label: 'PRICE ↑', sortKey: 'PRICE', reverse: false},
   {value: 'price-high', label: 'PRICE ↓', sortKey: 'PRICE', reverse: true},
@@ -52,6 +54,23 @@ function resolveSort(value: string | null | undefined) {
 
 export async function loader(args: Route.LoaderArgs) {
   return loadCriticalData(args);
+}
+
+type Faq = {q: string; a: string}[];
+
+function parseFaq(value?: string | null): Faq {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return Array.isArray(parsed)
+      ? (parsed as Array<Partial<{q: unknown; a: unknown}>>).filter(
+          (f): f is {q: string; a: string} =>
+            typeof f?.q === 'string' && typeof f?.a === 'string',
+        )
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
@@ -67,7 +86,17 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw redirect(`/collections/i-love-collection${url.search}`, 301);
   }
 
+  const contentPromise = storefront
+    .query(COLLECTION_CONTENT_QUERY, {variables: {handle}})
+    .then(({collection}) => ({
+      seo: collection?.seo ?? null,
+      introHtml: collection?.descriptionHtml ?? '',
+      faq: parseFaq(collection?.faq?.value),
+    }))
+    .catch(() => ({seo: null, introHtml: '', faq: [] as Faq}));
+
   const aisle = findAisle(handle);
+  const giftDept = GIFT_DEPARTMENTS.find((d) => d.handle === handle);
   if (!aisle) {
     // Not a known aisle — resolve as a real Shopify collection (e.g. frontpage).
     const {collection} = await storefront.query(COLLECTION_QUERY, {
@@ -77,11 +106,14 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       throw new Response(`Collection ${handle} not found`, {status: 404});
     }
     return {
+      ...(await contentPromise),
       isAisle: false,
       curated: false,
       handle,
       title: collection.title,
-      label: collection.title,
+      label: giftDept
+        ? `GIFT DEPARTMENT — ${giftDept.title}`
+        : collection.title,
       description: collection.description ?? null,
       products: collection.products as ProductsConnection,
       count: collection.products.nodes.length,
@@ -102,13 +134,15 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   if (isCurated) {
     const {products} = await storefront.query(AISLE_PRODUCTS_QUERY, {
       variables: {
-        query: null,
+        // Front-of-store sets stay SafeSearch-friendly.
+        query: '-tag:adults-only',
         sortKey: sort.sortKey as ProductSortKeys,
         reverse: sort.reverse,
         first: 24,
       },
     });
     return {
+      ...(await contentPromise),
       isAisle: true,
       curated: true,
       handle,
@@ -137,6 +171,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   ]);
 
   return {
+    ...(await contentPromise),
     isAisle: true,
     curated: false,
     handle,
@@ -152,8 +187,18 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 export default function Collection() {
   const data = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const {label, title, description, products, count, isAisle, handle, curated} =
-    data;
+  const {
+    label,
+    title,
+    description,
+    products,
+    count,
+    isAisle,
+    handle,
+    curated,
+    introHtml,
+    faq,
+  } = data;
 
   const countLabel = count >= 250 ? '250+' : String(count);
   const countText = curated
@@ -272,6 +317,58 @@ export default function Collection() {
         </PaginatedResourceSection>
       )}
 
+      {(introHtml || faq.length > 0) && (
+        <section
+          aria-labelledby="aisle-notes-heading"
+          className="mt-16 grid gap-10 border-t-2 border-ink pt-10 lg:grid-cols-[1.2fr_1fr]"
+        >
+          {introHtml ? (
+            <div>
+              <p className="label-type text-ink/50">POSTED IN THIS AISLE</p>
+              <h2 id="aisle-notes-heading" className="sign-type mt-1 text-2xl">
+                ABOUT {title}
+              </h2>
+              <div
+                className="aisle-copy mt-4 space-y-4 text-ink/80"
+                // Merchant-authored HTML from Shopify (collection description).
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{__html: introHtml}}
+              />
+            </div>
+          ) : (
+            <span />
+          )}
+          {faq.length > 0 && (
+            <div>
+              <p className="label-type text-ink/50">CUSTOMER SERVICE DESK</p>
+              <h2 className="sign-type mt-1 text-2xl">QUESTIONS, ANSWERED</h2>
+              <div className="mt-4 divide-y-2 divide-ink border-2 border-ink bg-white">
+                {faq.map((item) => (
+                  <details key={item.q} className="group p-4">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-bold">
+                      <span>{item.q}</span>
+                      <span
+                        aria-hidden
+                        className="text-signage transition-transform group-open:rotate-45"
+                      >
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 text-sm text-ink/75">{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      <ItemListJsonLd
+        name={title}
+        path={`/collections/${handle}`}
+        handles={products.nodes.map((p) => p.handle)}
+      />
+
       <BreadcrumbJsonLd
         items={[
           {name: 'AISLE 9', path: '/'},
@@ -349,6 +446,21 @@ const AISLE_PRODUCTS_QUERY = `#graphql
         endCursor
         startCursor
       }
+    }
+  }
+` as const;
+
+/** Merchandising content for a collection: SEO fields, long copy, FAQ. */
+const COLLECTION_CONTENT_QUERY = `#graphql
+  query CollectionContent(
+    $handle: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    collection(handle: $handle) {
+      descriptionHtml
+      seo { title description }
+      faq: metafield(namespace: "aisle9", key: "faq") { value }
     }
   }
 ` as const;

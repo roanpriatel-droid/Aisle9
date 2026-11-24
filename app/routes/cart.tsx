@@ -3,9 +3,10 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `AISLE 9 — YOUR BASKET`}];
+  return seoMeta({title: 'Your Basket', noindex: true});
 };
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;

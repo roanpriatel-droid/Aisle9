@@ -4,18 +4,17 @@ import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import type {BlogsQuery} from 'storefrontapi.generated';
 import {BRAND} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `${BRAND.name} — BULLETIN BOARD`},
-    {
-      name: 'description',
-      content:
-        'Store notices, restock announcements, and things posted to the corkboard by the entrance.',
-    },
-  ];
+  return seoMeta({
+    title: 'Store Bulletin Board',
+    description:
+      'Store notices, restock announcements and gift guides from AISLE 9, posted to the corkboard by the entrance.',
+    path: '/blogs',
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

@@ -274,6 +274,7 @@ export const AISLE_TAG: Record<string, string | null> = {
 
 export const NAV = [
   {title: 'AISLES', to: COLLECTIONS.shopAll},
+  {title: 'GIFTS', to: '/pages/gift-guide'},
   {title: 'BEST SELLERS', to: COLLECTIONS.bestSellers},
   {title: 'MATCHING SETS', to: '/collections/matching-sets'},
   {title: 'ALL PRODUCTS', to: COLLECTIONS.shopAll},
@@ -488,6 +489,7 @@ export const FOOTER_AISLES = ALL_AISLES.map((a) => ({
 }));
 
 export const FOOTER_SERVICE = [
+  {title: 'GIFT DEPARTMENT', to: '/pages/gift-guide'},
   {title: 'CUSTOMER SERVICE DESK', to: '/pages/faq'},
   {title: 'SHIPPING & RECEIVING', to: '/pages/shipping'},
   {title: 'SIZING DEPARTMENT', to: '/pages/size-guide'},
@@ -918,3 +920,50 @@ export const POLICY_FALLBACKS: Record<
     `,
   },
 };
+
+/**
+ * GIFT DEPARTMENT — recipient/occasion collections (Shopify smart collections
+ * keyed by tag; explicit designs are never tagged into these).
+ */
+export const GIFT_DEPARTMENTS = [
+  {
+    handle: 'gifts-for-him',
+    title: 'FOR HIM',
+    line: 'Boyfriends, husbands, and men who will say “ha” out loud.',
+  },
+  {
+    handle: 'gifts-for-her',
+    title: 'FOR HER',
+    line: 'Girlfriends, wives, and women who already knew.',
+  },
+  {
+    handle: 'matching-sets',
+    title: 'FOR THE TWO OF YOU',
+    line: 'Matching sets. Two shirts, one bad idea, split evenly.',
+  },
+  {
+    handle: 'white-elephant',
+    title: 'WHITE ELEPHANT',
+    line: 'Office-adjacent. Wins the swap. Under $40.',
+  },
+  {
+    handle: 'bachelor-party',
+    title: 'BACHELOR / ETTE',
+    line: 'Group orders tip the ladder to −30% at four shirts.',
+  },
+  {
+    handle: 'gifts-for-idiots',
+    title: 'GIFTS FOR IDIOTS',
+    line: 'For the person who has everything and understands none of it.',
+  },
+] as const;
+
+/**
+ * Holiday ordering cut-off (US). Shown sitewide until it passes, then hides
+ * itself. Every shirt is printed after it is ordered, so this is conservative.
+ */
+export const HOLIDAY_CUTOFF = {
+  orderBy: '2026-12-10T23:59:00-05:00',
+  label: 'ORDER BY DEC 10 FOR US DELIVERY BY DEC 24',
+  link: '/pages/gift-guide',
+} as const;

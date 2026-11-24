@@ -1,6 +1,7 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {BRAND, POLICY_FALLBACKS} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
 /** Shopify shop-policy handle → the shop field that holds it. */
 const POLICY_FIELDS: Record<string, string> = {
@@ -10,14 +11,13 @@ const POLICY_FIELDS: Record<string, string> = {
   'refund-policy': 'refundPolicy',
 };
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [
-    {title: `${BRAND.name} — ${data?.policy.title ?? 'POLICY'}`},
-    {
-      name: 'description',
-      content: `${data?.policy.title ?? 'Store policy'} — ${BRAND.name}.`,
-    },
-  ];
+export const meta: Route.MetaFunction = ({data, params}) => {
+  const title = data?.policy.title ?? 'Store Policy';
+  return seoMeta({
+    title,
+    description: `${title} for AISLE 9: the terms that govern buying a $36 shirt from a store that does not exist. Plainly stated.`,
+    path: `/policies/${params.handle}`,
+  });
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {
@@ -40,9 +40,10 @@ export async function loader({params, context}: Route.LoaderArgs) {
           language: context.storefront.i18n?.language,
         },
       });
-      const shopPolicy = (data.shop as Record<string, {title: string; body: string} | null> | undefined)?.[
-        policyName
-      ];
+      const shopPolicy = (
+        data.shop as
+          Record<string, {title: string; body: string} | null> | undefined
+      )?.[policyName];
       if (shopPolicy?.body) {
         return {
           policy: {title: shopPolicy.title, body: shopPolicy.body},

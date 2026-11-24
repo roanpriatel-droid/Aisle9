@@ -1,5 +1,5 @@
 import type {Route} from './+types/[sitemap-pages.xml]';
-import {ALL_AISLES} from '~/lib/brand';
+import {ALL_AISLES, GIFT_DEPARTMENTS} from '~/lib/brand';
 
 /**
  * Supplemental sitemap for app-managed routes that aren't Shopify resources
@@ -12,6 +12,7 @@ export function loader({request}: Route.LoaderArgs) {
   const staticPaths = [
     '/',
     '/collections',
+    '/pages/gift-guide',
     '/pages/weekly-circular',
     '/pages/about',
     '/pages/faq',
@@ -19,10 +20,14 @@ export function loader({request}: Route.LoaderArgs) {
     '/pages/size-guide',
     '/pages/contact',
     '/pages/careers',
-    '/search',
   ];
 
-  const collectionPaths = ALL_AISLES.map((a) => `/collections/${a.handle}`);
+  const collectionPaths = [
+    ...new Set([
+      ...ALL_AISLES.map((a) => `/collections/${a.handle}`),
+      ...GIFT_DEPARTMENTS.map((d) => `/collections/${d.handle}`),
+    ]),
+  ];
   const paths = [...staticPaths, ...collectionPaths];
 
   const urls = paths

@@ -12,9 +12,10 @@ import type {
   RegularSearchQuery,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `AISLE 9 — PRICE CHECK`}];
+  return seoMeta({title: 'Search', noindex: true});
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

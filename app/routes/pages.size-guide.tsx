@@ -1,15 +1,14 @@
 import type {Route} from './+types/pages.size-guide';
 import {BRAND, SIZE_CHART} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `${BRAND.name} — SIZE GUIDE`},
-    {
-      name: 'description',
-      content:
-        'Measurements for the unisex heavyweight tee, S through 3XL, plus care instructions.',
-    },
-  ];
+  return seoMeta({
+    title: 'T-Shirt Size Guide (S–3XL)',
+    description:
+      'Size chart for the AISLE 9 unisex heavy cotton tee (Gildan 5000), S through 3XL, in inches. Chest width, body length, sleeve.',
+    path: '/pages/size-guide',
+  });
 };
 
 /** Measurements live in brand.ts (SIZE_CHART) so the PDP modal matches. */
@@ -59,16 +58,15 @@ export default function SizeGuidePage() {
           <h2 className="sign-type text-sm">HOW TO MEASURE</h2>
           <p className="mt-1.5 text-xs text-ink/60">
             Take a shirt that fits how you want this one to fit. Lay it flat.
-            Measure armpit to armpit (chest), collar to hem (length). Compare
-            to the table. Trust the table over your optimism.
+            Measure armpit to armpit (chest), collar to hem (length). Compare to
+            the table. Trust the table over your optimism.
           </p>
         </div>
         <div className="border-2 border-ink bg-white p-4">
           <h2 className="sign-type text-sm">CARE INSTRUCTIONS</h2>
           <p className="mt-1.5 text-xs text-ink/60">
-            Wash inside out. Cold water. Hang dry or tumble low. Do not iron
-            the print. Do not dry clean a t-shirt; nobody involved would
-            respect it.
+            Wash inside out. Cold water. Hang dry or tumble low. Do not iron the
+            print. Do not dry clean a t-shirt; nobody involved would respect it.
           </p>
         </div>
       </div>

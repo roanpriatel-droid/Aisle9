@@ -4,21 +4,22 @@ import type {CurrencyCode} from '@shopify/hydrogen/storefront-api-types';
 import type {Route} from './+types/pages.weekly-circular';
 import type {FlyerProductFragment} from 'storefrontapi.generated';
 import {WEEKLY_CIRCULAR, LADDER, aisleLabelForHandle} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `AISLE 9 — WEEKLY CIRCULAR`},
-    {
-      name: 'description',
-      content:
-        'The AISLE 9 weekly circular. Every department, laid out with price tags, like the mailer nobody asked for. Every shirt is $36. The bulk discount applies itself.',
-    },
-    {property: 'og:title', content: 'AISLE 9 — WEEKLY CIRCULAR'},
-    {property: 'og:type', content: 'website'},
-  ];
+  return seoMeta({
+    title: 'Weekly Circular — Funny Shirts This Week',
+    description:
+      'The AISLE 9 weekly circular: every department laid out with price tags. Every shirt $36, bulk discount applied automatically at checkout.',
+    path: '/pages/weekly-circular',
+  });
 };
 
-type Section = {handle: string; title: string; products: FlyerProductFragment[]};
+type Section = {
+  handle: string;
+  title: string;
+  products: FlyerProductFragment[];
+};
 
 /** The flyer's departments, in order, with the product tag that fills each. */
 const CIRCULAR_AISLES = [
@@ -73,7 +74,9 @@ export default function WeeklyCircular() {
       {/* Masthead */}
       <div className="flyer-masthead border-2 border-ink">
         <div className="flex flex-wrap items-center justify-between gap-3 bg-signage px-4 py-2 sm:px-6">
-          <span className="label-type text-white">{WEEKLY_CIRCULAR.eyebrow}</span>
+          <span className="label-type text-white">
+            {WEEKLY_CIRCULAR.eyebrow}
+          </span>
           <span className="label-type text-white/80">AISLE 9</span>
         </div>
         <div className="bg-ink px-4 py-8 text-center sm:px-6 sm:py-12">
@@ -97,7 +100,9 @@ export default function WeeklyCircular() {
             .map((t) => `${t.qty} FOR −${t.discountPct}%`)
             .join('  ·  ')}
         </span>
-        <span className="label-type text-ink/50">APPLIES ITSELF AT CHECKOUT</span>
+        <span className="label-type text-ink/50">
+          APPLIES ITSELF AT CHECKOUT
+        </span>
       </div>
 
       {/* Hero headliner */}

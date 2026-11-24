@@ -1,16 +1,15 @@
 import type {Route} from './+types/pages.faq';
 import {SERVICE_DESK} from '~/lib/brand';
 import {Link} from 'react-router';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'AISLE 9 — CUSTOMER SERVICE DESK'},
-    {
-      name: 'description',
-      content:
-        'Store policies and answers, numbered for reference. Read in the order received.',
-    },
-  ];
+  return seoMeta({
+    title: 'FAQ — Sizing, Shipping, Returns & Bulk Discounts',
+    description:
+      'AISLE 9 Customer Service Desk: how the bulk discount works, shipping times, returns, sizing and misprints. Numbered for reference.',
+    path: '/pages/faq',
+  });
 };
 
 export default function FaqPage() {

@@ -5,9 +5,15 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
 import {DealStrip} from '~/components/brand/DealStrip';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
+import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `AISLE 9 — SHOP ALL`}];
+  return seoMeta({
+    title: 'All Funny T-Shirts',
+    description:
+      'Every funny t-shirt in the store: 375 deadpan graphic tees across nine aisles. $36 each. Buy 2 save 10%, 3 save 20%, 4+ save 30%.',
+    path: '/collections/all',
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

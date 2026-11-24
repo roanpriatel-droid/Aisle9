@@ -30,6 +30,17 @@ Disallow: /search
 Allow: /search/
 Disallow: /search/?*
 
+# AI search & answer engines: welcome to crawl the catalog (same rules).
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: Applebot
+User-agent: Bingbot
+${generalDisallowRules({sitemapUrl})}
+
 User-agent: Nutch
 Disallow: /
 
@@ -57,6 +68,8 @@ function generalDisallowRules({sitemapUrl}: {sitemapUrl?: string}) {
   return `Disallow: /cart
 Disallow: /account
 Disallow: /collections/*sort_by*
+Disallow: /collections/*?*sort=
+Disallow: /collections/*&sort=
 Disallow: /*/collections/*sort_by*
 Disallow: /collections/*+*
 Disallow: /collections/*%2B*
@@ -71,7 +84,6 @@ Disallow: /blogs/*%2b*
 Disallow: /*/blogs/*+*
 Disallow: /*/blogs/*%2B*
 Disallow: /*/blogs/*%2b*
-Disallow: /policies/
 Disallow: /search
 Allow: /search/
 Disallow: /search/?*

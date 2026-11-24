@@ -117,6 +117,14 @@ export function AisleDirectoryList({onNavigate}: {onNavigate?: () => void}) {
       >
         FRONT OF STORE
       </Link>
+      <Link
+        className="header-menu-item text-signage"
+        to="/pages/gift-guide"
+        prefetch="intent"
+        onClick={onNavigate}
+      >
+        GIFT DEPARTMENT
+      </Link>
 
       <p className="label-type aisle-directory-heading">DEPARTMENTS</p>
       {DEPARTMENTS.map((dept) => (

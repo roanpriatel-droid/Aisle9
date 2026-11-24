@@ -1,3 +1,4 @@
+import {useRouteLoaderData} from 'react-router';
 /**
  * Product structured data + Judge.me review wiring.
  *
@@ -103,6 +104,123 @@ export function ProductJsonLd({
   );
 }
 
+type GroupVariant = {
+  id: string;
+  sku?: string | null;
+  availableForSale: boolean;
+  price: {amount: string; currencyCode: string};
+  selectedOptions: {name: string; value: string}[];
+  image?: {url: string} | null;
+};
+
+/**
+ * schema.org ProductGroup (Google's product-variants pattern): one group for
+ * the design, one Product per size/color variant, each with its own Offer.
+ * Falls back to the plain Product markup if variants are unavailable. No
+ * ratings until real reviews exist.
+ */
+export function ProductGroupJsonLd({
+  title,
+  description,
+  handle,
+  productId,
+  image,
+  aisle,
+  variants,
+  fallbackOffers,
+  brand = 'AISLE 9',
+}: {
+  title: string;
+  description?: string;
+  handle: string;
+  productId: string;
+  image?: string;
+  aisle?: string;
+  variants: GroupVariant[];
+  fallbackOffers?: VariantOffer[];
+  brand?: string;
+}) {
+  const origin = useOrigin();
+  const url = `${origin}/products/${handle}`;
+  if (!variants.length) {
+    return (
+      <ProductJsonLd
+        title={title}
+        description={description}
+        image={image}
+        url={url}
+        offers={fallbackOffers}
+        brand={brand}
+      />
+    );
+  }
+  const opt = (v: GroupVariant, name: RegExp) =>
+    v.selectedOptions.find((o) => name.test(o.name))?.value;
+  const data = {
+    '@context': 'https://schema.org/',
+    '@type': 'ProductGroup',
+    '@id': `${url}#group`,
+    name: `${title} T-Shirt`,
+    description,
+    url,
+    productGroupID: productId,
+    brand: {'@type': 'Brand', name: brand},
+    ...(image ? {image: [image]} : {}),
+    ...(aisle ? {category: `Apparel > Graphic Tees > ${aisle}`} : {}),
+    material: 'Cotton',
+    audience: {
+      '@type': 'PeopleAudience',
+      suggestedGender: 'unisex',
+      suggestedAge: {
+        '@type': 'QuantitativeValue',
+        minValue: 13,
+        unitCode: 'ANN',
+      },
+    },
+    variesBy: ['https://schema.org/size', 'https://schema.org/color'],
+    hasVariant: variants.map((v) => {
+      const size = opt(v, /size/i);
+      const color = opt(v, /colou?r/i);
+      const variantId = v.id.split('/').pop();
+      return {
+        '@type': 'Product',
+        name: [title, color, size].filter(Boolean).join(' – '),
+        ...(v.sku ? {sku: v.sku} : {}),
+        ...(size ? {size} : {}),
+        ...(color ? {color} : {}),
+        ...(v.image?.url ? {image: v.image.url} : {}),
+        offers: {
+          '@type': 'Offer',
+          url: `${url}?variant=${variantId}`,
+          price: Number(v.price.amount).toFixed(2),
+          priceCurrency: v.price.currencyCode,
+          itemCondition: 'https://schema.org/NewCondition',
+          availability: v.availableForSale
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          seller: {'@id': `${origin}/#org`},
+        },
+      };
+    }),
+  };
+  return <JsonLdScript data={data} />;
+}
+
+function JsonLdScript({data}: {data: unknown}) {
+  return (
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{__html: JSON.stringify(data)}}
+    />
+  );
+}
+
+function useOrigin(): string {
+  const root = useRouteLoaderData('root') as {origin?: string} | undefined;
+  return root?.origin ?? '';
+}
+
 /**
  * Judge.me review widget mount. `productId` is the numeric Shopify product id
  * Judge.me keys on (derived from the storefront GID). The Judge.me script,
@@ -146,7 +264,5 @@ export function JudgeMeReviews({
 
 /** Judge.me preview badge (stars summary) for PDP headers, once connected. */
 export function JudgeMeBadge({productId}: {productId: string}) {
-  return (
-    <div className="jdgm-widget jdgm-preview-badge" data-id={productId} />
-  );
+  return <div className="jdgm-widget jdgm-preview-badge" data-id={productId} />;
 }

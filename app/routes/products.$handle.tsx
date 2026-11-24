@@ -9,6 +9,7 @@ import {
 } from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {isEmail, subscribeEmail} from '~/lib/admin.server';
+import {seoMeta} from '~/lib/seo';
 import {
   getSelectedProductOptions,
   Analytics,
@@ -31,7 +32,7 @@ import {RecentlyViewed, useTrackScanned} from '~/components/RecentlyViewed';
 import {
   JudgeMeReviews,
   JudgeMeBadge,
-  ProductJsonLd,
+  ProductGroupJsonLd,
   type VariantOffer,
 } from '~/components/Reviews';
 import {BreadcrumbJsonLd} from '~/components/StructuredData';
@@ -73,19 +74,18 @@ export const meta: Route.MetaFunction = ({data}) => {
   const title = product?.title ?? '';
   const description =
     product?.seo?.description ||
-    (title ? describeProduct(title).announcement : '') ||
-    `${title} — a deadpan graphic tee, printed on demand at AISLE 9.`;
+    `“${title}” — a funny graphic t-shirt from AISLE 9. Unisex heavy cotton, S–3XL, printed to order. $36; buy 2+ and save up to 30%.`;
   const image = data?.previewImageUrl;
-
   return [
-    {title: `AISLE 9 — ${title}`},
-    {name: 'description', content: description},
-    {property: 'og:title', content: `AISLE 9 — ${title}`},
-    {property: 'og:description', content: description},
-    {property: 'og:type', content: 'product'},
-    ...(image ? [{property: 'og:image', content: image}] : []),
-    {name: 'twitter:card', content: 'summary_large_image'},
-    {rel: 'canonical', href: `/products/${product?.handle}`},
+    ...seoMeta({
+      title: product?.seo?.title || `${title} T-Shirt | AISLE 9`,
+      fullTitle: true,
+      description,
+      path: `/products/${product?.handle}`,
+      image,
+      imageAlt: `“${title}” t-shirt`,
+      type: 'product',
+    }),
     // LCP preload for the main gallery image.
     ...(image
       ? [{tagName: 'link', rel: 'preload', as: 'image', href: image} as const]
@@ -372,14 +372,15 @@ export default function Product() {
         onRequireSize={requireSize}
       />
 
-      <ProductJsonLd
+      <ProductGroupJsonLd
         title={product.title}
-        description={copy.announcement}
-        image={selectedVariant?.image?.url ?? galleryImages[0]?.url}
-        url={`/products/${product.handle}`}
-        currencyCode={selectedVariant?.price?.currencyCode}
-        available={available}
-        offers={offers}
+        description={product.description || copy.announcement}
+        handle={product.handle}
+        productId={numericProductId}
+        image={galleryImages[0]?.url}
+        aisle={aisleHandle ? aisleLabel : undefined}
+        variants={product.allVariants?.nodes ?? []}
+        fallbackOffers={offers}
       />
 
       <BreadcrumbJsonLd
@@ -1113,6 +1114,16 @@ const PRODUCT_FRAGMENT = `#graphql
     encodedVariantExistence
     encodedVariantAvailability
     tags
+    allVariants: variants(first: 30) {
+      nodes {
+        id
+        sku
+        availableForSale
+        price { amount currencyCode }
+        selectedOptions { name value }
+        image { url }
+      }
+    }
     matchingSet: metafield(namespace: "aisle9", key: "matching_set") {
       references(first: 3) {
         nodes {
