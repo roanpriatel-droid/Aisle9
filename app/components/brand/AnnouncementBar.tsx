@@ -1,5 +1,11 @@
 import {useEffect, useState} from 'react';
-import {ANNOUNCEMENT_BAR} from '~/lib/brand';
+import {ANNOUNCEMENT_BAR as BASE_MESSAGES, HOLIDAY_CUTOFF} from '~/lib/brand';
+
+/** Holiday order-by notice leads the rotation until the cutoff passes. */
+const ANNOUNCEMENT_BAR: readonly string[] =
+  Date.now() < Date.parse(HOLIDAY_CUTOFF.orderBy)
+    ? [`ATTENTION SHOPPERS: ${HOLIDAY_CUTOFF.label}.`, ...BASE_MESSAGES]
+    : BASE_MESSAGES;
 
 /**
  * "ATTENTION SHOPPERS" PA bar. Ink background, linoleum text.

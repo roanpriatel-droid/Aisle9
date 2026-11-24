@@ -431,6 +431,8 @@ export const VOICE = {
   noMatchBody: 'Loosen the filter and the shelf refills.',
   clearFilters: 'CLEAR ALL FILTERS',
   /** PDP cross-sell. */
+  /** Bulk-ladder chip on every product card. */
+  ladderChip: '2+ SAVES 10%',
   pairedHeading: 'FREQUENTLY PAIRED',
   pairedSub: 'Bought together by people making a series of decisions.',
   /** PDP cross-sell when the product is half of a real matching set. */

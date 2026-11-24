@@ -331,7 +331,7 @@ export default function Collection() {
               <div
                 className="aisle-copy mt-4 space-y-4 text-ink/80"
                 // Merchant-authored HTML from Shopify (collection description).
-                // eslint-disable-next-line react/no-danger
+
                 dangerouslySetInnerHTML={{__html: introHtml}}
               />
             </div>
@@ -389,6 +389,13 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     currencyCode
   }
   fragment ProductItem on Product {
+    cardImages: images(first: 2) {
+      nodes { id url altText width height }
+    }
+    cardOptions: options(first: 2) {
+      name
+      optionValues { name }
+    }
     id
     handle
     title

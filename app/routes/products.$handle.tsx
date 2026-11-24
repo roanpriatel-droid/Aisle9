@@ -10,6 +10,7 @@ import {
 import type {Route} from './+types/products.$handle';
 import {isEmail, subscribeEmail} from '~/lib/admin.server';
 import {seoMeta} from '~/lib/seo';
+import {DeliveryEstimate} from '~/components/DeliveryEstimate';
 import {
   getSelectedProductOptions,
   Analytics,
@@ -335,6 +336,8 @@ export default function Product() {
           </span>
           <span className="label-type text-ink/50">APPLIES ITSELF</span>
         </div>
+
+        <DeliveryEstimate />
 
         {/* 9 — trust row as compliance notices */}
         <div className="mt-4 grid grid-cols-3 gap-2">

@@ -88,6 +88,13 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     currencyCode
   }
   fragment CollectionItem on Product {
+    cardImages: images(first: 2) {
+      nodes { id url altText width height }
+    }
+    cardOptions: options(first: 2) {
+      name
+      optionValues { name }
+    }
     id
     handle
     title

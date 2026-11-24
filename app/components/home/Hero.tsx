@@ -3,6 +3,7 @@ import {Await, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {COLLECTIONS} from '~/lib/brand';
 import type {ShelfData} from '~/lib/shelf';
+import {stableBit} from '~/components/ProductItem';
 
 /**
  * Hero — "THE ENTRANCE". The homepage first-screen is the store's automatic
@@ -87,6 +88,14 @@ const WALL_TILES = 36;
  * (square) product images stay crisp and undistorted, and the grid fills densely
  * regardless of how many products came back (tiles cycle through them).
  */
+/** Alternate colorways across the wall (checkerboard-ish), like a real shelf. */
+function wallImage(p: ShelfData['products'][number], i: number) {
+  const alt = p.cardImages?.nodes?.find(
+    (img) => img.id !== p.featuredImage?.id,
+  );
+  return alt && stableBit(p.id) !== (i % 2 === 0) ? alt : p.featuredImage!;
+}
+
 function ProductWall({products}: {products: ShelfData['products']}) {
   const src = products.filter((p) => p.featuredImage);
   if (src.length === 0) return <WallFallback />;
@@ -105,7 +114,7 @@ function ProductWall({products}: {products: ShelfData['products']}) {
           <Image
             alt=""
             aspectRatio="1/1"
-            data={p.featuredImage!}
+            data={wallImage(p, i)}
             loading={i < 12 ? 'eager' : 'lazy'}
             sizes="(min-width: 64em) 9vw, (min-width: 48em) 12vw, 17vw"
           />

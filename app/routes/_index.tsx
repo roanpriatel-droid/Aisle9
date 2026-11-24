@@ -8,11 +8,9 @@ import {TrustStrip} from '~/components/home/TrustStrip';
 import {BestSellersRow} from '~/components/home/BestSellersRow';
 import {AisleMapStrip} from '~/components/home/AisleMapStrip';
 import {WeeklyCircularTeaser} from '~/components/home/WeeklyCircularTeaser';
-import {GiftsClearanceBanner} from '~/components/home/GiftsClearanceBanner';
 import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
-import {FreakBehaviorGag} from '~/components/home/FreakBehaviorGag';
+import {GiftDepartmentStrip} from '~/components/home/GiftDepartmentStrip';
 import {BulkLadder} from '~/components/home/BulkLadder';
-import {PAQuoteStrip} from '~/components/home/PAQuoteStrip';
 import {SavingsClub} from '~/components/home/SavingsClub';
 import {BRAND} from '~/lib/brand';
 import type {ShelfData, ShelfSource} from '~/lib/shelf';
@@ -93,13 +91,11 @@ export default function Homepage() {
       <Hero shelf={data.shelf} />
       <TrustStrip />
       <BestSellersRow shelf={data.shelf} />
+      <GiftDepartmentStrip />
       <AisleMapStrip />
-      <WeeklyCircularTeaser shelf={data.shelf} />
-      <GiftsClearanceBanner />
-      <MatchingSetsPromo />
-      <FreakBehaviorGag />
       <BulkLadder />
-      <PAQuoteStrip />
+      <MatchingSetsPromo />
+      <WeeklyCircularTeaser shelf={data.shelf} />
       <SavingsClub />
     </div>
   );
@@ -107,6 +103,13 @@ export default function Homepage() {
 
 const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   fragment RecommendedProduct on Product {
+    cardImages: images(first: 2) {
+      nodes { id url altText width height }
+    }
+    cardOptions: options(first: 2) {
+      name
+      optionValues { name }
+    }
     id
     title
     handle
@@ -134,7 +137,7 @@ const SHELF_CATALOG_QUERY = `#graphql
   ${RECOMMENDED_PRODUCT_FRAGMENT}
   query ShelfCatalog($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 36, sortKey: BEST_SELLING) {
+    products(first: 36, sortKey: BEST_SELLING, query: "-tag:adults-only") {
       nodes {
         ...RecommendedProduct
       }

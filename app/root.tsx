@@ -171,7 +171,7 @@ const CART_RECOMMENDATIONS_QUERY = `#graphql
   }
   query CartRecommendations($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: BEST_SELLING) {
+    products(first: 8, sortKey: BEST_SELLING, query: "-tag:adults-only") {
       nodes { ...CartRecProduct }
     }
   }
@@ -248,7 +248,9 @@ export function ErrorBoundary() {
           : `STORE ERROR · CODE ${errorStatus}`}
       </p>
       <h1 className="sign-type text-4xl">
-        {notFound ? 'ITEM NOT FOUND — CHECK AISLE 9' : 'SOMETHING FELL OFF A SHELF.'}
+        {notFound
+          ? 'ITEM NOT FOUND — CHECK AISLE 9'
+          : 'SOMETHING FELL OFF A SHELF.'}
       </h1>
       <p className="text-ink/70">
         {notFound

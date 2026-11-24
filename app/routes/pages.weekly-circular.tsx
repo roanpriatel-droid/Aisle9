@@ -247,14 +247,14 @@ const CIRCULAR_QUERY = `#graphql
   ${FLYER_PRODUCT_FRAGMENT}
   query WeeklyCircular($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    a1: products(first: 4, query: "tag:'i-love-collection'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a2: products(first: 4, query: "tag:'down-bad'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a3: products(first: 4, query: "tag:'the-confessions'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a4: products(first: 4, query: "tag:'freak-behavior'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a5: products(first: 4, query: "tag:'warning-labels'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a6: products(first: 4, query: "tag:'minor-crimes'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a7: products(first: 4, query: "tag:'liver-damage'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
-    a8: products(first: 4, query: "tag:'gifts-for-idiots'", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a1: products(first: 4, query: "tag:'i-love-collection' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a2: products(first: 4, query: "tag:'down-bad' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a3: products(first: 4, query: "tag:'the-confessions' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a4: products(first: 4, query: "tag:'freak-behavior' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a5: products(first: 4, query: "tag:'warning-labels' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a6: products(first: 4, query: "tag:'minor-crimes' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a7: products(first: 4, query: "tag:'liver-damage' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
+    a8: products(first: 4, query: "tag:'gifts-for-idiots' -tag:adults-only", sortKey: BEST_SELLING) { nodes { ...FlyerProduct } }
   }
 ` as const;
 
@@ -265,7 +265,7 @@ const CIRCULAR_FALLBACK_QUERY = `#graphql
     $language: LanguageCode
     $first: Int
   ) @inContext(country: $country, language: $language) {
-    products(first: $first, sortKey: BEST_SELLING) {
+    products(first: $first, sortKey: BEST_SELLING, query: "-tag:adults-only") {
       nodes {
         ...FlyerProduct
       }

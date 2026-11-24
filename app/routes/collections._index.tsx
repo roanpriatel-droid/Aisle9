@@ -10,7 +10,7 @@ export const meta: Route.MetaFunction = () => {
       content:
         'Every department at AISLE 9: nine themed aisles of deadpan graphic tees plus best sellers, new arrivals and matching sets. Every shirt $36.',
     },
-    {rel: 'canonical', href: '/collections'},
+    {tagName: 'link', rel: 'canonical', href: '/collections'},
   ];
 };
 

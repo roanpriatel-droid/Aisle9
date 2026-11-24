@@ -84,7 +84,7 @@ export default function GiftGuide() {
             <div
               className="mt-4 max-w-2xl space-y-3 text-ink/75"
               // Merchant-authored HTML from the Shopify page body.
-              // eslint-disable-next-line react/no-danger
+
               dangerouslySetInnerHTML={{__html: bodyHtml}}
             />
           ) : null}
@@ -92,7 +92,7 @@ export default function GiftGuide() {
         {beforeCutoff && (
           <Link
             to="#departments"
-            className="block border-2 border-ink bg-signage p-5 text-white no-underline shadow-[6px_6px_0_0_var(--color-ink)]"
+            className="block border-2 border-ink bg-signage p-5 text-white! no-underline shadow-[6px_6px_0_0_var(--color-ink)]"
           >
             <p className="label-type text-white/80">ATTENTION SHOPPERS</p>
             <p className="sign-type mt-1 text-2xl">{HOLIDAY_CUTOFF.label}</p>

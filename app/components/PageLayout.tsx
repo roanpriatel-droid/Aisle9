@@ -15,6 +15,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {AnnouncementBar} from '~/components/brand/AnnouncementBar';
+import {SavingsClubPopup} from '~/components/SavingsClubPopup';
 import {NavProgress} from '~/components/NavProgress';
 import {VOICE} from '~/lib/brand';
 
@@ -56,6 +57,7 @@ export function PageLayout({
       <main id="main-content" tabIndex={-1}>
         {children}
       </main>
+      <SavingsClubPopup />
       <Footer
         footer={footer}
         header={header}
