@@ -152,7 +152,7 @@ export function findAisle(handle: string) {
  * decisions, crimes go with their consequences. Falls back to best sellers.
  */
 export const COLLECTION_PAIRS: Record<string, string> = {
-  'i-collection': 'down-bad',
+  'i-love-collection': 'down-bad',
   'down-bad': 'the-confessions',
   'the-confessions': 'down-bad',
   'freak-behavior': 'warning-labels',
@@ -200,7 +200,7 @@ export const TAG_PAIRS: Record<string, string> = {
 
 /** The tag → its aisle handle (for building links/labels from a product tag). */
 export const TAG_TO_HANDLE: Record<string, string> = {
-  'i-love-collection': 'i-collection',
+  'i-love-collection': 'i-love-collection',
   'down-bad': 'down-bad',
   'the-confessions': 'the-confessions',
   'freak-behavior': 'freak-behavior',
@@ -228,7 +228,7 @@ export function primaryAisleTag(tags: readonly string[]): string | null {
  * catalog by sort. Note the I❤ aisle's real tag is `i-love-collection`.
  */
 export const AISLE_TAG: Record<string, string | null> = {
-  'i-collection': 'i-love-collection',
+  'i-love-collection': 'i-love-collection',
   'down-bad': 'down-bad',
   'the-confessions': 'the-confessions',
   'freak-behavior': 'freak-behavior',

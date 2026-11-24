@@ -61,6 +61,12 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   if (!handle) throw redirect('/collections');
 
+  // Legacy handle for the I ❤ aisle (indexed / linked before it was unified).
+  if (handle === 'i-collection') {
+    const url = new URL(request.url);
+    throw redirect(`/collections/i-love-collection${url.search}`, 301);
+  }
+
   const aisle = findAisle(handle);
   if (!aisle) {
     // Not a known aisle — resolve as a real Shopify collection (e.g. frontpage).

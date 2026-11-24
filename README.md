@@ -35,7 +35,7 @@ The catalog currently runs on [mock.shop](https://mock.shop) (no
 
 ## Launch checklist (things the UI promises that admin must honor)
 
-- [ ] **Bulk pricing ladder** — the site advertises 1 tee $29 / 2 −10% /
+- [ ] **Bulk pricing ladder** — the site advertises 1 tee $36 / 2 −10% /
       3 −20% / 4 −30%, auto-applied, mix-and-match. This REQUIRES a Shopify
       **automatic discount** with quantity tiers in the store admin (or a
       Function-based discount). Without it, checkout will charge list price.

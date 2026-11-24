@@ -22,7 +22,7 @@ type Section = {handle: string; title: string; products: FlyerProductFragment[]}
 
 /** The flyer's departments, in order, with the product tag that fills each. */
 const CIRCULAR_AISLES = [
-  {alias: 'a1', handle: 'i-collection', title: 'I ❤'},
+  {alias: 'a1', handle: 'i-love-collection', title: 'I ❤'},
   {alias: 'a2', handle: 'down-bad', title: 'DOWN BAD'},
   {alias: 'a3', handle: 'the-confessions', title: 'THE CONFESSIONS'},
   {alias: 'a4', handle: 'freak-behavior', title: 'FREAK BEHAVIOR'},
