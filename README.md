@@ -23,7 +23,7 @@ land later, swap the component internals and keep their APIs.
 - `app/styles/app.css` — reskin of skeleton classes (header, cart aside, PDP,
   grids) so inner pages match.
 
-## Data: mock.shop now, real store later
+## Data: mock.shop locally unless `.env` is set
 
 The catalog currently runs on [mock.shop](https://mock.shop) (no
 `PUBLIC_STORE_DOMAIN` set). To point at the real store:
@@ -33,33 +33,59 @@ The catalog currently runs on [mock.shop](https://mock.shop) (no
 2. Update collection handles in `app/lib/brand.ts` (`COLLECTIONS`) —
    best-sellers / new-stock currently point at `/collections/all`.
 
-## Launch checklist (things the UI promises that admin must honor)
+## Store (live config — set up 2026-11-24)
 
-- [ ] **Bulk pricing ladder** — the site advertises 1 tee $36 / 2 −10% /
-      3 −20% / 4 −30%, auto-applied, mix-and-match. This REQUIRES a Shopify
-      **automatic discount** with quantity tiers in the store admin (or a
-      Function-based discount). Without it, checkout will charge list price.
-      Ladder copy lives in `app/lib/brand.ts` (`LADDER`, `BASE_PRICE`).
-- [ ] **Price Check email capture** — the homepage form posts to a stub
-      action in `app/routes/_index.tsx` that discards the address. Wire to
-      Shopify Email / Klaviyo before launch, including the promised 10% first
-      order code.
+Shopify store: `nibavt-pw.myshopify.com` · Hydrogen storefront "Aisle9" (Oxygen,
+workflow `oxygen-deployment-1000186400.yml`) · catalog from the Printify shop
+"Aisle9" (Gildan 5000 via Monster Digital, printed in Columbus, OH).
+
+- **Products** are created by Printify (so orders route to print automatically).
+  Edit titles/tags/descriptions in Printify and re-publish, or in Shopify.
+  Every product carries exactly one themed aisle tag + `all-products`;
+  matching pairs also carry `matching-sets`; store-themed shirts `store-classics`.
+- **Collections**: 12 smart collections, one per aisle/department, filled by tag
+  (best-sellers / new-arrivals = every `all-products` item, sorted). Handles
+  match `AISLES` / `DEPARTMENTS` in `app/lib/brand.ts`.
+- **Bulk ladder**: three automatic discounts (2+ −10%, 3+ −20%, 4+ −30%) that
+  don't combine with each other, so Shopify applies the best tier.
+- **Codes**: `SAVINGSCLUB10` (Savings Club, once per customer) and
+  `TAGGEDINAISLE9` (UGC reward). Neither stacks with the ladder; the better wins.
+- **Metafields** (`aisle9.*`): product `aisle_number`, `aisle`, `matching_set`,
+  `pa_announcement`; collection `aisle_number`, `sign_blurb`.
+- **Contact form** submissions → metaobject `aisle9_complaint`
+  (Admin → Content → Metaobjects). Add a Shopify Flow "Metaobject created →
+  send internal email" to get them in your inbox.
+- **Savings Club / Price Check / Notify-me** → Shopify customers subscribed to
+  email marketing, tagged `savings-club` / `restock-notify`.
+
+### Required Oxygen environment variables (Hydrogen → Storefront → Environments)
+
+| Name | Value | Notes |
+|---|---|---|
+| `PRIVATE_SHOPIFY_ADMIN_CLIENT_ID` | the custom app's client ID | mark **secret** |
+| `PRIVATE_SHOPIFY_ADMIN_CLIENT_SECRET` | the custom app's client secret | mark **secret** |
+
+Used only server-side (`app/lib/admin.server.ts`) to save email signups and
+complaints. Without them the forms still respond, but nothing is saved.
+
+## Launch checklist (admin-only — cannot be done via API)
+
+- [ ] **Store currency → USD** (Settings → Store details). Store is CAD; the
+      site and catalog are priced as $36 USD. Must be done before the first order.
+- [ ] **Hydrogen storefront public**: Hydrogen → Aisle9 → Storefront settings →
+      Production environment URL privacy → Public.
+- [ ] **Domain**: move `aisle9.store` / `www.aisle9.store` from Online Store to
+      the Hydrogen storefront (Settings → Domains / Hydrogen → Domains).
+- [ ] **Online Store password**: remove once the domain points at Hydrogen
+      (Online Store → Preferences).
+- [ ] **Payments**: activate Shopify Payments / PayPal (identity + bank).
 - [ ] **Order confirmation copy** — "Cleanup on aisle 9. Your order is on the
-      way." goes in Shopify admin → Settings → Notifications (checkout is
-      Shopify-hosted; not controlled by this repo).
-- [ ] **Contact page** — `app/routes/pages.contact.tsx` has a placeholder
-      support email + social handle.
-- [ ] **Contact form** — `app/routes/pages.contact.tsx` posts to a stub
-      action; wire to the real support inbox / helpdesk.
-- [ ] **Reviews / UGC** — CommentCards renders an honest empty state and
-      SeenInStore is a CTA band (no photos yet). Wire a review platform and
-      add real photos when they exist. Do not fabricate counts or ratings.
-- [ ] **UGC discount** — "tag us, get 10% off next order" needs a discount
-      code workflow in admin.
-- [ ] **Free US shipping over $100** — configure the shipping rate in admin.
-- [ ] **Size guide** — measurements in `app/routes/pages.size-guide.tsx`
-      assume a standard heavyweight unisex staple tee; verify against the
-      final Printify blank.
+      way." in Settings → Notifications (checkout is Shopify-hosted).
+- [ ] **Sender email** `aisle9@stratosync.solutions` verified with SPF/DKIM.
+- [ ] **Shopify Email welcome automation** (optional — the site already shows
+      the code on signup).
+- [ ] **Reviews / UGC** — wire a review platform; never fabricate ratings.
+- [ ] **Rotate** the Printify API token and the app client secret after setup.
 
 ## Development
 

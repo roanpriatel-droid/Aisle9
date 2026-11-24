@@ -1,6 +1,7 @@
 import type {Route} from './+types/pages.contact';
 import {useFetcher} from 'react-router';
 import {CONTACT} from '~/lib/brand';
+import {fileComplaint, isEmail} from '~/lib/admin.server';
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -13,14 +14,25 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export async function action({request}: Route.ActionArgs) {
+export async function action({request, context}: Route.ActionArgs) {
   const form = await request.formData();
-  if (form.get('intent') === 'complaint') return {ok: true};
-  return {ok: false};
+  if (form.get('intent') !== 'complaint') return {ok: false, failed: false};
+  const email = String(form.get('email') ?? '')
+    .trim()
+    .toLowerCase();
+  if (!isEmail(email)) return {ok: false, failed: true};
+  const filed = await fileComplaint(context.env, {
+    email,
+    order_number: String(form.get('order') ?? ''),
+    nature: String(form.get('nature') ?? ''),
+    severity: String(form.get('severity') ?? ''),
+    body: String(form.get('body') ?? ''),
+  });
+  return {ok: filed, failed: !filed};
 }
 
 export default function ContactPage() {
-  const fetcher = useFetcher<{ok: boolean}>();
+  const fetcher = useFetcher<{ok: boolean; failed: boolean}>();
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
@@ -38,6 +50,14 @@ export default function ContactPage() {
         </div>
       ) : (
         <fetcher.Form method="post" className="mt-10 space-y-6">
+          {fetcher.data?.failed && (
+            <p
+              className="label-type border-2 border-ink bg-signage px-3 py-2 text-linoleum"
+              role="alert"
+            >
+              {CONTACT.failure}
+            </p>
+          )}
           <input type="hidden" name="intent" value="complaint" />
 
           <div>

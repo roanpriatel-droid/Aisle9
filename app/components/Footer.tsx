@@ -10,6 +10,10 @@ import {
   PAYMENT_METHODS,
   SAVINGS_CLUB,
 } from '~/lib/brand';
+import {
+  SavingsClubCode,
+  type SavingsClubResult,
+} from '~/components/SavingsClubCode';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -51,7 +55,10 @@ export function Footer(_props: FooterProps) {
 
           {/* Service Desk */}
           <nav aria-labelledby="footer-service" className="lg:col-span-3">
-            <h3 id="footer-service" className="label-type mb-4 text-linoleum/50">
+            <h3
+              id="footer-service"
+              className="label-type mb-4 text-linoleum/50"
+            >
               SERVICE DESK
             </h3>
             <ul className="flex flex-col gap-2">
@@ -91,7 +98,9 @@ export function Footer(_props: FooterProps) {
 
           {/* Member services / newsletter */}
           <div className="lg:col-span-3">
-            <h3 className="label-type mb-4 text-linoleum/50">MEMBER SERVICES</h3>
+            <h3 className="label-type mb-4 text-linoleum/50">
+              MEMBER SERVICES
+            </h3>
             <p className="sign-type text-base text-linoleum">
               {SAVINGS_CLUB.motto}
             </p>
@@ -142,19 +151,13 @@ export function Footer(_props: FooterProps) {
 
 /** Compact Savings Club signup — posts to the homepage action. */
 function FooterSignup() {
-  const fetcher = useFetcher<{ok: boolean}>();
+  const fetcher = useFetcher<SavingsClubResult>();
   const confirmed = fetcher.data?.ok;
 
-  if (confirmed) {
-    return (
-      <p className="label-type mt-4 border-2 border-linoleum/40 px-3 py-2 text-linoleum">
-        {SAVINGS_CLUB.success}
-      </p>
-    );
-  }
+  if (confirmed) return <SavingsClubCode tone="light" />;
 
   return (
-    <fetcher.Form method="post" action="/" className="mt-4 flex">
+    <fetcher.Form method="post" action="/?index" className="mt-4 flex">
       <label className="sr-only" htmlFor="footer-email">
         Email address
       </label>

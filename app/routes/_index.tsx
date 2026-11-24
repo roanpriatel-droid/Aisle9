@@ -1,5 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
+import {isEmail, subscribeEmail} from '~/lib/admin.server';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {Hero} from '~/components/home/Hero';
 import {TrustStrip} from '~/components/home/TrustStrip';
@@ -42,13 +43,24 @@ export async function loader(args: Route.LoaderArgs) {
  * and issue the promised 10%-off first-order code. Until then this accepts and
  * discards the address. See README launch checklist.
  */
-export async function action({request}: Route.ActionArgs) {
+export async function action({request, context}: Route.ActionArgs) {
   const form = await request.formData();
   const intent = form.get('intent');
-  if (intent === 'savings-club' || intent === 'price-check') {
-    return {ok: true};
+  if (intent !== 'savings-club' && intent !== 'price-check') {
+    return {ok: false, error: null};
   }
-  return {ok: false};
+  const email = String(form.get('email') ?? '')
+    .trim()
+    .toLowerCase();
+  if (!isEmail(email)) return {ok: false, error: 'invalid'};
+  // Capture the subscriber in Shopify. If that fails we still hand over the
+  // code (the benefit is real either way) and log for follow-up.
+  const saved = await subscribeEmail(context.env, email, [
+    'savings-club',
+    `source:${intent}`,
+  ]);
+  if (!saved) console.warn('[savings-club] subscriber not saved');
+  return {ok: true, error: null};
 }
 
 /**

@@ -60,7 +60,8 @@ export const AISLES = [
     n: 3,
     title: 'THE CONFESSIONS',
     handle: 'the-confessions',
-    blurb: 'Admissions in cotton. No priest, no absolution, free shipping over $100.',
+    blurb:
+      'Admissions in cotton. No priest, no absolution, free shipping over $100.',
   },
   {
     n: 4,
@@ -72,25 +73,29 @@ export const AISLES = [
     n: 5,
     title: 'WARNING LABELS',
     handle: 'warning-labels',
-    blurb: 'Full disclosure, worn on the chest. Handle with the appropriate caution.',
+    blurb:
+      'Full disclosure, worn on the chest. Handle with the appropriate caution.',
   },
   {
     n: 6,
     title: 'MINOR CRIMES',
     handle: 'minor-crimes',
-    blurb: 'Misdemeanors only. Nothing here rises to the level of a felony. Probably.',
+    blurb:
+      'Misdemeanors only. Nothing here rises to the level of a felony. Probably.',
   },
   {
     n: 7,
     title: 'LIVER DAMAGE',
     handle: 'liver-damage',
-    blurb: 'Consequences of a good time, itemized. Drink responsibly, dress otherwise.',
+    blurb:
+      'Consequences of a good time, itemized. Drink responsibly, dress otherwise.',
   },
   {
     n: 8,
     title: 'TYPO’D',
     handle: 'typod', // ✔ verified against the live store 2026-08-01
-    blurb: 'Errors we kept on purpose. The mistake is the design. No refunds on irony.',
+    blurb:
+      'Errors we kept on purpose. The mistake is the design. No refunds on irony.',
   },
   {
     n: 9,
@@ -108,10 +113,34 @@ export type Aisle = (typeof AISLES)[number];
  * numbered aisles, while nav still treats these as front-of-store quick links.
  */
 export const DEPARTMENTS = [
-  {n: 10, title: 'BEST SELLERS', handle: 'best-sellers', to: '/collections/best-sellers', blurb: 'What everyone else already regretted. Moves fast.'},
-  {n: 11, title: 'NEW ARRIVALS', handle: 'new-arrivals', to: '/collections/new-arrivals', blurb: 'Freshly shelved. No occasion. Restocked weekly.'},
-  {n: 12, title: 'MATCHING SETS', handle: 'matching-sets', to: '/collections/matching-sets', blurb: 'Two shirts, one bad idea, split evenly. Ladder applies.'},
-  {n: 13, title: 'ALL PRODUCTS', handle: 'all', to: '/collections/all', blurb: 'The entire store, aisle by aisle. Everything we have.'},
+  {
+    n: 10,
+    title: 'BEST SELLERS',
+    handle: 'best-sellers',
+    to: '/collections/best-sellers',
+    blurb: 'What everyone else already regretted. Moves fast.',
+  },
+  {
+    n: 11,
+    title: 'NEW ARRIVALS',
+    handle: 'new-arrivals',
+    to: '/collections/new-arrivals',
+    blurb: 'Freshly shelved. No occasion. Restocked weekly.',
+  },
+  {
+    n: 12,
+    title: 'MATCHING SETS',
+    handle: 'matching-sets',
+    to: '/collections/matching-sets',
+    blurb: 'Two shirts, one bad idea, split evenly. Ladder applies.',
+  },
+  {
+    n: 13,
+    title: 'ALL PRODUCTS',
+    handle: 'all',
+    to: '/collections/all',
+    blurb: 'The entire store, aisle by aisle. Everything we have.',
+  },
 ] as const;
 
 /**
@@ -330,8 +359,13 @@ export const SAVINGS_CLUB = {
   ],
   placeholder: 'EMAIL FOR CARD',
   cta: 'ENROLL',
-  finePrint: 'No card is mailed. No points accrue. Unsubscribe ends membership immediately and without ceremony.',
-  success: 'MEMBERSHIP ACTIVE. CHECK YOUR INBOX FOR THE CODE.',
+  finePrint:
+    'No card is mailed. No points accrue. Unsubscribe ends membership immediately and without ceremony.',
+  success: 'MEMBERSHIP ACTIVE. YOUR 10% FIRST-ORDER CODE:',
+  /** Real Shopify discount code (10% off, once per customer). */
+  code: 'SAVINGSCLUB10',
+  applyCta: 'APPLY IT AND SHOP',
+  invalid: 'THAT IS NOT AN EMAIL ADDRESS. THE CLUB HAS STANDARDS, BRIEFLY.',
   cardHolder: 'MEMBER SINCE TODAY',
 } as const;
 
@@ -380,7 +414,8 @@ export const VOICE = {
   notFoundBody: 'Whatever you were looking for, it is not down here.',
   notFoundCta: 'RETURN TO FRONT OF STORE',
   emailHeading: 'PRICE CHECK.',
-  emailSub: '10% off your first order. Announcements when new stock hits the shelf.',
+  emailSub:
+    '10% off your first order. Announcements when new stock hits the shelf.',
   emailPlaceholder: 'YOUR EMAIL',
   emailCta: 'CHECK',
   emailSuccess: 'PRICE CHECK CONFIRMED. WATCH YOUR INBOX.',
@@ -407,7 +442,8 @@ export const VOICE = {
     'Whatever you scanned did not ring up. It may be discontinued, mis-shelved, or something you imagined. Aisle 9 is where lost items end up.',
   /** Recently viewed. */
   previouslyScanned: 'PREVIOUSLY SCANNED',
-  previouslyScannedSub: 'Items you have already looked at. We kept the receipt.',
+  previouslyScannedSub:
+    'Items you have already looked at. We kept the receipt.',
   /** Quick add on grids. */
   quickAdd: 'QUICK ADD',
   quickAdding: 'ADDING…',
@@ -531,10 +567,22 @@ export const STORE_INFO = {
   },
 
   values: [
-    {title: 'INTEGRITY', body: 'The shirt will be the shirt shown. This is the entire promise.'},
-    {title: 'SYNERGY', body: 'Two shirts cost less per shirt than one shirt costs per shirt. This is mathematics, which we call synergy.'},
-    {title: 'TRANSPARENCY', body: 'Every shirt is $36. We do not know why. We have stopped asking.'},
-    {title: 'SUSTAINABILITY', body: 'Nothing is printed until you order it, so we maintain a warehouse of zero regrets and one printer.'},
+    {
+      title: 'INTEGRITY',
+      body: 'The shirt will be the shirt shown. This is the entire promise.',
+    },
+    {
+      title: 'SYNERGY',
+      body: 'Two shirts cost less per shirt than one shirt costs per shirt. This is mathematics, which we call synergy.',
+    },
+    {
+      title: 'TRANSPARENCY',
+      body: 'Every shirt is $36. We do not know why. We have stopped asking.',
+    },
+    {
+      title: 'SUSTAINABILITY',
+      body: 'Nothing is printed until you order it, so we maintain a warehouse of zero regrets and one printer.',
+    },
   ],
 
   /** §3 — the live directory. Counts come from the storefront at request time. */
@@ -587,7 +635,8 @@ export const STORE_INFO = {
     {role: 'CUSTODIAL (AISLE 9)', name: 'MANAGEMENT'},
     {role: 'INTERN', name: 'ALSO MANAGEMENT'},
   ],
-  orgFooter: 'ALL POSITIONS REPORT TO MANAGEMENT. MANAGEMENT REPORTS TO NO ONE.',
+  orgFooter:
+    'ALL POSITIONS REPORT TO MANAGEMENT. MANAGEMENT REPORTS TO NO ONE.',
 
   factsTitle: 'STORE FACTS',
   factsNote: 'Figures marked LIVE are read from the sales floor on page load.',
@@ -596,15 +645,28 @@ export const STORE_INFO = {
   revisionsTitle: 'REVISION HISTORY',
   revisions: [
     {rev: '1', change: 'Document created. Filed. Not read.'},
-    {rev: '2', change: 'Corporate values added. The values themselves were not changed, having not previously existed.'},
-    {rev: '3', change: 'Organizational chart amended to reflect the promotion of MANAGEMENT to MANAGEMENT.'},
-    {rev: '4', change: 'Store directory connected to the sales floor. The numbers now update without anyone being asked.'},
+    {
+      rev: '2',
+      change:
+        'Corporate values added. The values themselves were not changed, having not previously existed.',
+    },
+    {
+      rev: '3',
+      change:
+        'Organizational chart amended to reflect the promotion of MANAGEMENT to MANAGEMENT.',
+    },
+    {
+      rev: '4',
+      change:
+        'Store directory connected to the sales floor. The numbers now update without anyone being asked.',
+    },
   ],
   revisionCols: {rev: 'REV.', change: 'NATURE OF AMENDMENT'},
 
   /** Acknowledgement block — the flourish that sells the whole conceit. */
   ackTitle: 'ACKNOWLEDGEMENT',
-  ackBody: 'I have read the above document in full and understand that doing so has changed nothing.',
+  ackBody:
+    'I have read the above document in full and understand that doing so has changed nothing.',
   ackSignature: 'SIGNATURE OF SHOPPER',
   ackDate: 'DATE',
   ackNote:
@@ -623,7 +685,9 @@ export const STORE_INFO = {
  */
 export function storeFacts(live: {items?: number; departments?: number}) {
   const n = (v: number | undefined) =>
-    typeof v === 'number' && v > 0 ? v.toLocaleString('en-US') : 'BEING COUNTED';
+    typeof v === 'number' && v > 0
+      ? v.toLocaleString('en-US')
+      : 'BEING COUNTED';
   return [
     {k: 'ESTABLISHED', v: 'RECENTLY', live: false},
     {k: 'HEADQUARTERS', v: 'AISLE 9', live: false},
@@ -669,7 +733,10 @@ export const CONTACT = {
   bodyLabel: 'STATE YOUR COMPLAINT',
   bodyPlaceholder: 'Begin. We are, in a manner of speaking, listening.',
   submit: 'SUBMIT TO THE DESK',
-  success: 'COMPLAINT LOGGED. TICKET FILED UNDER "NOTED." RESPONSE TIME: EVENTUALLY.',
+  success:
+    'COMPLAINT LOGGED. TICKET FILED UNDER "NOTED." RESPONSE TIME: EVENTUALLY.',
+  failure:
+    'THE DESK DROPPED YOUR COMPLAINT. PLEASE EMAIL IT TO AISLE9@STRATOSYNC.SOLUTIONS INSTEAD.',
   /** The real, monitored inbox. Every customer-facing email on the site and in
    *  the Shopify policies points here — keep them in sync. */
   deskEmail: 'aisle9@stratosync.solutions',
@@ -714,15 +781,42 @@ export const SERVICE_DESK = {
   heading: 'CUSTOMER SERVICE DESK',
   sub: 'Policies and answers, numbered for reference. Read in the order received.',
   items: [
-    {q: 'HOW DOES THE BULK DISCOUNT WORK?', a: 'Put shirts in your basket. Two shirts take 10% off, three take 20% off, four or more take 30% off. It applies automatically at checkout — no code, and you can mix and match any designs. The math happens whether or not you notice it.'},
-    {q: 'WHEN WILL MY ORDER SHIP?', a: 'Every shirt is printed after you order it. Printing takes 2–5 business days, then transit. Most US orders arrive within 5–7 business days of printing. You will get a tracking number when it leaves the facility.'},
-    {q: 'HOW MUCH IS SHIPPING?', a: 'Calculated at checkout by weight and destination. US orders over $100 ship free, which — given the bulk ladder — is achievable if you commit.'},
-    {q: 'WHAT ARE THE SHIRTS LIKE?', a: 'Heavyweight unisex cotton tees, printed with water-based inks. Sizes S through 3XL. Colorways vary by design — generally white, black, and ash grey. See the Sizing Department before guessing.'},
-    {q: 'CAN I RETURN A SHIRT?', a: 'Yes. 30 days from delivery, unworn and unwashed. Start at the Customer Service Desk (the contact page). Refunds go back to the original payment method once the shirt is inspected.'},
-    {q: 'MY SHIRT ARRIVED DAMAGED OR MISPRINTED.', a: 'Not technically a question, but understood. Send a photo of the problem to customer service within 30 days and a replacement will be printed at no charge. The photo is required. The apology is implied.'},
-    {q: 'HOW DO I WASH IT?', a: 'Inside out, cold water, mild detergent. Hang dry or tumble low. Do not iron the print. Treated properly, the shirt will outlast the phase of your life it describes.'},
-    {q: 'DO YOU RESTOCK?', a: 'New designs shelve weekly. Because everything is printed to order, designs do not "sell out" — but they do get discontinued without ceremony. If you are attached to one, act like it.'},
-    {q: 'IS THE STORE REAL?', a: 'The shirts are real. The prices are real. The store is a concept. If you have further questions about the nature of retail, the Customer Service Desk will read them in the order received.'},
+    {
+      q: 'HOW DOES THE BULK DISCOUNT WORK?',
+      a: 'Put shirts in your basket. Two shirts take 10% off, three take 20% off, four or more take 30% off. It applies automatically at checkout — no code, and you can mix and match any designs. The math happens whether or not you notice it.',
+    },
+    {
+      q: 'WHEN WILL MY ORDER SHIP?',
+      a: 'Every shirt is printed after you order it. Printing takes 2–5 business days, then transit. Most US orders arrive within 5–7 business days of printing. You will get a tracking number when it leaves the facility.',
+    },
+    {
+      q: 'HOW MUCH IS SHIPPING?',
+      a: 'Calculated at checkout by weight and destination. US orders over $100 ship free, which — given the bulk ladder — is achievable if you commit.',
+    },
+    {
+      q: 'WHAT ARE THE SHIRTS LIKE?',
+      a: 'Heavyweight unisex cotton tees, printed with water-based inks. Sizes S through 3XL. Colorways vary by design — generally white, black, and ash grey. See the Sizing Department before guessing.',
+    },
+    {
+      q: 'CAN I RETURN A SHIRT?',
+      a: 'Yes. 30 days from delivery, unworn and unwashed. Start at the Customer Service Desk (the contact page). Refunds go back to the original payment method once the shirt is inspected.',
+    },
+    {
+      q: 'MY SHIRT ARRIVED DAMAGED OR MISPRINTED.',
+      a: 'Not technically a question, but understood. Send a photo of the problem to customer service within 30 days and a replacement will be printed at no charge. The photo is required. The apology is implied.',
+    },
+    {
+      q: 'HOW DO I WASH IT?',
+      a: 'Inside out, cold water, mild detergent. Hang dry or tumble low. Do not iron the print. Treated properly, the shirt will outlast the phase of your life it describes.',
+    },
+    {
+      q: 'DO YOU RESTOCK?',
+      a: 'New designs shelve weekly. Because everything is printed to order, designs do not "sell out" — but they do get discontinued without ceremony. If you are attached to one, act like it.',
+    },
+    {
+      q: 'IS THE STORE REAL?',
+      a: 'The shirts are real. The prices are real. The store is a concept. If you have further questions about the nature of retail, the Customer Service Desk will read them in the order received.',
+    },
   ],
 } as const;
 

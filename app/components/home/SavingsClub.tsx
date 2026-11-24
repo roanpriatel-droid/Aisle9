@@ -1,5 +1,9 @@
 import {useFetcher} from 'react-router';
 import {SAVINGS_CLUB} from '~/lib/brand';
+import {
+  SavingsClubCode,
+  type SavingsClubResult,
+} from '~/components/SavingsClubCode';
 
 /**
  * SAVINGS CLUB — email capture styled as a supermarket loyalty-card
@@ -7,11 +11,11 @@ import {SAVINGS_CLUB} from '~/lib/brand';
  * card. The joke stays deadpan — the club saves you nothing; the 10% first
  * order is stated as the one real benefit so it isn't a lie.
  *
- * Posts to the homepage action (intent "savings-club"), which is a STUB until
- * the store's email platform is wired. See README launch checklist.
+ * Posts to the homepage action (intent "savings-club"), which subscribes the
+ * email as a Shopify customer (tag: savings-club) and returns the real code.
  */
 export function SavingsClub() {
-  const fetcher = useFetcher<{ok: boolean}>();
+  const fetcher = useFetcher<SavingsClubResult>();
   const confirmed = fetcher.data?.ok;
 
   return (
@@ -41,9 +45,7 @@ export function SavingsClub() {
           </ul>
 
           {confirmed ? (
-            <p className="label-type mt-6 inline-block border-2 border-signage bg-signage px-4 py-3 text-white">
-              {SAVINGS_CLUB.success}
-            </p>
+            <SavingsClubCode />
           ) : (
             <fetcher.Form method="post" className="mt-6 flex w-full max-w-md">
               <label className="sr-only" htmlFor="savings-club-email">
@@ -67,6 +69,11 @@ export function SavingsClub() {
                 {SAVINGS_CLUB.cta}
               </button>
             </fetcher.Form>
+          )}
+          {fetcher.data?.error === 'invalid' && !confirmed && (
+            <p className="label-type mt-2 text-signage" role="alert">
+              {SAVINGS_CLUB.invalid}
+            </p>
           )}
 
           <p className="mt-3 max-w-md text-xs text-linoleum/40">

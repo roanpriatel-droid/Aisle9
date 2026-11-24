@@ -8,6 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/products.$handle';
+import {isEmail, subscribeEmail} from '~/lib/admin.server';
 import {
   getSelectedProductOptions,
   Analytics,
@@ -53,11 +54,17 @@ import type {
   PairedProductFragment,
 } from 'storefrontapi.generated';
 
-type SiblingData = {handle: string; title: string; products: PairedProductFragment[]};
+type SiblingData = {
+  handle: string;
+  title: string;
+  products: PairedProductFragment[];
+};
 
 /** "ITEM #A9-0217" from the product GID. Deterministic, stable. */
 function itemNumber(productId: string): string {
-  const digits = (productId.match(/\d+/g)?.join('') ?? '').slice(-4).padStart(4, '0');
+  const digits = (productId.match(/\d+/g)?.join('') ?? '')
+    .slice(-4)
+    .padStart(4, '0');
   return `A9-${digits}`;
 }
 
@@ -87,10 +94,19 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 /** Notify-me / restock capture (stub until email platform is wired). */
-export async function action({request}: Route.ActionArgs) {
+export async function action({request, context, params}: Route.ActionArgs) {
   const form = await request.formData();
-  if (form.get('intent') === 'notify') return {ok: true};
-  return {ok: false};
+  if (form.get('intent') !== 'notify') return {ok: false};
+  const email = String(form.get('email') ?? '')
+    .trim()
+    .toLowerCase();
+  if (!isEmail(email)) return {ok: false};
+  const saved = await subscribeEmail(context.env, email, [
+    'restock-notify',
+    `notify:${params.handle ?? 'unknown'}`.slice(0, 255),
+  ]);
+  if (!saved) console.warn('[notify] subscriber not saved');
+  return {ok: true};
 }
 
 export async function loader(args: Route.LoaderArgs) {
@@ -125,7 +141,10 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 }
 
 /** FREQUENTLY PAIRED (paired collection) + FROM THE SAME AISLE (own collection). */
-function loadDeferredData({context}: Route.LoaderArgs, product: ProductFragment) {
+function loadDeferredData(
+  {context}: Route.LoaderArgs,
+  product: ProductFragment,
+) {
   // Products are organized by TAG (the themed collections don't exist), so both
   // cross-sell rails key off the product's own aisle tag.
   const tags = (product.tags ?? []) as string[];
@@ -170,10 +189,14 @@ export default function Product() {
   // The product's aisle comes from its tags (themed collections don't exist).
   const aisleHandle = useMemo(() => {
     const tag = primaryAisleTag((product.tags ?? []) as string[]);
-    return tag ? TAG_TO_HANDLE[tag] ?? null : null;
+    return tag ? (TAG_TO_HANDLE[tag] ?? null) : null;
   }, [product.tags]);
-  const aisleLabel = aisleHandle ? aisleLabelForHandle(aisleHandle) : 'THE SHELF';
-  const aisleTo = aisleHandle ? `/collections/${aisleHandle}` : COLLECTIONS.shopAll;
+  const aisleLabel = aisleHandle
+    ? aisleLabelForHandle(aisleHandle)
+    : 'THE SHELF';
+  const aisleTo = aisleHandle
+    ? `/collections/${aisleHandle}`
+    : COLLECTIONS.shopAll;
 
   const available = selectedVariant?.availableForSale ?? false;
   const numericProductId = product.id.split('/').pop() ?? product.id;
@@ -304,7 +327,10 @@ export default function Product() {
         {/* 9 — trust row as compliance notices */}
         <div className="mt-4 grid grid-cols-3 gap-2">
           {COMPLIANCE.map((c) => (
-            <div key={c} className="border-2 border-ink bg-white p-2 text-center">
+            <div
+              key={c}
+              className="border-2 border-ink bg-white p-2 text-center"
+            >
               <span className="label-type text-ink/70">{c}</span>
             </div>
           ))}
@@ -315,7 +341,11 @@ export default function Product() {
       </div>
 
       {/* Below the fold */}
-      <FrequentlyPaired paired={paired} current={product} variant={selectedVariant} />
+      <FrequentlyPaired
+        paired={paired}
+        current={product}
+        variant={selectedVariant}
+      />
       <FromTheSameAisle siblings={siblings} />
       <RecentlyViewed excludeHandle={product.handle} />
       <JudgeMeReviews productId={numericProductId} productTitle={title} />
@@ -407,7 +437,9 @@ function BuyControls({
   const navigate = useNavigate();
   const {open} = useAside();
 
-  const colorOption = productOptions.find((o) => /colou?r|colorway/i.test(o.name));
+  const colorOption = productOptions.find((o) =>
+    /colou?r|colorway/i.test(o.name),
+  );
   const sizeOption = productOptions.find((o) => /size/i.test(o.name));
   const otherOptions = productOptions.filter(
     (o) => o !== colorOption && o !== sizeOption && o.optionValues.length > 1,
@@ -415,7 +447,10 @@ function BuyControls({
 
   function pick(variantUriQuery: string, isSize: boolean) {
     if (isSize) onSizeChosen();
-    void navigate(`?${variantUriQuery}`, {replace: true, preventScrollReset: true});
+    void navigate(`?${variantUriQuery}`, {
+      replace: true,
+      preventScrollReset: true,
+    });
   }
 
   return (
@@ -516,7 +551,11 @@ function BuyControls({
         {available ? (
           <>
             {needsSize ? (
-              <button type="button" className="btn w-full" onClick={onRequireSize}>
+              <button
+                type="button"
+                className="btn w-full"
+                onClick={onRequireSize}
+              >
                 ADD TO BASKET
               </button>
             ) : (
@@ -525,7 +564,13 @@ function BuyControls({
                 onClick={() => open('cart')}
                 lines={
                   selectedVariant
-                    ? [{merchandiseId: selectedVariant.id, quantity: 1, selectedVariant}]
+                    ? [
+                        {
+                          merchandiseId: selectedVariant.id,
+                          quantity: 1,
+                          selectedVariant,
+                        },
+                      ]
                     : []
                 }
               >
@@ -534,7 +579,10 @@ function BuyControls({
             )}
 
             {/* 8 — express checkout */}
-            <ExpressCheckout variantId={selectedVariant?.id} disabled={needsSize} />
+            <ExpressCheckout
+              variantId={selectedVariant?.id}
+              disabled={needsSize}
+            />
           </>
         ) : (
           <OutOfStock />
@@ -668,7 +716,13 @@ function StickyBuyBar({
             onClick={() => open('cart')}
             lines={
               variant
-                ? [{merchandiseId: variant.id, quantity: 1, selectedVariant: variant}]
+                ? [
+                    {
+                      merchandiseId: variant.id,
+                      quantity: 1,
+                      selectedVariant: variant,
+                    },
+                  ]
                 : []
             }
           >
@@ -728,7 +782,10 @@ function ProductAccordion({copy}: {copy: ReturnType<typeof describeProduct>}) {
               </thead>
               <tbody>
                 {SIZE_CHART.map((r, i) => (
-                  <tr key={r.size} className={i % 2 ? 'bg-fluorescent' : 'bg-white'}>
+                  <tr
+                    key={r.size}
+                    className={i % 2 ? 'bg-fluorescent' : 'bg-white'}
+                  >
                     <td className="sign-type p-2">{r.size}</td>
                     <td className="p-2">{r.chest}&Prime;</td>
                     <td className="p-2">{r.length}&Prime;</td>
@@ -755,8 +812,8 @@ function ProductAccordion({copy}: {copy: ReturnType<typeof describeProduct>}) {
         </summary>
         <div className="pdp-acc-body">
           <p className="text-sm text-ink/70">
-            Printed to order in 2–5 business days, then 5–7 in transit. US orders
-            over $100 ship free. 30-day returns, unworn and unwashed.
+            Printed to order in 2–5 business days, then 5–7 in transit. US
+            orders over $100 ship free. 30-day returns, unworn and unwashed.
           </p>
           <Link
             className="label-type mt-3 inline-block text-signage underline"
@@ -804,7 +861,10 @@ function FrequentlyPaired({
               );
             }
             const partnerVariant = partner.selectedOrFirstAvailableVariant;
-            const combined = combinePrice(variant?.price, partnerVariant?.price);
+            const combined = combinePrice(
+              variant?.price,
+              partnerVariant?.price,
+            );
             const lines = [
               variant ? {merchandiseId: variant.id, quantity: 1} : null,
               partnerVariant
@@ -828,7 +888,10 @@ function FrequentlyPaired({
                     to={`/products/${partner.handle}`}
                     image={partner.featuredImage}
                     title={partner.title}
-                    price={partnerVariant?.price ?? partner.priceRange.minVariantPrice}
+                    price={
+                      partnerVariant?.price ??
+                      partner.priceRange.minVariantPrice
+                    }
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-ink p-4">
@@ -875,7 +938,12 @@ function PairSide({
   price,
 }: {
   to: string;
-  image?: {url: string; altText?: string | null; width?: number | null; height?: number | null} | null;
+  image?: {
+    url: string;
+    altText?: string | null;
+    width?: number | null;
+    height?: number | null;
+  } | null;
   title: string;
   price?: MoneyV2 | null;
 }) {
@@ -883,7 +951,13 @@ function PairSide({
     <Link to={to} prefetch="intent" className="group block p-3 no-underline">
       {image && (
         <div className="border-2 border-ink">
-          <Image alt={image.altText || title} aspectRatio="1/1" data={image} loading="lazy" sizes="240px" />
+          <Image
+            alt={image.altText || title}
+            aspectRatio="1/1"
+            data={image}
+            loading="lazy"
+            sizes="240px"
+          />
         </div>
       )}
       <h3 className="sign-type mt-2 line-clamp-2 text-sm group-hover:text-signage">
@@ -975,10 +1049,18 @@ function CheckoutDivider() {
             DONE HERE? THE AISLE ISN’T.
           </h2>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link className="btn" prefetch="intent" to={COLLECTIONS.bestSellers}>
+            <Link
+              className="btn"
+              prefetch="intent"
+              to={COLLECTIONS.bestSellers}
+            >
               KEEP SHOPPING
             </Link>
-            <Link className="btn btn-outline" prefetch="intent" to="/pages/weekly-circular">
+            <Link
+              className="btn btn-outline"
+              prefetch="intent"
+              to="/pages/weekly-circular"
+            >
               THIS WEEK’S CIRCULAR
             </Link>
           </div>
