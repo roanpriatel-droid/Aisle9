@@ -1,50 +1,25 @@
-import {useLoaderData, Link} from 'react-router';
+import {Link} from 'react-router';
 import type {Route} from './+types/collections._index';
-import {getPaginationVariables, Image} from '@shopify/hydrogen';
-import type {CollectionFragment} from 'storefrontapi.generated';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {ALL_AISLES} from '~/lib/brand';
 
-export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
-
-  return {...deferredData, ...criticalData};
-}
-
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
-async function loadCriticalData({context, request}: Route.LoaderArgs) {
-  const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
-  });
-
-  const [{collections}] = await Promise.all([
-    context.storefront.query(COLLECTIONS_QUERY, {
-      variables: paginationVariables,
-    }),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
-
-  return {collections};
-}
+export const meta: Route.MetaFunction = () => {
+  return [
+    {title: 'AISLE 9 — DEPARTMENTS'},
+    {
+      name: 'description',
+      content:
+        'Every department at AISLE 9: nine themed aisles of deadpan graphic tees plus best sellers, new arrivals and matching sets. Every shirt $36.',
+    },
+    {rel: 'canonical', href: '/collections'},
+  ];
+};
 
 /**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
+ * The overhead directory: all 13 numbered aisles in store order, straight from
+ * the brand directory (the same list as the nav, footer and breadcrumbs), so it
+ * never shows Shopify's internal collections or an arbitrary sort.
  */
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
-}
-
 export default function Collections() {
-  const {collections} = useLoaderData<typeof loader>();
-
   return (
     <div className="collections">
       <p className="label-type text-ink/50">OVERHEAD DIRECTORY</p>
@@ -52,92 +27,36 @@ export default function Collections() {
       <p className="collection-description">
         Every aisle in the store. There is currently one store.
       </p>
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
-          />
-        )}
-      </PaginatedResourceSection>
+      <ul className="collections-grid">
+        {ALL_AISLES.map((aisle) => (
+          <li key={aisle.handle}>
+            <Link
+              className="collection-item group flex h-full flex-col gap-2 border-2 border-ink bg-white px-4 py-4 no-underline"
+              prefetch="intent"
+              to={`/collections/${aisle.handle}`}
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="sign-type flex h-9 w-9 shrink-0 items-center justify-center bg-signage text-base text-white"
+                  >
+                    {aisle.n}
+                  </span>
+                  <span className="sign-type text-sm group-hover:text-signage">
+                    <span className="sr-only">Aisle {aisle.n}: </span>
+                    {aisle.title}
+                  </span>
+                </span>
+                <span className="label-type text-ink/40">
+                  {aisle.kind === 'aisle' ? 'AISLE' : 'DEPT'} →
+                </span>
+              </span>
+              <span className="text-sm text-ink/70">{aisle.blurb}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-function CollectionItem({
-  collection,
-  index,
-}: {
-  collection: CollectionFragment;
-  index: number;
-}) {
-  return (
-    <Link
-      className="collection-item group border-2 border-ink bg-white no-underline"
-      key={collection.id}
-      to={`/collections/${collection.handle}`}
-      prefetch="intent"
-    >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          className="border-b-2 border-ink"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <span className="flex items-center justify-between px-4 py-3">
-        <h5 className="sign-type text-sm group-hover:text-signage">
-          {collection.title}
-        </h5>
-        <span className="label-type text-ink/40">AISLE →</span>
-      </span>
-    </Link>
-  );
-}
-
-const COLLECTIONS_QUERY = `#graphql
-  fragment Collection on Collection {
-    id
-    title
-    handle
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-  }
-  query StoreCollections(
-    $country: CountryCode
-    $endCursor: String
-    $first: Int
-    $language: LanguageCode
-    $last: Int
-    $startCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collections(
-      first: $first,
-      last: $last,
-      before: $startCursor,
-      after: $endCursor
-    ) {
-      nodes {
-        ...Collection
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-    }
-  }
-` as const;

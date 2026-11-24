@@ -199,7 +199,7 @@ export default function AboutPage() {
             <p className="mb-5 max-w-2xl text-sm text-ink/70">
               {STORE_INFO.directoryNote}
             </p>
-            <div className="overflow-x-auto border-2 border-ink">
+            <div className="relative overflow-x-auto border-2 border-ink">
               <table className="w-full min-w-[34rem] border-collapse text-left">
                 <thead>
                   <tr className="bg-ink text-linoleum">
