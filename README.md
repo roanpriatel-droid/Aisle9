@@ -35,7 +35,8 @@ The catalog currently runs on [mock.shop](https://mock.shop) (no
 
 ## Store (live config — set up 2026-11-24)
 
-Shopify store: `nibavt-pw.myshopify.com` · Hydrogen storefront "Aisle9" (Oxygen,
+Shopify store: `nibavt-pw.myshopify.com` · 375 products (all linked to Printify) ·
+18 matching sets · · Hydrogen storefront "Aisle9" (Oxygen,
 workflow `oxygen-deployment-1000186400.yml`) · catalog from the Printify shop
 "Aisle9" (Gildan 5000 via Monster Digital, printed in Columbus, OH).
 
@@ -70,6 +71,13 @@ complaints. Without them the forms still respond, but nothing is saved.
 
 ## Launch checklist (admin-only — cannot be done via API)
 
+- [ ] **US (and international) checkout — #1 blocker**: only Canadian buyers
+      can currently purchase. The US market exists but has no inventory
+      location, so every product reads 0 in stock for US shoppers. In
+      Settings → Markets → United States, add the **Printify** location to the
+      market's inventory/fulfillment locations (and check Settings → Shipping
+      and delivery → Fulfillable inventory). Verify: a US cart stops warning
+      "already sold out".
 - [ ] **Store currency → USD** (Settings → Store details). Store is CAD; the
       site and catalog are priced as $36 USD. Must be done before the first order.
 - [ ] **Hydrogen storefront public**: Hydrogen → Aisle9 → Storefront settings →
