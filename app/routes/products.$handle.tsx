@@ -165,7 +165,19 @@ function loadDeferredData(
           .catch(() => ({handle: '', title: '', products: []}))
       : Promise.resolve({handle: '', title: '', products: []});
 
-  return {paired: byTag(pairedTag), siblings: byTag(myTag)};
+  // A real matching set (aisle9.matching_set) beats the aisle-level pairing.
+  const setPartners = (product.matchingSet?.references?.nodes ?? []).filter(
+    (n): n is PairedProductFragment => 'handle' in n && Boolean(n.handle),
+  );
+  const paired: Promise<SiblingData> = setPartners.length
+    ? Promise.resolve({
+        handle: 'matching-sets',
+        title: '',
+        products: setPartners,
+      })
+    : byTag(pairedTag);
+
+  return {paired, siblings: byTag(myTag)};
 }
 
 export default function Product() {
@@ -839,14 +851,17 @@ function FrequentlyPaired({
   variant: ProductFragment['selectedOrFirstAvailableVariant'];
 }) {
   const {open} = useAside();
+  const isSet = Boolean(current.matchingSet?.references?.nodes?.length);
   return (
     <section
       aria-labelledby="paired-heading"
       className="col-span-full mt-14 border-t-2 border-ink pt-10"
     >
-      <p className="label-type text-ink/50">{VOICE.pairedSub}</p>
+      <p className="label-type text-ink/50">
+        {isSet ? VOICE.setSub : VOICE.pairedSub}
+      </p>
       <h2 id="paired-heading" className="sign-type mt-1 text-3xl">
-        {VOICE.pairedHeading}
+        {isSet ? VOICE.setHeading : VOICE.pairedHeading}
       </h2>
 
       <Suspense fallback={<span />}>
@@ -1098,6 +1113,24 @@ const PRODUCT_FRAGMENT = `#graphql
     encodedVariantExistence
     encodedVariantAvailability
     tags
+    matchingSet: metafield(namespace: "aisle9", key: "matching_set") {
+      references(first: 3) {
+        nodes {
+          ... on Product {
+            id
+            title
+            handle
+            featuredImage { id altText url width height }
+            priceRange { minVariantPrice { amount currencyCode } }
+            selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {
+              id
+              availableForSale
+              price { amount currencyCode }
+            }
+          }
+        }
+      }
+    }
     images(first: 12) {
       nodes { id url altText width height }
     }

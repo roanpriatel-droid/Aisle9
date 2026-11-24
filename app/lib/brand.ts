@@ -432,6 +432,10 @@ export const VOICE = {
   /** PDP cross-sell. */
   pairedHeading: 'FREQUENTLY PAIRED',
   pairedSub: 'Bought together by people making a series of decisions.',
+  /** PDP cross-sell when the product is half of a real matching set. */
+  setHeading: 'COMPLETE THE SET',
+  setSub:
+    'The other half of this bad idea. Two in the basket takes 10% off, automatically.',
   /** Cart upsell slot. */
   cartUpsellHeading: 'CUSTOMERS ALSO REGRETTED',
   cartUpsellSub: 'Add one more. The ladder rewards poor impulse control.',
