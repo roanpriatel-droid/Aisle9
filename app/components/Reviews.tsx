@@ -236,10 +236,11 @@ export function JudgeMeReviews({
   return (
     <section
       aria-labelledby="reviews-heading"
-      className="col-span-full mt-14 border-t-2 border-ink pt-10"
+      className="pdp-section"
+      data-reveal
     >
-      <p className="label-type text-ink/50">CUSTOMER FEEDBACK · UNEDITED</p>
-      <h2 id="reviews-heading" className="sign-type mt-1 text-3xl">
+      <p className="eyebrow text-signage">CUSTOMER FEEDBACK · UNEDITED</p>
+      <h2 id="reviews-heading" className="display-l">
         REVIEWS
       </h2>
 

@@ -3781,3 +3781,97 @@ html.js [data-reveal].is-revealed {
     animation: none;
   }
 }
+
+/* PDP sticky buy bar: slides up only after the main ATC leaves the screen */
+.pdp-sticky {
+  pointer-events: none;
+  transform: translateY(110%);
+  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.pdp-sticky.is-shown {
+  pointer-events: auto;
+  transform: none;
+}
+@media (min-width: 48em) {
+  .pdp-sticky {
+    justify-content: center;
+    padding-left: max(1rem, calc((100vw - 80rem) / 2));
+    padding-right: max(1rem, calc((100vw - 80rem) / 2));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pdp-sticky {
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+ * Product page — homepage-grade layout
+ * ========================================================================= */
+.pdp {
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: clamp(1.5rem, 4vw, 3rem) 1rem 0;
+}
+.pdp-hero.product {
+  gap: clamp(2rem, 5vw, 5rem);
+}
+@media (min-width: 45em) {
+  .pdp-hero.product {
+    grid-template-columns: 1.12fr 1fr;
+  }
+}
+/* Gallery: hard offset shadow like the homepage staff picks */
+.pdp-hero .gallery-main {
+  box-shadow: 14px 14px 0 var(--color-ink);
+  margin-bottom: 0.9rem;
+}
+.pdp-hero .gallery-thumbs {
+  margin-top: 0.4rem;
+}
+
+/* Title at display scale (Arial Black-ish weight, tight tracking) */
+.pdp-title {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  margin-top: 0.85rem;
+}
+.pdp-title-xl {
+  font-size: clamp(3rem, 7vw, 6rem);
+}
+.pdp-title-lg {
+  font-size: clamp(2.4rem, 4.8vw, 4.25rem);
+}
+.pdp-title-md {
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 0.95;
+}
+
+/* Buy box rhythm — every block gets real air */
+.product-main > * + * {
+  margin-top: 1.25rem;
+}
+.product-main .pdp-option {
+  margin-top: 1.5rem;
+}
+.product-main .pdp-option legend {
+  margin-bottom: 0.6rem;
+}
+
+/* Below-the-fold sections share the homepage rhythm */
+.pdp-section {
+  border-top: 2px solid var(--color-ink);
+  margin-top: clamp(4rem, 8vw, 7rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+.pdp-section-plain {
+  border-top: 0;
+  padding-top: 0;
+}
+.pdp-section .display-l + * {
+  margin-top: 2rem;
+}
+.pdp-below {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}

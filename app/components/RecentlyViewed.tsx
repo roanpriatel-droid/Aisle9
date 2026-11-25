@@ -60,10 +60,11 @@ export function RecentlyViewed({excludeHandle}: {excludeHandle?: string}) {
   return (
     <section
       aria-labelledby="scanned-heading"
-      className="col-span-full mt-14 border-t-2 border-ink pt-10"
+      className="pdp-section"
+      data-reveal
     >
-      <p className="label-type text-ink/50">{VOICE.previouslyScannedSub}</p>
-      <h2 id="scanned-heading" className="sign-type mt-1 text-3xl">
+      <p className="eyebrow text-signage">{VOICE.previouslyScannedSub}</p>
+      <h2 id="scanned-heading" className="display-l">
         {VOICE.previouslyScanned}
       </h2>
       <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">

@@ -1,3 +1,7 @@
+/* Layered into Tailwind's `base` so utility classes (mt-*, text-*, etc.)
+ * override these element defaults, as intended. Unlayered app.css still
+ * wins over both. */
+@layer base {
 body {
   font-family:
     system-ui,
@@ -136,4 +140,6 @@ code {
   border-radius: 4px;
   font-family: monospace;
   padding: 0.25rem;
+}
+
 }

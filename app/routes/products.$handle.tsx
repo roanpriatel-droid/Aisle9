@@ -1,4 +1,4 @@
-import {Suspense, useMemo, useState} from 'react';
+import {Suspense, useEffect, useMemo, useState} from 'react';
 import {
   Await,
   Link,
@@ -61,6 +61,12 @@ type SiblingData = {
   title: string;
   products: PairedProductFragment[];
 };
+
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
+function sizeRank(size: string) {
+  const i = SIZE_ORDER.indexOf(size.trim().toUpperCase());
+  return i === -1 ? 99 : i;
+}
 
 /** "ITEM #A9-0217" from the product GID. Deterministic, stable. */
 function itemNumber(productId: string): string {
@@ -191,10 +197,20 @@ export default function Product() {
   );
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
+  // Sizes always shelve small → large, whatever order the API returns.
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
-  });
+  }).map((o) =>
+    /size/i.test(o.name)
+      ? {
+          ...o,
+          optionValues: [...o.optionValues].sort(
+            (a, b) => sizeRank(a.name) - sizeRank(b.name),
+          ),
+        }
+      : o,
+  );
 
   const {title} = product;
   const copy = useMemo(() => describeProduct(title), [title]);
@@ -273,99 +289,106 @@ export default function Product() {
   });
 
   return (
-    <div className="product pb-28 md:pb-0">
-      <ProductGallery
-        images={galleryImages}
-        selectedImage={selectedVariant?.image}
-        title={title}
-      />
-
-      <div className="product-main">
-        {/* 1 — breadcrumb + item number */}
-        <nav aria-label="Breadcrumb" className="label-type text-ink/50">
-          <Link className="hover:text-signage" to="/">
-            AISLE 9
-          </Link>
-          {' / '}
-          <Link className="hover:text-signage" to={aisleTo}>
-            {aisleLabel}
-          </Link>
-          <span className="text-ink/30"> / {itemNo}</span>
-        </nav>
-
-        {/* 2 — title, scaled per length */}
-        <h1 className={`pdp-title ${titleScaleClass(title)}`}>{title}</h1>
-
-        {/* PA announcement — the item's one-line pitch */}
-        <p className="pdp-pa">{copy.announcement}</p>
-
-        {/* 3 — review stars slot (hidden until Judge.me populates) */}
-        <div className="mt-3">
-          <JudgeMeBadge productId={numericProductId} />
-        </div>
-
-        {/* 4 — price tag */}
-        <div className="mt-5">
-          <PriceTag
-            price={selectedVariant?.price}
-            compareAtPrice={selectedVariant?.compareAtPrice}
-          />
-        </div>
-
-        {/* 5–8 — options, add-to-cart, express (or OOS state) */}
-        <BuyControls
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-          available={available}
-          sizeChosen={sizeChosen}
-          needsSize={needsSize}
-          onSizeChosen={() => {
-            setSizeChosen(true);
-            setSizeError(false);
-          }}
-          sizeError={sizeError}
-          onRequireSize={requireSize}
+    <div className="pdp pb-28 md:pb-0">
+      {/* Hero: gallery + buy column share their own grid, so the sticky buy
+          column can only stick within this block — never over the
+          sections below. */}
+      <div className="product pdp-hero">
+        <ProductGallery
+          images={galleryImages}
+          selectedImage={selectedVariant?.image}
+          title={title}
         />
 
-        {/* bulk ladder shelf-edge */}
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-2 border-ink bg-fluorescent px-4 py-2.5">
-          <span className="label-type text-signage">BUY MORE, PAY LESS</span>
-          <span className="label-type text-ink">
-            {LADDER.filter((t) => t.discountPct > 0)
-              .map((t) => `${t.qty} −${t.discountPct}%`)
-              .join(' · ')}
-          </span>
-          <span className="label-type text-ink/50">APPLIES ITSELF</span>
+        <div className="product-main">
+          {/* 1 — breadcrumb + item number */}
+          <nav aria-label="Breadcrumb" className="label-type text-ink/50">
+            <Link className="hover:text-signage" to="/">
+              AISLE 9
+            </Link>
+            {' / '}
+            <Link className="hover:text-signage" to={aisleTo}>
+              {aisleLabel}
+            </Link>
+            <span className="text-ink/30"> / {itemNo}</span>
+          </nav>
+
+          {/* 2 — title, scaled per length */}
+          <h1 className={`pdp-title ${titleScaleClass(title)}`}>{title}</h1>
+
+          {/* PA announcement — the item's one-line pitch */}
+          <p className="pdp-pa">{copy.announcement}</p>
+
+          {/* 3 — review stars slot (hidden until Judge.me populates) */}
+          <div className="mt-3">
+            <JudgeMeBadge productId={numericProductId} />
+          </div>
+
+          {/* 4 — price tag */}
+          <div className="mt-5">
+            <PriceTag
+              price={selectedVariant?.price}
+              compareAtPrice={selectedVariant?.compareAtPrice}
+            />
+          </div>
+
+          {/* 5–8 — options, add-to-cart, express (or OOS state) */}
+          <BuyControls
+            productOptions={productOptions}
+            selectedVariant={selectedVariant}
+            available={available}
+            sizeChosen={sizeChosen}
+            needsSize={needsSize}
+            onSizeChosen={() => {
+              setSizeChosen(true);
+              setSizeError(false);
+            }}
+            sizeError={sizeError}
+            onRequireSize={requireSize}
+          />
+
+          {/* bulk ladder shelf-edge */}
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-2 border-ink bg-fluorescent px-4 py-2.5">
+            <span className="label-type text-signage">BUY MORE, PAY LESS</span>
+            <span className="label-type text-ink">
+              {LADDER.filter((t) => t.discountPct > 0)
+                .map((t) => `${t.qty} −${t.discountPct}%`)
+                .join(' · ')}
+            </span>
+            <span className="label-type text-ink/50">APPLIES ITSELF</span>
+          </div>
+
+          <DeliveryEstimate />
+
+          {/* 9 — trust row as compliance notices */}
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {COMPLIANCE.map((c) => (
+              <div
+                key={c}
+                className="border-2 border-ink bg-white p-2 text-center"
+              >
+                <span className="label-type text-ink/70">{c}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* 10 — accordion */}
+          <ProductAccordion copy={copy} />
         </div>
-
-        <DeliveryEstimate />
-
-        {/* 9 — trust row as compliance notices */}
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {COMPLIANCE.map((c) => (
-            <div
-              key={c}
-              className="border-2 border-ink bg-white p-2 text-center"
-            >
-              <span className="label-type text-ink/70">{c}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* 10 — accordion */}
-        <ProductAccordion copy={copy} />
       </div>
 
       {/* Below the fold */}
-      <FrequentlyPaired
-        paired={paired}
-        current={product}
-        variant={selectedVariant}
-      />
-      <FromTheSameAisle siblings={siblings} />
-      <RecentlyViewed excludeHandle={product.handle} />
-      <JudgeMeReviews productId={numericProductId} productTitle={title} />
-      <CheckoutDivider />
+      <div className="pdp-below">
+        <FrequentlyPaired
+          paired={paired}
+          current={product}
+          variant={selectedVariant}
+        />
+        <FromTheSameAisle siblings={siblings} />
+        <RecentlyViewed excludeHandle={product.handle} />
+        <JudgeMeReviews productId={numericProductId} productTitle={title} />
+        <CheckoutDivider />
+      </div>
 
       <StickyBuyBar
         title={title}
@@ -564,7 +587,7 @@ function BuyControls({
       ))}
 
       {/* 7 — add to cart / OOS */}
-      <div className="mt-6">
+      <div className="mt-6" id="pdp-atc">
         {available ? (
           <>
             {needsSize ? (
@@ -706,8 +729,25 @@ function StickyBuyBar({
   onRequireSize: () => void;
 }) {
   const {open} = useAside();
+  // Appears only once the main ADD TO BASKET has scrolled out of view, so it
+  // never sits on top of the buy box (any screen size).
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const target = document.getElementById('pdp-atc');
+    if (!target || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(
+      ([entry]) =>
+        setShown(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+      {threshold: 0},
+    );
+    io.observe(target);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className="pdp-sticky md:hidden">
+    <div
+      className={`pdp-sticky${shown ? ' is-shown' : ''}`}
+      aria-hidden={!shown}
+    >
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-bold uppercase tracking-wide">
           {title}
@@ -860,12 +900,13 @@ function FrequentlyPaired({
   return (
     <section
       aria-labelledby="paired-heading"
-      className="col-span-full mt-14 border-t-2 border-ink pt-10"
+      className="pdp-section"
+      data-reveal
     >
-      <p className="label-type text-ink/50">
+      <p className="eyebrow text-signage">
         {isSet ? VOICE.setSub : VOICE.pairedSub}
       </p>
-      <h2 id="paired-heading" className="sign-type mt-1 text-3xl">
+      <h2 id="paired-heading" className="display-l">
         {isSet ? VOICE.setHeading : VOICE.pairedHeading}
       </h2>
 
@@ -1004,7 +1045,8 @@ function FromTheSameAisle({siblings}: {siblings: Promise<SiblingData>}) {
   return (
     <section
       aria-labelledby="siblings-heading"
-      className="col-span-full mt-14 border-t-2 border-ink pt-10"
+      className="pdp-section"
+      data-reveal
     >
       <Suspense fallback={<span />}>
         <Await resolve={siblings} errorElement={<span />}>
@@ -1013,8 +1055,8 @@ function FromTheSameAisle({siblings}: {siblings: Promise<SiblingData>}) {
             if (!items.length) return <span />;
             return (
               <>
-                <p className="label-type text-ink/50">SHELVED NEARBY</p>
-                <h2 id="siblings-heading" className="sign-type mt-1 text-3xl">
+                <p className="eyebrow text-signage">SHELVED NEARBY</p>
+                <h2 id="siblings-heading" className="display-l">
                   FROM THE SAME AISLE
                 </h2>
                 <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
@@ -1060,24 +1102,24 @@ function FromTheSameAisle({siblings}: {siblings: Promise<SiblingData>}) {
 /** Final CTA styled as the checkout-lane belt divider. */
 function CheckoutDivider() {
   return (
-    <section className="col-span-full mt-16">
+    <section className="pdp-section pdp-section-plain" data-reveal>
       <div className="checkout-divider">
         <span className="checkout-divider-stick" aria-hidden />
         <div className="checkout-divider-body">
-          <p className="label-type text-linoleum/60">NEXT CUSTOMER, PLEASE</p>
-          <h2 className="sign-type text-3xl text-linoleum sm:text-4xl">
+          <p className="eyebrow text-signage">NEXT CUSTOMER, PLEASE</p>
+          <h2 className="display-l text-linoleum">
             DONE HERE? THE AISLE ISN’T.
           </h2>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
-              className="btn"
+              className="btn btn-invert"
               prefetch="intent"
               to={COLLECTIONS.bestSellers}
             >
               KEEP SHOPPING
             </Link>
             <Link
-              className="btn btn-outline"
+              className="btn btn-ghost-light"
               prefetch="intent"
               to="/pages/weekly-circular"
             >
