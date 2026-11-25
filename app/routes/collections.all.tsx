@@ -8,6 +8,7 @@ import {DealStrip} from '~/components/brand/DealStrip';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
 import {seoMeta} from '~/lib/seo';
 import {GridBanner} from '~/components/GridBanner';
+import {CollectionHero, NextAisle} from '~/components/CollectionHero';
 
 export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
@@ -62,30 +63,43 @@ export default function Collection() {
 
   return (
     <div className="collection">
-      <p className="label-type text-ink/50">FULL INVENTORY</p>
-      <h1>EVERYTHING ON THE SHELF</h1>
-      <p className="collection-description">
-        The complete stock, in no particular order of importance, because none
-        of it is important.
-      </p>
-      <DealStrip />
-      <PaginatedResourceSection<CollectionItemFragment>
-        connection={products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <Fragment key={product.id}>
-            <ProductItem
-              product={product}
-              loading={index < 8 ? 'eager' : undefined}
-              quickAdd
-            />
-            {(index + 1) % 12 === 0 ? (
-              <GridBanner position={(index + 1) / 12 - 1} />
-            ) : null}
-          </Fragment>
-        )}
-      </PaginatedResourceSection>
+      <CollectionHero
+        marker="13"
+        eyebrow="FRONT OF STORE · FULL INVENTORY"
+        title="Everything on the shelf."
+        blurb="The complete stock, in no particular order of importance, because none of it is important. Every shirt $36; the bulk ladder works across all of it."
+        countText="EVERY AISLE · ONE SHELF"
+        products={products.nodes}
+        crumbs={[
+          {label: 'AISLE 9', to: '/'},
+          {label: 'ALL AISLES', to: '/collections'},
+          {label: 'ALL PRODUCTS'},
+        ]}
+      />
+      <div className="collection-body mx-auto max-w-7xl px-4">
+        <div className="collection-toolbar">
+          <DealStrip />
+        </div>
+        <PaginatedResourceSection<CollectionItemFragment>
+          connection={products}
+          resourcesClassName="products-grid"
+        >
+          {({node: product, index}) => (
+            <Fragment key={product.id}>
+              <ProductItem
+                product={product}
+                loading={index < 8 ? 'eager' : undefined}
+                quickAdd
+                reveal
+              />
+              {(index + 1) % 12 === 0 ? (
+                <GridBanner position={(index + 1) / 12 - 1} />
+              ) : null}
+            </Fragment>
+          )}
+        </PaginatedResourceSection>
+      </div>
+      <NextAisle handle="all" />
     </div>
   );
 }

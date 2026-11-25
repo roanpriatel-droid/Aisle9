@@ -36,11 +36,14 @@ export function ProductItem({
   loading,
   badge,
   quickAdd = false,
+  reveal = false,
 }: {
   product: AnyProduct;
   loading?: 'eager' | 'lazy';
   badge?: string;
   quickAdd?: boolean;
+  /** Fade up on scroll (grids that don't wrap cards themselves). */
+  reveal?: boolean;
 }) {
   const variantUrl = useVariantUrl(product.handle);
   const featured = product.featuredImage;
@@ -80,7 +83,7 @@ export function ProductItem({
       : undefined;
 
   return (
-    <div className="product-item">
+    <div className="product-item" data-reveal={reveal ? '' : undefined}>
       <div className="product-item-media">
         {badge && <span className="shelf-badge">{badge}</span>}
         <Link

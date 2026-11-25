@@ -3875,3 +3875,205 @@ html.js [data-reveal].is-revealed {
 .pdp-below {
   padding-bottom: clamp(3rem, 6vw, 5rem);
 }
+
+/* ===========================================================================
+ * Collection pages — homepage-grade
+ * ========================================================================= */
+.aisle-hero {
+  background: var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+  color: var(--color-linoleum);
+  overflow: hidden;
+  position: relative;
+}
+.aisle-hero-inner {
+  align-items: center;
+  display: grid;
+  gap: 2.5rem;
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1rem clamp(3rem, 6vw, 4.5rem);
+  position: relative;
+}
+@media (min-width: 64em) {
+  .aisle-hero-inner {
+    grid-template-columns: 1.3fr 1fr;
+  }
+}
+.aisle-hero-crumbs {
+  color: rgb(242 241 236 / 0.5);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.aisle-hero-crumbs a {
+  color: rgb(242 241 236 / 0.75);
+  text-decoration: none;
+}
+.aisle-hero-crumbs a:hover {
+  color: var(--color-signage);
+}
+.aisle-hero-crumbs [aria-current] {
+  color: var(--color-linoleum);
+}
+.aisle-hero-marker {
+  color: var(--color-signage);
+  font-size: clamp(4.5rem, 12vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  margin: 1.5rem 0 1rem;
+}
+.aisle-hero .display-xl {
+  margin-bottom: 0.15em;
+}
+.aisle-hero-blurb {
+  color: rgb(242 241 236 / 0.75);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  max-width: 34rem;
+}
+.aisle-hero-count {
+  border: 1px solid rgb(242 241 236 / 0.3);
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.14em;
+  margin-top: 1.75rem;
+  padding: 0.55rem 0.85rem;
+}
+.aisle-hero-endcap {
+  margin: 0 auto;
+  max-width: 26rem;
+  width: 100%;
+}
+.aisle-hero .endcap-item {
+  box-shadow:
+    14px 14px 0 rgb(0 0 0 / 0.55),
+    0 24px 50px rgb(0 0 0 / 0.45);
+}
+@media (max-width: 63.99em) {
+  .aisle-hero-endcap {
+    max-width: 20rem;
+  }
+}
+
+/* Toolbar: ladder strip + sort pills */
+.collection-body {
+  padding-top: clamp(2rem, 4vw, 3rem);
+}
+.collection-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  justify-content: space-between;
+  margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+}
+.collection-toolbar > :first-child {
+  flex: 1 1 26rem;
+}
+.sort-pills {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sort-pills .eyebrow {
+  margin-right: 0.35rem;
+}
+.sort-pill {
+  border: 2px solid var(--color-ink);
+  border-radius: 999px;
+  color: var(--color-ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.45rem 0.9rem;
+  text-decoration: none;
+}
+.sort-pill:hover {
+  background: var(--color-fluorescent);
+  text-decoration: none;
+}
+.sort-pill.is-active {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+/* Wider shelves: 4-up on large screens */
+@media (min-width: 75em) {
+  .collection-body .products-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Aisle notes + FAQ */
+.aisle-notes {
+  border-top: 2px solid var(--color-ink);
+  display: grid;
+  gap: 3rem;
+  margin-top: clamp(4rem, 8vw, 6rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+@media (min-width: 64em) {
+  .aisle-notes {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+.aisle-notes .display-l + * {
+  margin-top: 1.5rem;
+}
+.aisle-copy p + p {
+  margin-top: 1rem;
+}
+
+/* Next aisle band */
+.next-aisle {
+  border-top: 2px solid var(--color-ink);
+  display: grid;
+  margin-top: clamp(4rem, 8vw, 6rem);
+}
+@media (min-width: 48em) {
+  .next-aisle {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.next-aisle a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 4vw, 3rem);
+  text-decoration: none;
+  transition: background 200ms ease;
+}
+.next-aisle-prev {
+  background: var(--color-linoleum);
+  color: var(--color-ink);
+}
+.next-aisle-prev:hover {
+  background: var(--color-fluorescent);
+}
+.next-aisle-next {
+  background: var(--color-ink);
+  color: var(--color-linoleum);
+  text-align: right;
+}
+.next-aisle-next:hover {
+  background: var(--color-signage);
+}
+.next-aisle-next .eyebrow {
+  color: var(--color-signage);
+}
+.next-aisle-next:hover .eyebrow {
+  color: #fff;
+}
+.next-aisle-title {
+  font-size: clamp(1.75rem, 4.5vw, 3.75rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}

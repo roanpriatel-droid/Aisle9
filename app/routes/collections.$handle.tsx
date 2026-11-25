@@ -9,6 +9,7 @@ import {BreadcrumbJsonLd, ItemListJsonLd} from '~/components/StructuredData';
 import {seoMeta} from '~/lib/seo';
 import {DealStrip} from '~/components/brand/DealStrip';
 import {GridBanner} from '~/components/GridBanner';
+import {CollectionHero, NextAisle} from '~/components/CollectionHero';
 import {
   GIFT_DEPARTMENTS,
   aisleLabelForHandle,
@@ -208,6 +209,12 @@ export default function Collection() {
     ? `TOP ${count}`
     : `${countLabel} ${VOICE.inStockSuffix}`;
   const isEmpty = products.nodes.length === 0;
+  const aisleInfo = findAisle(handle);
+  const heroMarker = aisleInfo
+    ? String(aisleInfo.n).padStart(2, '0')
+    : GIFT_DEPARTMENTS.some((d) => d.handle === handle)
+      ? 'GIFT'
+      : '—';
 
   function sortHref(value: string) {
     const p = new URLSearchParams(searchParams);
@@ -218,174 +225,173 @@ export default function Collection() {
   }
 
   return (
-    <div className="collection mx-auto max-w-6xl px-4 py-10">
-      {/* Aisle breadcrumb */}
-      <nav aria-label="Breadcrumb" className="label-type text-ink/50">
-        <Link className="hover:text-signage" to="/">
-          AISLE 9
-        </Link>
-        {' / '}
-        <Link className="hover:text-signage" to={COLLECTIONS.shopAll}>
-          ALL AISLES
-        </Link>
-        {' / '}
-        <span className="text-ink">{label}</span>
-      </nav>
-
-      {/* Sign header */}
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-b-2 border-ink pb-4">
-        <div>
-          <p className="label-type text-signage">{label}</p>
-          <h1 className="sign-type mt-1 text-4xl">{title}</h1>
-        </div>
-        {!isEmpty && (
-          <span className="label-type border-2 border-ink bg-fluorescent px-3 py-2 text-ink">
-            {countText}
-          </span>
-        )}
-      </div>
-
-      {description && (
-        <p className="mt-4 max-w-2xl text-ink/70">{description}</p>
-      )}
-
-      <div className="mt-6">
-        <DealStrip />
-      </div>
-
-      {/* Sort controls (tag-based aisles; not the curated top sets) */}
-      {isAisle && !curated && !isEmpty && (
-        <div className="mb-8 flex flex-wrap items-center gap-2 border-2 border-ink bg-white p-4">
-          <span className="label-type text-ink/50 sm:min-w-24">SORT</span>
-          {SORT_OPTIONS.map((opt) => {
-            const active = data.currentSort === opt.value;
-            return (
-              <Link
-                key={opt.value}
-                to={sortHref(opt.value)}
-                preventScrollReset
-                aria-pressed={active}
-                className={`label-type border-2 px-3 py-1.5 no-underline ${
-                  active
-                    ? 'border-signage bg-signage text-white'
-                    : 'border-ink bg-white text-ink hover:bg-fluorescent'
-                }`}
-              >
-                {opt.label}
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      {isEmpty ? (
-        <div className="border-2 border-ink bg-white p-10 text-center">
-          <p className="sign-type text-2xl">{VOICE.outOfStockHeading}</p>
-          <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
-            {VOICE.outOfStockBody}
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link className="btn" prefetch="intent" to={COLLECTIONS.shopAll}>
-              BROWSE ALL PRODUCTS
-            </Link>
-            <Link className="btn btn-outline" prefetch="intent" to="/search">
-              SEARCH THE SHELVES
-            </Link>
-          </div>
-        </div>
-      ) : curated ? (
-        <div className="products-grid">
-          {products.nodes.map((product, index) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              loading={index < 8 ? 'eager' : 'lazy'}
-              quickAdd
-            />
-          ))}
-        </div>
-      ) : (
-        <PaginatedResourceSection<ProductItemFragment>
-          connection={products}
-          resourcesClassName="products-grid"
-        >
-          {({node: product, index}) => (
-            <Fragment key={product.id}>
-              <ProductItem
-                product={product}
-                loading={index < 8 ? 'eager' : 'lazy'}
-                quickAdd
-              />
-              {(index + 1) % 12 === 0 ? (
-                <GridBanner position={(index + 1) / 12 - 1} />
-              ) : null}
-            </Fragment>
-          )}
-        </PaginatedResourceSection>
-      )}
-
-      {(introHtml || faq.length > 0) && (
-        <section
-          aria-labelledby="aisle-notes-heading"
-          className="mt-16 grid gap-10 border-t-2 border-ink pt-10 lg:grid-cols-[1.2fr_1fr]"
-        >
-          {introHtml ? (
-            <div>
-              <p className="label-type text-ink/50">POSTED IN THIS AISLE</p>
-              <h2 id="aisle-notes-heading" className="sign-type mt-1 text-2xl">
-                ABOUT {title}
-              </h2>
-              <div
-                className="aisle-copy mt-4 space-y-4 text-ink/80"
-                // Merchant-authored HTML from Shopify (collection description).
-
-                dangerouslySetInnerHTML={{__html: introHtml}}
-              />
-            </div>
-          ) : (
-            <span />
-          )}
-          {faq.length > 0 && (
-            <div>
-              <p className="label-type text-ink/50">CUSTOMER SERVICE DESK</p>
-              <h2 className="sign-type mt-1 text-2xl">QUESTIONS, ANSWERED</h2>
-              <div className="mt-4 divide-y-2 divide-ink border-2 border-ink bg-white">
-                {faq.map((item) => (
-                  <details key={item.q} className="group p-4">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-bold">
-                      <span>{item.q}</span>
-                      <span
-                        aria-hidden
-                        className="text-signage transition-transform group-open:rotate-45"
-                      >
-                        +
-                      </span>
-                    </summary>
-                    <p className="mt-3 text-sm text-ink/75">{item.a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      <ItemListJsonLd
-        name={title}
-        path={`/collections/${handle}`}
-        handles={products.nodes.map((p) => p.handle)}
-      />
-
-      <BreadcrumbJsonLd
-        items={[
-          {name: 'AISLE 9', path: '/'},
-          {name: title, path: `/collections/${handle}`},
+    <div className="collection">
+      <CollectionHero
+        marker={heroMarker}
+        eyebrow={
+          aisleInfo?.kind === 'aisle'
+            ? `AISLE ${aisleInfo.n} OF 9`
+            : aisleInfo
+              ? 'FRONT OF STORE'
+              : label
+        }
+        title={title}
+        blurb={
+          aisleInfo
+            ? description
+            : (GIFT_DEPARTMENTS.find((d) => d.handle === handle)?.line ??
+              (description ?? '').split(/(?<=\.)\s/)[0])
+        }
+        countText={isEmpty ? null : countText}
+        products={products.nodes}
+        crumbs={[
+          {label: 'AISLE 9', to: '/'},
+          GIFT_DEPARTMENTS.some((d) => d.handle === handle)
+            ? {label: 'GIFT DEPARTMENT', to: '/pages/gift-guide'}
+            : {label: 'ALL AISLES', to: '/collections'},
+          {label: title},
         ]}
       />
 
-      <Analytics.CollectionView
-        data={{collection: {id: `aisle:${handle}`, handle}}}
-      />
+      <div className="collection-body mx-auto max-w-7xl px-4">
+        {/* Toolbar: the ladder reminder + sort pills (tag aisles only) */}
+        <div className="collection-toolbar">
+          <DealStrip />
+          {isAisle && !curated && !isEmpty && (
+            <div className="sort-pills" role="group" aria-label="Sort">
+              <span className="eyebrow text-ink/50">SORT</span>
+              {SORT_OPTIONS.map((opt) => {
+                const active = data.currentSort === opt.value;
+                return (
+                  <Link
+                    key={opt.value}
+                    to={sortHref(opt.value)}
+                    preventScrollReset
+                    aria-pressed={active}
+                    className={`sort-pill${active ? ' is-active' : ''}`}
+                  >
+                    {opt.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {isEmpty ? (
+          <div className="border-2 border-ink bg-white p-10 text-center">
+            <p className="sign-type text-2xl">{VOICE.outOfStockHeading}</p>
+            <p className="mx-auto mt-3 max-w-md text-sm text-ink/60">
+              {VOICE.outOfStockBody}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <Link className="btn" prefetch="intent" to={COLLECTIONS.shopAll}>
+                BROWSE ALL PRODUCTS
+              </Link>
+              <Link className="btn btn-outline" prefetch="intent" to="/search">
+                SEARCH THE SHELVES
+              </Link>
+            </div>
+          </div>
+        ) : curated ? (
+          <div className="products-grid">
+            {products.nodes.map((product, index) => (
+              <ProductItem
+                key={product.id}
+                product={product}
+                loading={index < 8 ? 'eager' : 'lazy'}
+                quickAdd
+                reveal
+              />
+            ))}
+          </div>
+        ) : (
+          <PaginatedResourceSection<ProductItemFragment>
+            connection={products}
+            resourcesClassName="products-grid"
+          >
+            {({node: product, index}) => (
+              <Fragment key={product.id}>
+                <ProductItem
+                  product={product}
+                  loading={index < 8 ? 'eager' : 'lazy'}
+                  quickAdd
+                  reveal
+                />
+                {(index + 1) % 12 === 0 ? (
+                  <GridBanner position={(index + 1) / 12 - 1} />
+                ) : null}
+              </Fragment>
+            )}
+          </PaginatedResourceSection>
+        )}
+
+        {(introHtml || faq.length > 0) && (
+          <section
+            aria-labelledby="aisle-notes-heading"
+            className="aisle-notes"
+            data-reveal
+          >
+            {introHtml ? (
+              <div>
+                <p className="eyebrow text-signage">POSTED IN THIS AISLE</p>
+                <h2 id="aisle-notes-heading" className="display-l">
+                  ABOUT {title}
+                </h2>
+                <div
+                  className="aisle-copy mt-4 space-y-4 text-ink/80"
+                  // Merchant-authored HTML from Shopify (collection description).
+
+                  dangerouslySetInnerHTML={{__html: introHtml}}
+                />
+              </div>
+            ) : (
+              <span />
+            )}
+            {faq.length > 0 && (
+              <div>
+                <p className="eyebrow text-signage">CUSTOMER SERVICE DESK</p>
+                <h2 className="display-l">Questions, answered.</h2>
+                <div className="mt-4 divide-y-2 divide-ink border-2 border-ink bg-white">
+                  {faq.map((item) => (
+                    <details key={item.q} className="group p-4">
+                      <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-bold">
+                        <span>{item.q}</span>
+                        <span
+                          aria-hidden
+                          className="text-signage transition-transform group-open:rotate-45"
+                        >
+                          +
+                        </span>
+                      </summary>
+                      <p className="mt-3 text-sm text-ink/75">{item.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        <ItemListJsonLd
+          name={title}
+          path={`/collections/${handle}`}
+          handles={products.nodes.map((p) => p.handle)}
+        />
+
+        <BreadcrumbJsonLd
+          items={[
+            {name: 'AISLE 9', path: '/'},
+            {name: title, path: `/collections/${handle}`},
+          ]}
+        />
+
+        <Analytics.CollectionView
+          data={{collection: {id: `aisle:${handle}`, handle}}}
+        />
+      </div>
+
+      <NextAisle handle={handle} />
     </div>
   );
 }
