@@ -3623,3 +3623,161 @@ html.js [data-reveal].is-revealed {
     max-width: 86%;
   }
 }
+
+/* ===========================================================================
+ * Merged hero: entrance sign + automatic doors + conveyor wall + campaign
+ * ========================================================================= */
+.hero-stage {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+.hero-stage .campaign-inner {
+  position: relative;
+  z-index: 2;
+}
+.hero-stage .entrance-door {
+  z-index: 5;
+}
+.hero-stage .campaign-fluoro {
+  z-index: 3;
+}
+
+/* Conveyor wall of real stock */
+.hero-wall {
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+.conveyor {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 100%;
+  margin: 0 -2%;
+  transform: rotate(-4deg) scale(1.12);
+}
+@media (min-width: 40em) {
+  .conveyor {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+@media (min-width: 64em) {
+  .conveyor {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+}
+.conveyor-col {
+  animation: conveyor-up var(--conveyor-dur, 50s) linear infinite;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  will-change: transform;
+}
+.conveyor-down {
+  animation-name: conveyor-down;
+}
+@media (max-width: 63.99em) {
+  .conveyor-col:nth-child(n + 7) {
+    display: none;
+  }
+}
+@media (max-width: 39.99em) {
+  .conveyor-col:nth-child(n + 5) {
+    display: none;
+  }
+}
+.conveyor-tile {
+  aspect-ratio: 1;
+  background: #fff;
+  display: block;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.conveyor-tile img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+@keyframes conveyor-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-50% - 5px));
+  }
+}
+@keyframes conveyor-down {
+  from {
+    transform: translateY(calc(-50% - 5px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Scrim: readable copy on the left, the wall glowing through on the right */
+.hero-scrim {
+  background:
+    radial-gradient(
+      90% 80% at 80% 50%,
+      rgb(26 26 26 / 0),
+      rgb(26 26 26 / 0.45) 75%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(26 26 26 / 0.97) 0%,
+      rgb(26 26 26 / 0.88) 36%,
+      rgb(26 26 26 / 0.3) 66%,
+      rgb(26 26 26 / 0.18) 100%
+    );
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+@media (max-width: 63.99em) {
+  .hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgb(26 26 26 / 0.93) 0%,
+      rgb(26 26 26 / 0.88) 55%,
+      rgb(26 26 26 / 0.6) 100%
+    );
+  }
+}
+
+/* Copy rhythm (unlayered: the reset zeroes <p> margins) */
+.hero-headline {
+  color: var(--color-linoleum);
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.45);
+}
+.hero-sub {
+  color: rgb(242 241 236 / 0.78);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  margin-top: 0.25rem;
+  max-width: 28rem;
+}
+.hero-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+@media (min-width: 40em) {
+  .hero-ctas {
+    flex-direction: row;
+  }
+}
+.hero-stage .endcap-item {
+  box-shadow:
+    18px 18px 0 rgb(0 0 0 / 0.55),
+    0 30px 60px rgb(0 0 0 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conveyor-col {
+    animation: none;
+  }
+}
