@@ -1052,6 +1052,41 @@ export type PageQuery = {
   >;
 };
 
+export type GiftCardFragment = Pick<
+  StorefrontAPI.Product,
+  'id' | 'handle' | 'title' | 'tags'
+> & {
+  cardImages: {
+    nodes: Array<
+      Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
+    >;
+  };
+  cardVariants: {
+    nodes: Array<
+      Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+        selectedOptions: Array<
+          Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+        >;
+      }
+    >;
+  };
+  cardOptions: Array<
+    Pick<StorefrontAPI.ProductOption, 'name'> & {
+      optionValues: Array<Pick<StorefrontAPI.ProductOptionValue, 'name'>>;
+    }
+  >;
+  featuredImage?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+  >;
+  selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+  >;
+  priceRange: {
+    minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+    maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+  };
+};
+
 export type GiftGuidePageQueryVariables = StorefrontAPI.Exact<{
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
@@ -1066,6 +1101,312 @@ export type GiftGuidePageQuery = {
       faq?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
     }
   >;
+  d0?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+  d1?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+  d2?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+  d3?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+  d4?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
+  d5?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'tags'> & {
+          cardImages: {
+            nodes: Array<
+              Pick<
+                StorefrontAPI.Image,
+                'id' | 'url' | 'altText' | 'width' | 'height'
+              >
+            >;
+          };
+          cardVariants: {
+            nodes: Array<
+              Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'> & {
+                selectedOptions: Array<
+                  Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                >;
+              }
+            >;
+          };
+          cardOptions: Array<
+            Pick<StorefrontAPI.ProductOption, 'name'> & {
+              optionValues: Array<
+                Pick<StorefrontAPI.ProductOptionValue, 'name'>
+              >;
+            }
+          >;
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'altText' | 'url' | 'width' | 'height'
+            >
+          >;
+          selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+            maxVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+        }
+      >;
+    };
+  }>;
 };
 
 export type FlyerProductFragment = Pick<
@@ -1985,7 +2326,7 @@ interface GeneratedQueryTypes {
     return: PageQuery;
     variables: PageQueryVariables;
   };
-  '#graphql\n  query GiftGuidePage($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    page(handle: "gift-guide") {\n      title\n      body\n      seo { title description }\n      faq: metafield(namespace: "aisle9", key: "faq") { value }\n    }\n  }\n': {
+  '#graphql\n  fragment GiftCard on Product {\n    cardImages: images(first: 2) {\n      nodes { id url altText width height }\n    }\n    cardVariants: variants(first: 12) {\n      nodes {\n        id\n        availableForSale\n        selectedOptions { name value }\n      }\n    }\n    cardOptions: options(first: 2) {\n      name\n      optionValues { name }\n    }\n    id\n    handle\n    title\n    tags\n    featuredImage { id altText url width height }\n    selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {\n      id\n      availableForSale\n    }\n    priceRange {\n      minVariantPrice { amount currencyCode }\n      maxVariantPrice { amount currencyCode }\n    }\n  }\n  query GiftGuidePage($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    page(handle: "gift-guide") {\n      title\n      body\n      seo { title description }\n      faq: metafield(namespace: "aisle9", key: "faq") { value }\n    }\n    d0: collection(handle: "gifts-for-him") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n    d1: collection(handle: "gifts-for-her") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n    d2: collection(handle: "matching-sets") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n    d3: collection(handle: "white-elephant") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n    d4: collection(handle: "bachelor-party") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n    d5: collection(handle: "gifts-for-idiots") {\n      products(first: 8, sortKey: BEST_SELLING) { nodes { ...GiftCard } }\n    }\n  }\n': {
     return: GiftGuidePageQuery;
     variables: GiftGuidePageQueryVariables;
   };

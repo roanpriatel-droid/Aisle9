@@ -4077,3 +4077,162 @@ html.js [data-reveal].is-revealed {
   line-height: 0.92;
   text-transform: uppercase;
 }
+
+/* ===========================================================================
+ * Gift guide
+ * ========================================================================= */
+.receipt-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+@media (min-width: 40em) {
+  .receipt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 64em) {
+  .receipt-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.receipt-big {
+  background: #fff;
+  border: 2px dashed var(--color-ink);
+  color: var(--color-ink);
+  display: flex;
+  flex-direction: column;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  gap: 0.65rem;
+  height: 100%;
+  padding: 1.5rem;
+  position: relative;
+  text-decoration: none;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+.receipt-big::after {
+  /* torn-paper teeth along the bottom edge */
+  background: radial-gradient(
+      circle at 6px -2px,
+      transparent 6px,
+      #fff 6.5px
+    )
+    0 0 / 12px 10px repeat-x;
+  bottom: -10px;
+  content: '';
+  height: 10px;
+  left: -2px;
+  position: absolute;
+  right: -2px;
+}
+.receipt-big:hover {
+  box-shadow: 8px 8px 0 var(--color-ink);
+  text-decoration: none;
+  transform: translate(-3px, -3px);
+}
+.receipt-big.is-best {
+  border-color: var(--color-signage);
+  border-style: solid;
+}
+.receipt-big-head {
+  align-items: center;
+  color: rgb(26 26 26 / 0.55);
+  display: flex;
+  font-size: 0.7rem;
+  justify-content: space-between;
+  letter-spacing: 0.1em;
+}
+.receipt-big-flag {
+  background: var(--color-signage);
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+}
+.receipt-big-qty {
+  align-items: baseline;
+  display: flex;
+  font-family: Arial, sans-serif;
+  font-size: clamp(3.5rem, 6vw, 5rem);
+  font-weight: 900;
+  gap: 0.5rem;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  margin: 0.4rem 0 0.6rem;
+}
+.receipt-big-qty small {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.receipt-big-line {
+  display: flex;
+  font-size: 0.85rem;
+  justify-content: space-between;
+}
+.receipt-big-saved {
+  color: var(--color-signage);
+  font-weight: 700;
+}
+.receipt-big-total {
+  border-top: 2px dashed var(--color-ink);
+  display: flex;
+  font-size: 1.35rem;
+  font-weight: 800;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+.receipt-big-note {
+  color: var(--color-signage);
+  font-family: Arial, sans-serif;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.gift-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 3rem;
+}
+@media (min-width: 64em) {
+  .gift-grid {
+    gap: 1.25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.gift-cta {
+  background: var(--color-signage);
+  border-top: 2px solid var(--color-ink);
+  color: #fff;
+  margin-top: clamp(4rem, 8vw, 6rem);
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+.gift-cta .eyebrow {
+  color: rgb(255 255 255 / 0.75);
+}
+.gift-cta-title {
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  margin-top: 1rem;
+  max-width: 14ch;
+  text-transform: uppercase;
+}
+.gift-cta-sub {
+  font-size: 1.1rem;
+  line-height: 1.55;
+  margin-top: 1.25rem;
+  max-width: 36rem;
+  opacity: 0.9;
+}
+.gift-cta .btn-invert:hover {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+}
