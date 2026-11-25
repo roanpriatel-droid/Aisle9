@@ -12,15 +12,15 @@ export function GiftDepartmentStrip() {
       aria-labelledby="gift-dept-heading"
       className="border-b-2 border-ink bg-fluorescent"
     >
-      <div className="mx-auto max-w-6xl px-4 py-14">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28" data-reveal>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="label-type text-signage">
+            <p className="eyebrow text-signage">
               SEASONAL · GIFT DEPARTMENT
             </p>
             <h2
               id="gift-dept-heading"
-              className="sign-type mt-1 text-3xl sm:text-4xl"
+              className="display-l"
             >
               WHO IS THIS FOR, ROUGHLY
             </h2>

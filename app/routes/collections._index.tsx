@@ -1,17 +1,16 @@
 import {Link} from 'react-router';
 import type {Route} from './+types/collections._index';
 import {ALL_AISLES} from '~/lib/brand';
+import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: 'AISLE 9 — DEPARTMENTS'},
-    {
-      name: 'description',
-      content:
-        'Every department at AISLE 9: nine themed aisles of deadpan graphic tees plus best sellers, new arrivals and matching sets. Every shirt $36.',
-    },
-    {tagName: 'link', rel: 'canonical', href: '/collections'},
-  ];
+export const meta: Route.MetaFunction = ({matches}) => {
+  return seoMeta({
+    matches,
+    title: 'All Departments — Funny T-Shirt Aisles',
+    description:
+      'Every department at AISLE 9: nine themed aisles of deadpan graphic tees plus best sellers, new arrivals and matching sets. Every shirt $36.',
+    path: '/collections',
+  });
 };
 
 /**

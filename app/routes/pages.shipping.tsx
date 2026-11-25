@@ -3,8 +3,9 @@ import {SHIPPING, PRODUCTION} from '~/lib/brand';
 import {Link} from 'react-router';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Shipping & Returns',
     description:
       'Printed to order in 2–5 business days, most US orders arrive 5–7 business days later. Free US shipping over $100. 30-day returns.',

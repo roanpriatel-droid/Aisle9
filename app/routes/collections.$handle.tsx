@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import {Link, redirect, useLoaderData, useSearchParams} from 'react-router';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
@@ -7,6 +8,7 @@ import {ProductItem} from '~/components/ProductItem';
 import {BreadcrumbJsonLd, ItemListJsonLd} from '~/components/StructuredData';
 import {seoMeta} from '~/lib/seo';
 import {DealStrip} from '~/components/brand/DealStrip';
+import {GridBanner} from '~/components/GridBanner';
 import {
   GIFT_DEPARTMENTS,
   aisleLabelForHandle,
@@ -22,10 +24,11 @@ import type {
 
 type ProductsConnection = AisleProductsQuery['products'];
 
-export const meta: Route.MetaFunction = ({data, params}) => {
+export const meta: Route.MetaFunction = ({data, params, matches}) => {
   const title = data?.title ?? 'Aisle';
   const ogImage = data?.products?.nodes?.[0]?.featuredImage?.url;
   return seoMeta({
+    matches,
     title: data?.seo?.title || `${title} Shirts | AISLE 9`,
     fullTitle: true,
     description: data?.seo?.description || data?.description,
@@ -307,12 +310,16 @@ export default function Collection() {
           resourcesClassName="products-grid"
         >
           {({node: product, index}) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              loading={index < 8 ? 'eager' : 'lazy'}
-              quickAdd
-            />
+            <Fragment key={product.id}>
+              <ProductItem
+                product={product}
+                loading={index < 8 ? 'eager' : 'lazy'}
+                quickAdd
+              />
+              {(index + 1) % 12 === 0 ? (
+                <GridBanner position={(index + 1) / 12 - 1} />
+              ) : null}
+            </Fragment>
           )}
         </PaginatedResourceSection>
       )}
@@ -391,6 +398,13 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
   fragment ProductItem on Product {
     cardImages: images(first: 2) {
       nodes { id url altText width height }
+    }
+    cardVariants: variants(first: 12) {
+      nodes {
+        id
+        availableForSale
+        selectedOptions { name value }
+      }
     }
     cardOptions: options(first: 2) {
       name

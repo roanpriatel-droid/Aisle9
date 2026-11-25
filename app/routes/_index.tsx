@@ -1,22 +1,27 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {seoMeta} from '~/lib/seo';
+import {CampaignHero} from '~/components/home/CampaignHero';
+import {PromoTicker} from '~/components/home/PromoTicker';
+import {StaffPick} from '~/components/home/StaffPick';
+import {
+  AisleDirectoryGrid,
+  type AislePreview,
+} from '~/components/home/AisleDirectoryGrid';
 import {isEmail, subscribeEmail} from '~/lib/admin.server';
 import {MockShopNotice} from '~/components/MockShopNotice';
-import {Hero} from '~/components/home/Hero';
-import {TrustStrip} from '~/components/home/TrustStrip';
 import {BestSellersRow} from '~/components/home/BestSellersRow';
-import {AisleMapStrip} from '~/components/home/AisleMapStrip';
 import {WeeklyCircularTeaser} from '~/components/home/WeeklyCircularTeaser';
 import {MatchingSetsPromo} from '~/components/home/MatchingSetsPromo';
 import {GiftDepartmentStrip} from '~/components/home/GiftDepartmentStrip';
 import {BulkLadder} from '~/components/home/BulkLadder';
 import {SavingsClub} from '~/components/home/SavingsClub';
-import {BRAND} from '~/lib/brand';
+import {AISLES} from '~/lib/brand';
 import type {ShelfData, ShelfSource} from '~/lib/shelf';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Funny T-Shirts & Ironic Graphic Tees | AISLE 9',
     fullTitle: true,
     description:
@@ -71,7 +76,22 @@ function loadDeferredData({context}: Route.LoaderArgs) {
     return {source: 'catalog' as ShelfSource, products: []};
   });
 
-  return {shelf};
+  const aislePreviews = context.storefront
+    .query(AISLE_PREVIEWS_QUERY)
+    .then((data) =>
+      AISLES.map((a, i) => {
+        const node = (
+          data as unknown as Record<
+            string,
+            {nodes: {featuredImage: AislePreview['image']}[]} | undefined
+          >
+        )[`a${i}`]?.nodes?.[0];
+        return {handle: a.handle, image: node?.featuredImage ?? null};
+      }),
+    )
+    .catch(() => [] as AislePreview[]);
+
+  return {shelf, aislePreviews};
 }
 
 async function loadShelf(
@@ -88,11 +108,13 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <Hero shelf={data.shelf} />
-      <TrustStrip />
+      <CampaignHero shelf={data.shelf} />
+      <PromoTicker />
       <BestSellersRow shelf={data.shelf} />
+      <StaffPick shelf={data.shelf} slot={4} />
       <GiftDepartmentStrip />
-      <AisleMapStrip />
+      <AisleDirectoryGrid previews={data.aislePreviews} />
+      <StaffPick shelf={data.shelf} slot={9} flip />
       <BulkLadder />
       <MatchingSetsPromo />
       <WeeklyCircularTeaser shelf={data.shelf} />
@@ -105,6 +127,13 @@ const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
   fragment RecommendedProduct on Product {
     cardImages: images(first: 2) {
       nodes { id url altText width height }
+    }
+    cardVariants: variants(first: 12) {
+      nodes {
+        id
+        availableForSale
+        selectedOptions { name value }
+      }
     }
     cardOptions: options(first: 2) {
       name
@@ -141,6 +170,44 @@ const SHELF_CATALOG_QUERY = `#graphql
       nodes {
         ...RecommendedProduct
       }
+    }
+  }
+` as const;
+
+/**
+ * One clean best seller per aisle, for the directory tiles. Static (not built
+ * from AISLES) so GraphQL codegen can parse it; aliases a0–a8 follow AISLES
+ * order — update both together.
+ */
+const AISLE_PREVIEWS_QUERY = `#graphql
+  query AislePreviews($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    a0: products(first: 1, sortKey: BEST_SELLING, query: "tag:'i-love-collection' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a1: products(first: 1, sortKey: BEST_SELLING, query: "tag:'down-bad' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a2: products(first: 1, sortKey: BEST_SELLING, query: "tag:'the-confessions' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a3: products(first: 1, sortKey: BEST_SELLING, query: "tag:'freak-behavior' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a4: products(first: 1, sortKey: BEST_SELLING, query: "tag:'warning-labels' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a5: products(first: 1, sortKey: BEST_SELLING, query: "tag:'minor-crimes' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a6: products(first: 1, sortKey: BEST_SELLING, query: "tag:'liver-damage' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a7: products(first: 1, sortKey: BEST_SELLING, query: "tag:'typod' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
+    }
+    a8: products(first: 1, sortKey: BEST_SELLING, query: "tag:'gifts-for-idiots' -tag:adults-only") {
+      nodes { featuredImage { url altText width height } }
     }
   }
 ` as const;

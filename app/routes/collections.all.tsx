@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import type {Route} from './+types/collections.all';
 import {useLoaderData} from 'react-router';
 import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
@@ -6,9 +7,11 @@ import {ProductItem} from '~/components/ProductItem';
 import {DealStrip} from '~/components/brand/DealStrip';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
 import {seoMeta} from '~/lib/seo';
+import {GridBanner} from '~/components/GridBanner';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'All Funny T-Shirts',
     description:
       'Every funny t-shirt in the store: 375 deadpan graphic tees across nine aisles. $36 each. Buy 2 save 10%, 3 save 20%, 4+ save 30%.',
@@ -71,11 +74,16 @@ export default function Collection() {
         resourcesClassName="products-grid"
       >
         {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
+          <Fragment key={product.id}>
+            <ProductItem
+              product={product}
+              loading={index < 8 ? 'eager' : undefined}
+              quickAdd
+            />
+            {(index + 1) % 12 === 0 ? (
+              <GridBanner position={(index + 1) / 12 - 1} />
+            ) : null}
+          </Fragment>
         )}
       </PaginatedResourceSection>
     </div>
@@ -88,8 +96,19 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     currencyCode
   }
   fragment CollectionItem on Product {
+    selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {
+      id
+      availableForSale
+    }
     cardImages: images(first: 2) {
       nodes { id url altText width height }
+    }
+    cardVariants: variants(first: 12) {
+      nodes {
+        id
+        availableForSale
+        selectedOptions { name value }
+      }
     }
     cardOptions: options(first: 2) {
       name

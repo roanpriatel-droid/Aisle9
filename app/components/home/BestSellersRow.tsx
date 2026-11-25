@@ -14,17 +14,17 @@ export function BestSellersRow({shelf}: {shelf: Promise<ShelfData | null>}) {
   return (
     <section
       aria-labelledby="best-sellers-heading"
-      className="border-b-2 border-ink bg-linoleum"
+      className="section-pad border-b-2 border-ink bg-linoleum"
     >
-      <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="mx-auto max-w-7xl px-4">
+        <div
+          className="flex flex-wrap items-end justify-between gap-4"
+          data-reveal
+        >
           <div>
-            <p className="label-type text-ink/50">MOVING OFF THE SHELF</p>
-            <h2
-              id="best-sellers-heading"
-              className="sign-type mt-1 text-3xl sm:text-4xl"
-            >
-              BEST SELLERS
+            <p className="eyebrow text-signage">MOVING OFF THE SHELF</p>
+            <h2 id="best-sellers-heading" className="display-xl mt-3">
+              Best sellers.
             </h2>
           </div>
           <Link
@@ -50,14 +50,20 @@ export function BestSellersRow({shelf}: {shelf: Promise<ShelfData | null>}) {
                         : 'BEST SELLERS PENDING · SHOWING FRESH STOCK'}
                     </p>
                   )}
-                  <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+                  <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
                     {products.slice(0, 8).map((product, i) => (
-                      <ProductItem
+                      <div
                         key={product.id}
-                        product={product}
-                        loading={i < 4 ? 'eager' : 'lazy'}
-                        badge={i < 2 ? 'TOP SELLER' : undefined}
-                      />
+                        data-reveal
+                        style={{['--reveal-i' as string]: i % 4}}
+                      >
+                        <ProductItem
+                          key={product.id}
+                          product={product}
+                          loading={i < 4 ? 'eager' : 'lazy'}
+                          badge={i < 2 ? 'TOP SELLER' : undefined}
+                        />
+                      </div>
                     ))}
                   </div>
                 </>

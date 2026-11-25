@@ -3,8 +3,9 @@ import {SERVICE_DESK} from '~/lib/brand';
 import {Link} from 'react-router';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'FAQ — Sizing, Shipping, Returns & Bulk Discounts',
     description:
       'AISLE 9 Customer Service Desk: how the bulk discount works, shipping times, returns, sizing and misprints. Numbered for reference.',

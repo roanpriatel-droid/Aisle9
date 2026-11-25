@@ -9,7 +9,19 @@ export const SITE_NAME = 'AISLE 9';
 export const DEFAULT_DESCRIPTION =
   'Funny t-shirts and deadpan graphic tees from a big-box store that does not exist. Every shirt $36, printed to order. Buy 2 save 10%, 4+ save 30%.';
 
+/** Root-loader origin from meta() `matches`, for absolute social URLs. */
+type MetaMatches = ReadonlyArray<{id?: string; data?: unknown} | undefined>;
+function originFrom(matches?: MetaMatches): string {
+  const root = matches?.find((m) => m?.id === 'root')?.data as
+    {origin?: string} | undefined;
+  return root?.origin ?? '';
+}
+
+export const DEFAULT_OG_IMAGE = '/og-image.png';
+
 type SeoInput = {
+  /** meta() matches — lets social tags use absolute URLs. */
+  matches?: MetaMatches;
   /** Page name ("Down Bad Shirts") — combined with the brand unless `fullTitle`. */
   title: string;
   /** When true, `title` is used as-is (e.g. Shopify's SEO title). */
@@ -30,6 +42,7 @@ function clamp(text: string, max: number) {
 }
 
 export function seoMeta({
+  matches,
   title,
   fullTitle,
   description,
@@ -40,6 +53,10 @@ export function seoMeta({
   noindex,
 }: SeoInput) {
   const fullTitleText = fullTitle ? title : `${title} | ${SITE_NAME}`;
+  const origin = originFrom(matches);
+  const abs = (u: string) => (/^https?:/i.test(u) ? u : `${origin}${u}`);
+  const shareImage = abs(image || DEFAULT_OG_IMAGE);
+  const shareAlt = image ? imageAlt : 'AISLE 9 — Nothing you need.';
   const desc = clamp(description || DEFAULT_DESCRIPTION, 160);
   return [
     {title: fullTitleText},
@@ -48,11 +65,11 @@ export function seoMeta({
     {property: 'og:title', content: fullTitleText},
     {property: 'og:description', content: desc},
     {property: 'og:type', content: type},
-    ...(image ? [{property: 'og:image', content: image}] : []),
-    ...(image && imageAlt
-      ? [{property: 'og:image:alt', content: imageAlt}]
-      : []),
-    {name: 'twitter:card', content: image ? 'summary_large_image' : 'summary'},
+    {property: 'og:image', content: shareImage},
+    ...(shareAlt ? [{property: 'og:image:alt', content: shareAlt}] : []),
+    ...(origin && path ? [{property: 'og:url', content: abs(path)}] : []),
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:image', content: shareImage},
     {name: 'twitter:title', content: fullTitleText},
     {name: 'twitter:description', content: desc},
     ...(noindex ? [{name: 'robots', content: 'noindex,follow'}] : []),

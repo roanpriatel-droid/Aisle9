@@ -10,8 +10,9 @@ import {
 import {seoMeta} from '~/lib/seo';
 import {BreadcrumbJsonLd} from '~/components/StructuredData';
 
-export const meta: Route.MetaFunction = ({data}) => {
+export const meta: Route.MetaFunction = ({data, matches}) => {
   return seoMeta({
+    matches,
     title: data?.seo?.title || 'Funny Gift Guide — Gifts Under $40 | AISLE 9',
     fullTitle: true,
     description: data?.seo?.description,

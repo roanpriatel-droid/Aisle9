@@ -1,7 +1,6 @@
 import {BASE_PRICE, LADDER, ladderMath} from '~/lib/brand';
 
-const money = (n: number) =>
-  n % 1 === 0 ? `$${n}` : `$${n.toFixed(2)}`;
+const money = (n: number) => (n % 1 === 0 ? `$${n}` : `$${n.toFixed(2)}`);
 
 /**
  * BUY MORE, PAY LESS — the warehouse-club sign. Highest-priority section.
@@ -16,11 +15,11 @@ export function BulkLadder() {
       aria-labelledby="bulk-ladder-heading"
       className="border-b-2 border-ink bg-ink"
     >
-      <div className="mx-auto max-w-6xl px-4 py-14">
-        <p className="label-type text-linoleum/50">WAREHOUSE PRICING</p>
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28" data-reveal>
+        <p className="eyebrow text-signage">WAREHOUSE PRICING</p>
         <h2
           id="bulk-ladder-heading"
-          className="sign-type mt-2 text-4xl text-linoleum sm:text-5xl"
+          className="display-l text-linoleum"
         >
           BUY MORE, PAY LESS.
         </h2>

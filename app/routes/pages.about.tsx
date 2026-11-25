@@ -10,8 +10,9 @@ import {
 import {BreadcrumbJsonLd} from '~/components/StructuredData';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'About AISLE 9 — The Store That Does Not Exist',
     description:
       'AISLE 9 is a big-box store that does not exist, selling deadpan graphic tees that do. Printed to order in the USA. Every shirt is $36.',

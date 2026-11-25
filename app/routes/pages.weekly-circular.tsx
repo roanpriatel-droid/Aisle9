@@ -6,8 +6,9 @@ import type {FlyerProductFragment} from 'storefrontapi.generated';
 import {WEEKLY_CIRCULAR, LADDER, aisleLabelForHandle} from '~/lib/brand';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Weekly Circular — Funny Shirts This Week',
     description:
       'The AISLE 9 weekly circular: every department laid out with price tags. Every shirt $36, bulk discount applied automatically at checkout.',

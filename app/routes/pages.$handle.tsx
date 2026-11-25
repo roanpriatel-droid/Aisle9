@@ -4,9 +4,10 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {BRAND} from '~/lib/brand';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data, params}) => {
+export const meta: Route.MetaFunction = ({data, params, matches}) => {
   const page = data?.page;
   return seoMeta({
+    matches,
     title: page?.seo?.title || page?.title || 'Notice',
     fullTitle: false,
     description: page?.seo?.description,

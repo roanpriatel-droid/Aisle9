@@ -4,8 +4,9 @@ import {CONTACT} from '~/lib/brand';
 import {fileComplaint, isEmail} from '~/lib/admin.server';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Contact Customer Service',
     description:
       'Contact AISLE 9 Customer Relations about orders, sizing or general grievances. Email aisle9@stratosync.solutions. Response time: eventually.',

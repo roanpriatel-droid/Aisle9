@@ -16,6 +16,7 @@ import {
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {AnnouncementBar} from '~/components/brand/AnnouncementBar';
 import {SavingsClubPopup} from '~/components/SavingsClubPopup';
+import {RevealObserver} from '~/components/RevealObserver';
 import {NavProgress} from '~/components/NavProgress';
 import {VOICE} from '~/lib/brand';
 
@@ -58,6 +59,7 @@ export function PageLayout({
         {children}
       </main>
       <SavingsClubPopup />
+      <RevealObserver />
       <Footer
         footer={footer}
         header={header}

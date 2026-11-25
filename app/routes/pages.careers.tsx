@@ -3,8 +3,9 @@ import type {Route} from './+types/pages.careers';
 import {BRAND, CAREERS, COLLECTIONS} from '~/lib/brand';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Careers',
     description:
       'AISLE 9 careers. We are not hiring. The position of everyone is currently filled.',

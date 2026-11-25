@@ -12,13 +12,13 @@ export function MatchingSetsPromo() {
       aria-labelledby="matching-sets-heading"
       className="border-b-2 border-ink bg-fluorescent"
     >
-      <div className="mx-auto max-w-6xl px-4 py-14">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28" data-reveal>
         <div className="grid items-stretch gap-0 border-2 border-ink bg-white md:grid-cols-[1fr_auto]">
           <div className="p-6 sm:p-8">
-            <p className="label-type text-signage">{MATCHING_SETS.eyebrow}</p>
+            <p className="eyebrow text-signage">{MATCHING_SETS.eyebrow}</p>
             <h2
               id="matching-sets-heading"
-              className="sign-type mt-2 text-3xl sm:text-4xl"
+              className="display-l"
             >
               {MATCHING_SETS.heading}
             </h2>

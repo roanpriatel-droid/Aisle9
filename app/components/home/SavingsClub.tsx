@@ -20,12 +20,12 @@ export function SavingsClub() {
 
   return (
     <section aria-labelledby="savings-club-heading" className="bg-ink">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-[1.1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:py-28 lg:grid-cols-[1.1fr_1fr]" data-reveal>
         <div>
-          <p className="label-type text-linoleum/50">{SAVINGS_CLUB.eyebrow}</p>
+          <p className="eyebrow text-signage">{SAVINGS_CLUB.eyebrow}</p>
           <h2
             id="savings-club-heading"
-            className="sign-type mt-2 text-4xl text-linoleum sm:text-5xl"
+            className="display-l text-linoleum"
           >
             {SAVINGS_CLUB.heading}
           </h2>
@@ -60,7 +60,7 @@ export function SavingsClub() {
                 type="email"
               />
               <button
-                className="btn shrink-0 border-signage bg-signage text-white hover:border-linoleum hover:bg-linoleum hover:text-ink"
+                className="btn shrink-0 border-signage! bg-signage! text-white! hover:border-linoleum! hover:bg-linoleum! hover:text-ink!"
                 disabled={fetcher.state !== 'idle'}
                 name="intent"
                 type="submit"

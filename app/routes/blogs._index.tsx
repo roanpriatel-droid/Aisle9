@@ -8,8 +8,9 @@ import {seoMeta} from '~/lib/seo';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'Store Bulletin Board',
     description:
       'Store notices, restock announcements and gift guides from AISLE 9, posted to the corkboard by the entrance.',

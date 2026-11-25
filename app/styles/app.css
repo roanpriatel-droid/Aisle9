@@ -2855,3 +2855,771 @@ html {
 .product-item .shelf-price {
   flex-wrap: wrap;
 }
+
+/* ---------------------------------------------------------------------------
+ * Scroll reveal. Content is visible by default; only once JS has booted
+ * (html.js) do [data-reveal] blocks start hidden and fade up when they enter
+ * the viewport. Reduced-motion users get no movement at all.
+ * ------------------------------------------------------------------------- */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
+}
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+ * REDESIGN — campaign homepage
+ * ========================================================================= */
+
+/* --- Campaign hero ------------------------------------------------------- */
+.campaign-hero {
+  background: var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+  color: var(--color-linoleum);
+  overflow: hidden;
+  position: relative;
+}
+.campaign-fluoro {
+  background: linear-gradient(90deg, transparent, #f4fbef 20%, #f4fbef 80%, transparent);
+  box-shadow: 0 0 40px 6px rgb(221 229 216 / 0.35);
+  height: 3px;
+  left: 8%;
+  opacity: 0.85;
+  position: absolute;
+  right: 8%;
+  top: 0;
+}
+.campaign-inner {
+  align-items: center;
+  display: grid;
+  gap: 3rem;
+  margin: 0 auto;
+  max-width: 80rem;
+  min-height: min(88vh, 54rem);
+  padding: clamp(3.5rem, 8vw, 6rem) 1rem clamp(3rem, 6vw, 5rem);
+}
+@media (min-width: 64em) {
+  .campaign-inner {
+    grid-template-columns: 1.05fr 1fr;
+  }
+}
+.campaign-dot {
+  animation: campaign-blink 2.4s ease-in-out infinite;
+  background: var(--color-signage);
+  border-radius: 999px;
+  display: inline-block;
+  height: 0.5rem;
+  margin-right: 0.35rem;
+  vertical-align: 0.1em;
+  width: 0.5rem;
+}
+@keyframes campaign-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.campaign-cta {
+  min-height: 3.25rem;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+}
+.campaign-facts {
+  border-top: 1px solid rgb(242 241 236 / 0.18);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 3rem;
+  max-width: 30rem;
+  padding-top: 1.5rem;
+}
+.campaign-facts dt {
+  color: rgb(242 241 236 / 0.5);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.campaign-facts dd {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-top: 0.25rem;
+}
+
+/* --- Endcap: three shirts stacked on a display -------------------------- */
+.campaign-endcap {
+  margin: 0 auto;
+  max-width: 34rem;
+  width: 100%;
+}
+.endcap-stack {
+  aspect-ratio: 1 / 0.74;
+  position: relative;
+}
+.endcap-item {
+  aspect-ratio: 1;
+  background: #fff;
+  border: 2px solid var(--color-linoleum);
+  box-shadow: 14px 14px 0 rgb(0 0 0 / 0.45);
+  display: block;
+  position: absolute;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  width: 58%;
+}
+.endcap-item img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.endcap-item-0 {
+  left: 0;
+  top: 8%;
+  transform: rotate(-5deg);
+  z-index: 1;
+}
+.endcap-item-1 {
+  left: 21%;
+  top: 0;
+  transform: rotate(1.5deg);
+  z-index: 3;
+}
+.endcap-item-2 {
+  right: 0;
+  top: 12%;
+  transform: rotate(6deg);
+  z-index: 2;
+}
+@media (hover: hover) {
+  .endcap-stack:hover .endcap-item-0 {
+    transform: rotate(-8deg) translate(-4%, 2%);
+  }
+  .endcap-stack:hover .endcap-item-2 {
+    transform: rotate(9deg) translate(4%, 2%);
+  }
+  .endcap-stack:hover .endcap-item-1 {
+    transform: rotate(0deg) translateY(-3%);
+  }
+}
+.endcap-ghost {
+  background: rgb(242 241 236 / 0.08);
+  border-color: rgb(242 241 236 / 0.15);
+}
+.endcap-shelf {
+  background: var(--color-linoleum);
+  bottom: 0;
+  height: 10px;
+  left: -4%;
+  position: absolute;
+  right: -4%;
+}
+.price-gun {
+  background: var(--color-signage);
+  border: 2px solid #fff;
+  bottom: -0.9rem;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  padding: 0.3rem 0.6rem;
+  position: absolute;
+  right: -0.6rem;
+  transform: rotate(-8deg);
+}
+
+/* --- Promo ticker ------------------------------------------------------- */
+.promo-ticker {
+  background: var(--color-signage);
+  border-bottom: 2px solid var(--color-ink);
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.promo-ticker-track {
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  padding: 0.85rem 0;
+}
+.promo-ticker-track span {
+  padding-right: 0.5rem;
+}
+
+/* --- Store directory ---------------------------------------------------- */
+.aisle-tiles {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  margin-top: 3rem;
+}
+@media (min-width: 40em) {
+  .aisle-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 64em) {
+  .aisle-tiles {
+    gap: 1.25rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.aisle-tile {
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  color: var(--color-ink);
+  display: flex;
+  flex-direction: column;
+  min-height: 15.5rem;
+  overflow: hidden;
+  padding: 1.5rem;
+  position: relative;
+  text-decoration: none;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+.aisle-tile:hover {
+  box-shadow: 8px 8px 0 var(--color-ink);
+  transform: translate(-3px, -3px);
+}
+.aisle-tile-n {
+  color: var(--color-signage);
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+}
+.aisle-tile-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  max-width: 62%;
+  position: relative;
+  z-index: 1;
+}
+.aisle-tile-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.aisle-tile-blurb {
+  color: rgb(26 26 26 / 0.65);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.aisle-tile-cta {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+.aisle-tile:hover .aisle-tile-cta,
+.aisle-tile:hover .aisle-tile-title {
+  color: var(--color-signage);
+}
+.aisle-tile-peek {
+  bottom: -8%;
+  position: absolute;
+  right: -10%;
+  transform: rotate(-8deg);
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  width: 52%;
+}
+.aisle-tile-peek img {
+  display: block;
+  width: 100%;
+}
+.aisle-tile:hover .aisle-tile-peek {
+  transform: rotate(-3deg) translate(-6%, -6%);
+}
+.aisle-rail {
+  border-top: 2px solid var(--color-ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+}
+.aisle-rail a {
+  align-items: center;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.aisle-rail a:hover {
+  color: var(--color-signage);
+}
+.aisle-rail-n {
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+}
+
+/* --- Staff pick editorial spread ---------------------------------------- */
+.staff-pick {
+  background: var(--color-fluorescent);
+}
+.staff-pick-flip {
+  background: var(--color-linoleum);
+}
+.staff-pick-inner {
+  align-items: center;
+  display: grid;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+@media (min-width: 64em) {
+  .staff-pick-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .staff-pick-flip .staff-pick-media {
+    order: 2;
+  }
+}
+.staff-pick-media {
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  box-shadow: 16px 16px 0 var(--color-ink);
+  display: block;
+  overflow: hidden;
+}
+.staff-pick-media img {
+  display: block;
+  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  width: 100%;
+}
+.staff-pick-media:hover img {
+  transform: scale(1.04);
+}
+.staff-pick-title {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.staff-pick-title:hover {
+  color: var(--color-signage);
+}
+.staff-note {
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  margin-top: 2rem;
+  max-width: 26rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  position: relative;
+  transform: rotate(-1.5deg);
+}
+.staff-note blockquote {
+  font-size: 1.1rem;
+  line-height: 1.45;
+}
+.staff-note figcaption {
+  color: var(--color-signage);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin-top: 0.75rem;
+}
+.staff-note-tape {
+  background: rgb(221 229 216 / 0.9);
+  border: 1px solid rgb(26 26 26 / 0.15);
+  height: 1.4rem;
+  left: 50%;
+  position: absolute;
+  top: -0.8rem;
+  transform: translateX(-50%) rotate(2deg);
+  width: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-dot {
+    animation: none;
+  }
+  .endcap-item,
+  .aisle-tile,
+  .aisle-tile-peek,
+  .staff-pick-media img {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Display scale — oversized, tight, confident. The "expensive" look is mostly
+ * big type and room around it. Same Arial grotesque, heavier and tighter.
+ * ------------------------------------------------------------------------- */
+.display-xxl {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.86;
+  font-size: clamp(3.25rem, 11.5vw, 11rem);
+  margin: 0.35em 0 0.22em;
+  padding-bottom: 0.06em;
+}
+.display-xl {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  font-size: clamp(2.5rem, 7vw, 6.5rem);
+  margin: 0.3em 0 0.25em;
+}
+.display-l {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  font-size: clamp(2rem, 4.6vw, 4rem);
+  margin: 0.35em 0 0;
+}
+.eyebrow {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+/* Section rhythm: one vertical scale for every homepage band. */
+.section-pad {
+  padding-top: clamp(4rem, 9vw, 8rem);
+  padding-bottom: clamp(4rem, 9vw, 8rem);
+}
+
+/* Quick-add size picker on cards */
+.quick-sizes {
+  background: var(--color-ink);
+  bottom: 0;
+  color: #fff;
+  left: 0;
+  padding: 0.6rem;
+  position: absolute;
+  right: 0;
+  z-index: 3;
+}
+.quick-sizes-label {
+  align-items: center;
+  display: flex;
+  font-size: 0.62rem;
+  font-weight: 700;
+  justify-content: space-between;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.45rem;
+}
+.quick-sizes-close {
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+}
+.quick-sizes-row {
+  display: grid;
+  gap: 0.3rem;
+  grid-template-columns: repeat(auto-fit, minmax(2.4rem, 1fr));
+}
+.quick-size {
+  background: #fff;
+  border: 0;
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  font-weight: 800;
+  min-height: 2.25rem;
+  width: 100%;
+}
+.quick-size:hover:not(:disabled) {
+  background: var(--color-signage);
+  color: #fff;
+}
+.quick-size:disabled {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+/* Grid promo banners (every 12th card) */
+.grid-banner {
+  align-items: end;
+  border: 2px solid var(--color-ink);
+  display: grid;
+  gap: 1.5rem;
+  grid-column: 1 / -1;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+}
+@media (min-width: 48em) {
+  .grid-banner {
+    grid-template-columns: 1fr auto;
+  }
+}
+.grid-banner-ink {
+  background: var(--color-ink);
+  color: var(--color-linoleum);
+}
+.grid-banner-signage {
+  background: var(--color-signage);
+  color: #fff;
+}
+.grid-banner-fluorescent {
+  background: var(--color-fluorescent);
+  color: var(--color-ink);
+}
+.grid-banner .eyebrow {
+  opacity: 0.7;
+}
+.grid-banner-title {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  margin-top: 0.6rem;
+  text-transform: uppercase;
+}
+.grid-banner-body {
+  font-size: 0.95rem;
+  margin-top: 0.75rem;
+  max-width: 34rem;
+  opacity: 0.8;
+}
+.grid-banner-cta {
+  border: 2px solid currentColor;
+  color: inherit;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 0.9rem 1.25rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.grid-banner-cta:hover {
+  background: currentColor;
+}
+.grid-banner-ink .grid-banner-cta:hover {
+  color: var(--color-ink);
+  background: var(--color-linoleum);
+}
+.grid-banner-signage .grid-banner-cta:hover {
+  color: var(--color-signage);
+  background: #fff;
+}
+.grid-banner-fluorescent .grid-banner-cta:hover {
+  color: #fff;
+  background: var(--color-ink);
+}
+
+/* ---------------------------------------------------------------------------
+ * Cart drawer as a store receipt
+ * ------------------------------------------------------------------------- */
+.ladder-status {
+  align-items: center;
+  background: var(--color-fluorescent);
+  border: 2px solid var(--color-ink);
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem;
+}
+.ladder-status-pct {
+  background: var(--color-signage);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  padding: 0.15rem 0.45rem;
+}
+.receipt-lines {
+  border-bottom: 2px dashed var(--color-ink);
+  border-top: 2px dashed var(--color-ink);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 0;
+}
+.receipt-line {
+  align-items: baseline;
+  display: flex;
+  font-size: 0.85rem;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+}
+.receipt-line dt {
+  letter-spacing: 0.08em;
+}
+.receipt-line dd {
+  white-space: nowrap;
+}
+.receipt-savings {
+  color: var(--color-signage);
+  font-weight: 700;
+}
+.receipt-total {
+  border-top: 1px solid rgb(26 26 26 / 0.25);
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+}
+.receipt-note {
+  color: rgb(26 26 26 / 0.55);
+  font-family: Arial, sans-serif;
+  font-size: 0.72rem;
+  margin-top: 0.35rem;
+}
+.receipt-codes {
+  margin-top: 0.6rem;
+}
+.receipt-codes > summary {
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  list-style: none;
+  padding: 0.35rem 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.receipt-codes form > div {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.receipt-codes input {
+  border: 2px solid var(--color-ink);
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.6rem;
+}
+.receipt-apply {
+  background: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 0 0.9rem;
+}
+.receipt-apply:hover:not(:disabled) {
+  background: var(--color-signage);
+  border-color: var(--color-signage);
+}
+.cart-line-quantity {
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.cart-line-quantity button[name] {
+  align-items: center;
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  display: inline-flex;
+  font-weight: 800;
+  height: 1.9rem;
+  justify-content: center;
+  width: 1.9rem;
+}
+.cart-line-quantity button[name]:disabled {
+  opacity: 0.35;
+}
+.cart-qty-value {
+  font-weight: 800;
+  min-width: 1.4rem;
+  text-align: center;
+}
+.cart-remove {
+  background: none;
+  border: 0;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-left: 0.5rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cart-remove:hover {
+  color: var(--color-signage);
+}
+
+/* 404 — closed for cleaning */
+.not-found-sign {
+  align-items: center;
+  background: #fff;
+  border: 2px solid var(--color-ink);
+  display: inline-flex;
+  gap: 0.6rem;
+  padding: 0.5rem 0.9rem;
+}
+.not-found-cone {
+  color: var(--color-signage);
+  font-size: 0.9rem;
+}
+.not-found-search {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+  max-width: 34rem;
+}
+.not-found-search input {
+  border: 2px solid var(--color-ink);
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+}
+.not-found-aisles {
+  border-top: 2px solid var(--color-ink);
+  display: grid;
+  gap: 0.5rem 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+}
+.not-found-aisles a {
+  align-items: center;
+  color: var(--color-ink);
+  display: flex;
+  font-size: 0.85rem;
+  font-weight: 800;
+  gap: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0;
+  text-decoration: none;
+}
+.not-found-aisles a:hover {
+  color: var(--color-signage);
+}
+.not-found-aisles span {
+  background: var(--color-signage);
+  color: #fff;
+  font-size: 0.7rem;
+  min-width: 1.6rem;
+  padding: 0.15rem 0.35rem;
+  text-align: center;
+}
+
+/* Phones: the bulk chip collides with shelf badges on 2-up cards; the ladder
+   is already stated in the deal strip, cart and PDP. Endcap pulls in. */
+@media (max-width: 40em) {
+  .ladder-chip {
+    display: none;
+  }
+  .campaign-endcap {
+    max-width: 86%;
+  }
+}

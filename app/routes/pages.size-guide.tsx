@@ -2,8 +2,9 @@ import type {Route} from './+types/pages.size-guide';
 import {BRAND, SIZE_CHART} from '~/lib/brand';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({matches}) => {
   return seoMeta({
+    matches,
     title: 'T-Shirt Size Guide (S–3XL)',
     description:
       'Size chart for the AISLE 9 unisex heavy cotton tee (Gildan 5000), S through 3XL, in inches. Chest width, body length, sleeve.',

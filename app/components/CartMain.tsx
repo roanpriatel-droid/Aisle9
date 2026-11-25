@@ -118,22 +118,17 @@ function LadderNudge({quantity}: {quantity: number}) {
   const current = [...tiers].reverse().find((t) => quantity >= t.qty);
   const next = tiers.find((t) => t.qty > quantity);
 
+  // "Add N more" lives in the recommendations block below; this line only
+  // confirms the tier already earned, so the drawer never says it twice.
+  if (!current) return null;
   return (
-    <div className="mt-2 border-2 border-ink bg-fluorescent p-3">
-      {current && (
-        <p className="label-type text-ink">
-          {current.discountPct}% OFF APPLIES AT CHECKOUT.
-        </p>
-      )}
-      {next ? (
-        <p className={`label-type ${current ? 'mt-1 text-ink/60' : 'text-ink'}`}>
-          ADD {next.qty - quantity} MORE — SAVE {next.discountPct}%.
-        </p>
-      ) : (
-        <p className="label-type mt-1 text-ink/60">
-          MAXIMUM DISCOUNT REACHED. THE STORE CONCEDES.
-        </p>
-      )}
+    <div className="ladder-status">
+      <span className="ladder-status-pct">−{current.discountPct}%</span>
+      <span className="label-type">
+        {next
+          ? `BULK LADDER APPLIED · ${next.qty} SHIRTS UNLOCKS −${next.discountPct}%`
+          : 'MAXIMUM DISCOUNT REACHED. THE STORE CONCEDES.'}
+      </span>
     </div>
   );
 }

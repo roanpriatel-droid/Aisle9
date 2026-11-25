@@ -17,31 +17,78 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   const discountCodeInputId = useId();
   const giftCardHeadingId = useId();
   const giftCardInputId = useId();
+  const allocations = (cart?.discountAllocations ?? []) as Array<{
+    discountedAmount?: {amount?: string | null} | null;
+    title?: string | null;
+    code?: string | null;
+  }>;
+  const savings = allocations.reduce(
+    (sum, a) => sum + Number(a.discountedAmount?.amount ?? 0),
+    0,
+  );
+  const savingsLabel =
+    allocations.find((a) => a.title)?.title?.replace(/\s+—.*$/, '') ??
+    (allocations.find((a) => a.code)?.code
+      ? `CODE ${allocations.find((a) => a.code)?.code}`
+      : 'SAVINGS');
 
   return (
     <div aria-labelledby={summaryId} className={className}>
       <h4 id={summaryId} className="label-type text-ink/50">RECEIPT PREVIEW</h4>
       <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
-      <dl role="group" className="cart-subtotal">
-        <dt>SUBTOTAL</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
+      <dl className="receipt-lines">
+        <div className="receipt-line">
+          <dt>SUBTOTAL</dt>
+          <dd>
+            {cart?.cost?.subtotalAmount?.amount ? (
+              <Money as="span" data={cart?.cost?.subtotalAmount} />
+            ) : (
+              '—'
+            )}
+          </dd>
+        </div>
+        {savings > 0 && cart?.cost?.subtotalAmount?.currencyCode ? (
+          <div className="receipt-line receipt-savings">
+            <dt>{savingsLabel}</dt>
+            <dd>
+              −
+              <Money
+                as="span"
+                data={{
+                  amount: savings.toFixed(2),
+                  currencyCode: cart.cost.subtotalAmount.currencyCode,
+                }}
+              />
+            </dd>
+          </div>
+        ) : null}
+        <div className="receipt-line receipt-total">
+          <dt>ESTIMATED TOTAL</dt>
+          <dd>
+            {cart?.cost?.totalAmount?.amount ? (
+              <Money as="span" data={cart.cost.totalAmount} />
+            ) : (
+              '—'
+            )}
+          </dd>
+        </div>
+        <p className="receipt-note">
+          Shipping and tax calculated at checkout.
+        </p>
       </dl>
-      <CartDiscounts
-        discountCodes={cart?.discountCodes}
-        discountsHeadingId={discountsHeadingId}
-        discountCodeInputId={discountCodeInputId}
-      />
-      <CartGiftCard
-        giftCardCodes={cart?.appliedGiftCards}
-        giftCardHeadingId={giftCardHeadingId}
-        giftCardInputId={giftCardInputId}
-      />
+      <details className="receipt-codes">
+        <summary>HAVE A CODE?</summary>
+        <CartDiscounts
+          discountCodes={cart?.discountCodes}
+          discountsHeadingId={discountsHeadingId}
+          discountCodeInputId={discountCodeInputId}
+        />
+        <CartGiftCard
+          giftCardCodes={cart?.appliedGiftCards}
+          giftCardHeadingId={giftCardHeadingId}
+          giftCardInputId={giftCardInputId}
+        />
+      </details>
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
     </div>
   );
@@ -150,8 +197,12 @@ function CartDiscounts({
             placeholder="DISCOUNT CODE"
           />
           &nbsp;
-          <button type="submit" aria-label="Apply discount code">
-            Apply
+          <button
+            type="submit"
+            className="receipt-apply"
+            aria-label="Apply discount code"
+          >
+            APPLY
           </button>
         </div>
       </UpdateDiscountForm>
@@ -277,10 +328,11 @@ function CartGiftCard({
           &nbsp;
           <button
             type="submit"
+            className="receipt-apply"
             disabled={giftCardAddFetcher.state !== 'idle'}
             aria-label="Apply gift card code"
           >
-            Apply
+            APPLY
           </button>
         </div>
       </AddGiftCardForm>

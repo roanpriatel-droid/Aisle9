@@ -14,8 +14,8 @@ import type {
 } from 'storefrontapi.generated';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return seoMeta({title: 'Search', noindex: true});
+export const meta: Route.MetaFunction = ({matches}) => {
+  return seoMeta({matches, title: 'Search', noindex: true});
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

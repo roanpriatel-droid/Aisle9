@@ -11,9 +11,10 @@ const POLICY_FIELDS: Record<string, string> = {
   'refund-policy': 'refundPolicy',
 };
 
-export const meta: Route.MetaFunction = ({data, params}) => {
+export const meta: Route.MetaFunction = ({data, params, matches}) => {
   const title = data?.policy.title ?? 'Store Policy';
   return seoMeta({
+    matches,
     title,
     description: `${title} for AISLE 9: the terms that govern buying a $36 shirt from a store that does not exist. Plainly stated.`,
     path: `/policies/${params.handle}`,

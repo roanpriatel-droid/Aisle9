@@ -70,7 +70,7 @@ function itemNumber(productId: string): string {
   return `A9-${digits}`;
 }
 
-export const meta: Route.MetaFunction = ({data}) => {
+export const meta: Route.MetaFunction = ({data, matches}) => {
   const product = data?.product;
   const title = product?.title ?? '';
   const description =
@@ -79,6 +79,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   const image = data?.previewImageUrl;
   return [
     ...seoMeta({
+      matches,
       title: product?.seo?.title || `${title} T-Shirt | AISLE 9`,
       fullTitle: true,
       description,

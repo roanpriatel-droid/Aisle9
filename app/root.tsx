@@ -18,6 +18,7 @@ import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 import {SiteJsonLd} from './components/StructuredData';
+import {ALL_AISLES} from '~/lib/brand';
 
 export type RootLoader = typeof loader;
 
@@ -186,8 +187,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="theme-color" content="#1A1A1A" />
-        <meta property="og:site_name" content="AISLE 9" />
-        <meta name="twitter:card" content="summary_large_image" />
         <link rel="apple-touch-icon" href={favicon} />
         <link rel="mask-icon" href={favicon} color="#CC2229" />
         <link rel="stylesheet" href={tailwindCss}></link>
@@ -240,38 +239,72 @@ export function ErrorBoundary() {
 
   const notFound = errorStatus === 404;
 
+  if (notFound) return <NotFoundAisle />;
+
   return (
     <div className="route-error mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 py-20">
-      <p className="label-type text-ink/50">
-        {notFound
-          ? 'CODE 404 · CHECK AISLE 9'
-          : `STORE ERROR · CODE ${errorStatus}`}
-      </p>
-      <h1 className="sign-type text-4xl">
-        {notFound
-          ? 'ITEM NOT FOUND — CHECK AISLE 9'
-          : 'SOMETHING FELL OFF A SHELF.'}
-      </h1>
+      <p className="label-type text-ink/50">{`STORE ERROR · CODE ${errorStatus}`}</p>
+      <h1 className="sign-type text-4xl">SOMETHING FELL OFF A SHELF.</h1>
       <p className="text-ink/70">
-        {notFound
-          ? 'Whatever you scanned did not ring up. It may be discontinued, mis-shelved, or something you imagined. Aisle 9 is where lost items end up.'
-          : 'An associate has been notified. The associate is also us.'}
+        An associate has been notified. The associate is also us.
       </p>
-      {!notFound && errorMessage && (
+      {errorMessage && (
         <fieldset className="w-full border-2 border-ink p-3">
           <pre className="overflow-x-auto text-xs">{errorMessage}</pre>
         </fieldset>
       )}
-      <div className="flex flex-wrap gap-3">
-        <a className="btn" href="/">
-          RETURN TO FRONT OF STORE
-        </a>
-        {notFound && (
-          <a className="btn btn-outline" href="/collections/all">
-            BROWSE ALL AISLES
-          </a>
-        )}
+      <a className="btn" href="/">
+        RETURN TO FRONT OF STORE
+      </a>
+    </div>
+  );
+}
+
+/** 404 — the aisle is closed for cleaning. Search + the directory to recover. */
+function NotFoundAisle() {
+  return (
+    <div className="not-found mx-auto max-w-7xl px-4 py-20 sm:py-28">
+      <div className="not-found-sign">
+        <span className="not-found-cone" aria-hidden>
+          ▲
+        </span>
+        <span className="eyebrow">CAUTION · WET FLOOR · CODE 404</span>
       </div>
+      <h1 className="display-xl mt-8">
+        This aisle is closed
+        <br />
+        for cleaning.
+      </h1>
+      <p className="mt-6 max-w-xl text-lg text-ink/70">
+        Whatever you were looking for did not ring up. It may be discontinued,
+        mis-shelved, or something you imagined. Try a price check, or pick an
+        open aisle.
+      </p>
+      <form action="/search" method="get" className="not-found-search">
+        <label htmlFor="nf-q" className="sr-only">
+          Search the shelves
+        </label>
+        <input
+          id="nf-q"
+          name="q"
+          type="search"
+          placeholder="SEARCH THE SHELVES"
+          autoComplete="off"
+        />
+        <button type="submit" className="btn">
+          PRICE CHECK
+        </button>
+      </form>
+      <ul className="not-found-aisles">
+        {ALL_AISLES.map((a) => (
+          <li key={a.handle}>
+            <a href={`/collections/${a.handle}`}>
+              <span>{a.n}</span>
+              {a.title}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

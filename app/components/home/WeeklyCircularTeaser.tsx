@@ -10,24 +10,28 @@ import type {ShelfData} from '~/lib/shelf';
  * products (image + price tag), so the preview isn't hollow. The whole band
  * links to the full circular.
  */
-export function WeeklyCircularTeaser({shelf}: {shelf: Promise<ShelfData | null>}) {
+export function WeeklyCircularTeaser({
+  shelf,
+}: {
+  shelf: Promise<ShelfData | null>;
+}) {
   const t = WEEKLY_CIRCULAR.teaser;
   return (
     <section
       aria-labelledby="circular-teaser"
       className="border-b-2 border-ink bg-linoleum"
     >
-      <div className="mx-auto max-w-6xl px-4 py-14">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28" data-reveal>
         <Link
           to="/pages/weekly-circular"
           prefetch="intent"
           className="group grid items-stretch border-2 border-ink no-underline md:grid-cols-[1.3fr_1fr]"
         >
           <div className="bg-ink p-6 sm:p-10">
-            <p className="label-type text-linoleum/50">{t.eyebrow}</p>
+            <p className="eyebrow text-signage">{t.eyebrow}</p>
             <h2
               id="circular-teaser"
-              className="sign-type mt-2 text-4xl text-linoleum sm:text-5xl"
+              className="display-l text-linoleum"
             >
               {t.heading}
             </h2>

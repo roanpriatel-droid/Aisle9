@@ -5,8 +5,8 @@ import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 import {seoMeta} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return seoMeta({title: 'Your Basket', noindex: true});
+export const meta: Route.MetaFunction = ({matches}) => {
+  return seoMeta({matches, title: 'Your Basket', noindex: true});
 };
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
