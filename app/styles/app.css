@@ -53,7 +53,7 @@ main {
 }
 
 /* Route content that isn't a full-bleed section gets store-floor padding */
-main > :not(.home) {
+main > :not(.home, .collection, .gift-guide) {
   margin: 0 auto;
   max-width: 1200px;
   padding: 1.5rem 1rem 3rem;
@@ -4397,4 +4397,30 @@ html.js [data-reveal].is-revealed {
 .endcap-item-1 .price-gun {
   left: 18%;
   top: 50%;
+}
+
+/* Aisle hero: the homepage conveyor wall behind, dimmer, content on top */
+.aisle-hero {
+  isolation: isolate;
+}
+.aisle-hero-inner {
+  z-index: 2;
+}
+.aisle-hero-wall {
+  opacity: 0.85;
+}
+.aisle-hero .hero-scrim {
+  z-index: 1;
+}
+.aisle-hero .campaign-fluoro {
+  z-index: 3;
+}
+.aisle-hero-inner {
+  min-height: min(78vh, 46rem);
+  padding-top: clamp(2rem, 4.5vw, 3.5rem);
+}
+@media (min-width: 90em) {
+  .aisle-hero-endcap {
+    max-width: 34rem;
+  }
 }

@@ -110,6 +110,7 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     currencyCode
   }
   fragment CollectionItem on Product {
+    tags
     selectedOrFirstAvailableVariant(selectedOptions: [], ignoreUnknownOptions: true) {
       id
       availableForSale

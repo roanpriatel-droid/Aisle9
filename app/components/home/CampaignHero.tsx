@@ -115,10 +115,10 @@ export function CampaignHero({shelf}: {shelf: Promise<ShelfData | null>}) {
 }
 
 /** The second image is the black colorway. */
-function darkImage(p: ShelfProduct) {
+function darkImage(p: WallProduct) {
   return p.cardImages?.nodes?.find((img) => img.id !== p.featuredImage?.id);
 }
-function slotImage(p: ShelfProduct, wantDark: boolean) {
+function slotImage(p: WallProduct, wantDark: boolean) {
   const dark = darkImage(p);
   return wantDark && dark ? dark : p.featuredImage!;
 }
@@ -126,11 +126,24 @@ function slotImage(p: ShelfProduct, wantDark: boolean) {
 const COLUMNS = 9;
 const PER_COLUMN = 5;
 
+type WallImage = {
+  id?: string | null;
+  url: string;
+  altText?: string | null;
+  width?: number | null;
+  height?: number | null;
+};
+export type WallProduct = {
+  id: string;
+  featuredImage?: WallImage | null;
+  cardImages?: {nodes: WallImage[]} | null;
+};
+
 /**
  * Conveyor columns: each column is a strip of shirts duplicated once so a
  * translateY(-50%) loop is seamless. Odd columns run the other way.
  */
-function ConveyorWall({products}: {products: ShelfProduct[]}) {
+export function ConveyorWall({products}: {products: WallProduct[]}) {
   const src = products.filter((p) => p.featuredImage);
   if (src.length === 0) return null;
   const columns = Array.from({length: COLUMNS}, (_, c) =>

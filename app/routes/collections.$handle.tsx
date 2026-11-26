@@ -246,7 +246,7 @@ export default function Collection() {
         products={products.nodes}
         crumbs={[
           {label: 'AISLE 9', to: '/'},
-          GIFT_DEPARTMENTS.some((d) => d.handle === handle)
+          !aisleInfo && GIFT_DEPARTMENTS.some((d) => d.handle === handle)
             ? {label: 'GIFT DEPARTMENT', to: '/pages/gift-guide'}
             : {label: 'ALL AISLES', to: '/collections'},
           {label: title},
@@ -402,6 +402,7 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     currencyCode
   }
   fragment ProductItem on Product {
+    tags
     cardImages: images(first: 2) {
       nodes { id url altText width height }
     }

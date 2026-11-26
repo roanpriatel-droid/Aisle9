@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ALL_AISLES} from '~/lib/brand';
+import {ConveyorWall} from '~/components/home/CampaignHero';
 
 type HeroImage = {
   id?: string | null;
@@ -13,6 +14,7 @@ type HeroImage = {
 type HeroProduct = {
   id: string;
   handle: string;
+  tags?: string[] | null;
   featuredImage?: HeroImage | null;
   cardImages?: {nodes: HeroImage[]} | null;
 };
@@ -40,9 +42,19 @@ export function CollectionHero({
   products: HeroProduct[];
   crumbs: {label: string; to?: string}[];
 }) {
-  const picks = products.filter((p) => p.featuredImage).slice(0, 3);
+  // Front-of-store displays never feature adults-only designs.
+  const clean = products.filter(
+    (p) => p.featuredImage && !p.tags?.includes('adults-only'),
+  );
+  const picks = clean.slice(0, 3);
   return (
     <section className="aisle-hero" aria-labelledby="aisle-hero-title">
+      {clean.length > 0 ? (
+        <div className="hero-wall aisle-hero-wall" aria-hidden>
+          <ConveyorWall products={clean} />
+        </div>
+      ) : null}
+      <span className="hero-scrim" aria-hidden />
       <span className="campaign-fluoro" aria-hidden />
       <div className="aisle-hero-inner">
         <div className="aisle-hero-copy">
