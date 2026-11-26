@@ -77,6 +77,7 @@ export default function Collection() {
         ]}
       />
       <div className="collection-body mx-auto max-w-7xl px-4">
+        <h2 className="sr-only">All products</h2>
         <div className="collection-toolbar">
           <DealStrip />
         </div>

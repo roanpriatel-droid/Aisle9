@@ -68,7 +68,7 @@ export default function Page() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">POSTED IN AISLE 9</p>
+      <p className="label-type text-ink/70">POSTED IN AISLE 9</p>
       <h1 className="sign-type mt-2 text-4xl">{page.title}</h1>
       <main
         className="a9-prose mt-8"

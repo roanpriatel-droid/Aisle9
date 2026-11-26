@@ -64,7 +64,7 @@ export default function Blogs() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
-      <p className="label-type text-ink/50">POSTED BY THE ENTRANCE</p>
+      <p className="label-type text-ink/70">POSTED BY THE ENTRANCE</p>
       <h1 className="sign-type mt-2 text-4xl">BULLETIN BOARD</h1>
       <p className="mt-4 max-w-prose text-ink/70">
         Store notices, restock announcements, and whatever else gets pinned to

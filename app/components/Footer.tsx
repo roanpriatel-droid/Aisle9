@@ -140,7 +140,7 @@ export function Footer(_props: FooterProps) {
               </li>
             ))}
           </ul>
-          <p className="label-type text-linoleum/40">
+          <p className="label-type text-linoleum/70">
             © {new Date().getFullYear()} {BRAND.name}. NOTHING YOU NEED.
           </p>
         </div>

@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {SIZE_CHART} from '~/lib/brand';
+import {SIZE_CHART, SIZE_CHART_NOTE} from '~/lib/brand';
 import {useFocusTrap} from '~/lib/useFocusTrap';
 
 /**
@@ -47,14 +47,20 @@ export function SizeChartModal() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="size-chart-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setOpen(false);
-          }}
         >
+          <button
+            type="button"
+            className="dialog-scrim"
+            aria-label="Close size chart"
+            tabIndex={-1}
+            onClick={() => setOpen(false)}
+          />
           <div className="size-modal" ref={modalRef} tabIndex={-1}>
             <header className="size-modal-header">
               <div>
-                <p className="label-type text-ink/50">MEASURE TWICE, ADMIT ONCE</p>
+                <p className="label-type text-ink/70">
+                  MEASURE TWICE, ADMIT ONCE
+                </p>
                 <h2 id="size-chart-title" className="sign-type text-2xl">
                   SIZE CHART
                 </h2>
@@ -85,7 +91,7 @@ export function SizeChartModal() {
                       <th className="label-type p-3">SIZE</th>
                       <th className="label-type p-3">CHEST</th>
                       <th className="label-type p-3">LENGTH</th>
-                      <th className="label-type p-3">SLEEVE</th>
+                      <th className="label-type p-3">SLEEVE (CENTRE BACK)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -102,14 +108,14 @@ export function SizeChartModal() {
                     ))}
                   </tbody>
                 </table>
+                <p className="mt-3 px-1 text-xs text-ink/60">
+                  {SIZE_CHART_NOTE}
+                </p>
               </div>
 
               <p className="label-type mt-5 text-ink/50">
                 Full measuring + care instructions on the{' '}
-                <a
-                  className="text-signage underline"
-                  href="/pages/size-guide"
-                >
+                <a className="text-signage underline" href="/pages/size-guide">
                   SIZE GUIDE
                 </a>
                 .

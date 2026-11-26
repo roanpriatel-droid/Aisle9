@@ -68,7 +68,7 @@ export default function Blog() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
-      <p className="label-type text-ink/50">
+      <p className="label-type text-ink/70">
         <Link className="text-ink/50 hover:text-signage" to="/blogs">
           BULLETIN BOARD
         </Link>{' '}
@@ -135,7 +135,7 @@ function ArticleItem({
         </div>
       )}
       <div className="p-4">
-        <span className="label-type text-ink/40">{publishedAt}</span>
+        <span className="label-type text-ink/70">{publishedAt}</span>
         <h3 className="sign-type mt-1.5 text-base group-hover:text-signage">
           {article.title}
         </h3>

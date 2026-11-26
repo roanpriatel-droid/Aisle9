@@ -101,7 +101,7 @@ export default function WeeklyCircular() {
             .map((t) => `${t.qty} FOR −${t.discountPct}%`)
             .join('  ·  ')}
         </span>
-        <span className="label-type text-ink/50">
+        <span className="label-type text-ink/70">
           APPLIES ITSELF AT CHECKOUT
         </span>
       </div>
@@ -132,7 +132,7 @@ export default function WeeklyCircular() {
               {hero.title}
             </h2>
             <FlyerPrice price={hero.priceRange.minVariantPrice} big />
-            <span className="label-type text-ink/50">
+            <span className="label-type text-ink/70">
               PICK A SIZE — THE LADDER DOES THE REST →
             </span>
           </div>
@@ -164,7 +164,7 @@ export default function WeeklyCircular() {
       ))}
 
       {/* Disclaimer */}
-      <p className="mx-auto mt-12 max-w-2xl border-t-2 border-ink pt-6 text-center text-xs text-ink/50">
+      <p className="mx-auto mt-12 max-w-2xl border-t-2 border-ink pt-6 text-center text-xs text-ink/70">
         {WEEKLY_CIRCULAR.disclaimer}
       </p>
     </div>

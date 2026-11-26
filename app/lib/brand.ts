@@ -340,7 +340,7 @@ export const POLICIES = [
   {title: '30-DAY RETURNS', detail: 'Changed your mind. Understandable.'},
   {title: 'FREE US SHIPPING $100+', detail: 'Spend enough, pay nothing extra.'},
   {title: 'SECURE CHECKOUT', detail: 'Handled by Shopify. Not by us.'},
-  {title: '5–7 DAY DELIVERY', detail: 'Printed on demand. It takes a minute.'},
+  {title: '4–10 DAY DELIVERY', detail: 'Printed on demand, then shipped. Business days.'},
 ] as const;
 
 /**
@@ -396,14 +396,22 @@ export const MATCHING_SETS = {
  * chart modal. Unisex heavyweight staple tee, laid flat, inches. Verify
  * against the final Printify blank before launch.
  */
+/**
+ * Gildan 5000 measurements, inches, laid flat — from Printify's product page
+ * for blueprint 6 (Monster Digital). Sleeve is measured from the centre back.
+ * Tolerance ±1.5 in.
+ */
 export const SIZE_CHART = [
-  {size: 'S', chest: 18, length: 28, sleeve: 8.25},
-  {size: 'M', chest: 20, length: 29, sleeve: 8.63},
-  {size: 'L', chest: 22, length: 30, sleeve: 9},
-  {size: 'XL', chest: 24, length: 31, sleeve: 9.38},
-  {size: '2XL', chest: 26, length: 32, sleeve: 9.75},
-  {size: '3XL', chest: 28, length: 33, sleeve: 10.13},
+  {size: 'S', chest: 18, length: 28, sleeve: 15.1},
+  {size: 'M', chest: 20, length: 29, sleeve: 16.5},
+  {size: 'L', chest: 22, length: 30, sleeve: 18},
+  {size: 'XL', chest: 24, length: 31, sleeve: 19.5},
+  {size: '2XL', chest: 26, length: 32, sleeve: 21},
+  {size: '3XL', chest: 28, length: 33, sleeve: 22.4},
 ] as const;
+
+export const SIZE_CHART_NOTE =
+  'Gildan 5000, measured laid flat. Sleeve measured from the centre back of the collar. Tolerance ±1.5 in.';
 
 /** In-character UI strings. The PA voice never winks. */
 export const VOICE = {
@@ -759,11 +767,11 @@ export const SHIPPING = {
   sections: [
     {
       title: 'PROCESSING',
-      body: 'Every shirt is printed after you order it. Printing takes 2–5 business days. Nothing is sitting in a warehouse waiting; it does not exist until you commit to it.',
+      body: 'Every shirt is printed after you order it. Printing usually takes 2–5 business days, and up to 10 at peak season. Nothing is sitting in a warehouse waiting; it does not exist until you commit to it.',
     },
     {
       title: 'TRANSIT',
-      body: 'Once printed, most US orders arrive within 5–7 business days. A tracking number is issued when the parcel leaves the facility. The parcel does not require encouragement.',
+      body: 'Once printed, most US orders arrive within 2–5 business days. A tracking number is issued when the parcel leaves the facility. The parcel does not require encouragement.',
     },
     {
       title: 'RATES',
@@ -795,7 +803,7 @@ export const SERVICE_DESK = {
     },
     {
       q: 'WHEN WILL MY ORDER SHIP?',
-      a: 'Every shirt is printed after you order it. Printing takes 2–5 business days, then transit. Most US orders arrive within 5–7 business days of printing. You will get a tracking number when it leaves the facility.',
+      a: 'Every shirt is printed after you order it. Printing usually takes 2–5 business days (up to 10 at peak), then most US orders arrive within 2–5 business days. You will get a tracking number when it leaves the facility.',
     },
     {
       q: 'HOW MUCH IS SHIPPING?',
@@ -913,7 +921,7 @@ export const POLICY_FALLBACKS: Record<
     title: 'SHIPPING POLICY',
     eyebrow: 'LOGISTICS · DOCK 9',
     bodyHtml: `
-      <p>Every shirt is printed after you order it. Printing takes 2–5 business days; most US orders then arrive within 5–7 business days. A tracking number is issued when the parcel leaves the facility.</p>
+      <p>Every shirt is printed after you order it. Printing usually takes 2–5 business days (up to 10 at peak season); most US orders then arrive within 2–5 business days. A tracking number is issued when the parcel leaves the facility.</p>
       <h2>RATES</h2>
       <p>Shipping is calculated at checkout by weight and destination. US orders over $100 ship free.</p>
       <h2>WHERE WE SHIP</h2>
@@ -965,7 +973,9 @@ export const GIFT_DEPARTMENTS = [
  * itself. Every shirt is printed after it is ordered, so this is conservative.
  */
 export const HOLIDAY_CUTOFF = {
-  orderBy: '2026-12-10T23:59:00-05:00',
-  label: 'ORDER BY DEC 10 FOR US DELIVERY BY DEC 24',
+  // Printify (Monster Digital): production up to 10 business days + US
+  // standard 2–5 business days = up to 15 business days. Dec 3 covers it.
+  orderBy: '2026-12-03T23:59:00-05:00',
+  label: 'ORDER BY DEC 3 FOR US DELIVERY BY DEC 24',
   link: '/pages/gift-guide',
 } as const;

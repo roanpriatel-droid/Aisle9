@@ -118,27 +118,27 @@ export function ProductGallery({
       </button>
 
       {all.length > 1 && (
-        <div className="gallery-thumbs" role="list">
+        <ul className="gallery-thumbs" aria-label="Product images">
           {all.map((img, i) => (
-            <button
-              key={img.url}
-              type="button"
-              role="listitem"
-              className={`gallery-thumb${img.url === active.url ? ' is-active' : ''}`}
-              aria-label={`View image ${i + 1} of ${all.length}`}
-              aria-pressed={img.url === active.url}
-              onClick={() => setActiveUrl(img.url)}
-            >
-              <Image
-                alt={img.altText || `${title} — view ${i + 1}`}
-                aspectRatio="1/1"
-                data={img}
-                loading="lazy"
-                sizes="80px"
-              />
-            </button>
+            <li key={img.url}>
+              <button
+                type="button"
+                className={`gallery-thumb${img.url === active.url ? ' is-active' : ''}`}
+                aria-label={`View image ${i + 1} of ${all.length}`}
+                aria-pressed={img.url === active.url}
+                onClick={() => setActiveUrl(img.url)}
+              >
+                <Image
+                  alt={img.altText || `${title} — view ${i + 1}`}
+                  aspectRatio="1/1"
+                  data={img}
+                  loading="lazy"
+                  sizes="80px"
+                />
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       {lightbox && (
@@ -149,10 +149,14 @@ export function ProductGallery({
           aria-label={`${title} image viewer`}
           ref={lightboxRef}
           tabIndex={-1}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setLightbox(false);
-          }}
         >
+          <button
+            type="button"
+            className="dialog-scrim"
+            aria-label="Close image viewer"
+            tabIndex={-1}
+            onClick={() => setLightbox(false)}
+          />
           <div className="gallery-lightbox-bar">
             <span className="label-type text-linoleum/70">
               {activeIndex + 1} / {all.length}

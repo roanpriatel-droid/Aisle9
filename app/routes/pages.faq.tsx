@@ -16,7 +16,7 @@ export const meta: Route.MetaFunction = ({matches}) => {
 export default function FaqPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">{SERVICE_DESK.eyebrow}</p>
+      <p className="label-type text-ink/70">{SERVICE_DESK.eyebrow}</p>
       <h1 className="sign-type mt-2 text-4xl">{SERVICE_DESK.heading}</h1>
       <p className="mt-4 text-ink/70">{SERVICE_DESK.sub}</p>
 
@@ -48,7 +48,7 @@ export default function FaqPage() {
       </ul>
 
       <div className="mt-12 border-2 border-ink bg-white p-6">
-        <p className="label-type text-ink/50">STILL UNANSWERED?</p>
+        <p className="label-type text-ink/70">STILL UNANSWERED?</p>
         <h2 className="sign-type mt-2 text-2xl">FILE IT AT THE DESK</h2>
         <p className="mt-3 text-sm text-ink/70">
           Questions not covered above are read in the order received. Bring the

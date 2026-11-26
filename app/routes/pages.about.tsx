@@ -121,7 +121,7 @@ export default function AboutPage() {
                 i === 3 ? 'border-t-2 sm:border-t-0' : ''
               }`}
             >
-              <dt className="label-type text-ink/50">{f.k}</dt>
+              <dt className="label-type text-ink/70">{f.k}</dt>
               <dd className="sign-type mt-1 text-lg">{f.v}</dd>
             </div>
           ))}
@@ -232,13 +232,13 @@ export default function AboutPage() {
                         >
                           {d.title}
                         </Link>
-                        <p className="mt-1 hidden text-xs text-ink/50 sm:block">
+                        <p className="mt-1 hidden text-xs text-ink/70 sm:block">
                           {d.blurb}
                         </p>
                       </td>
                       <td className="sign-type whitespace-nowrap px-4 py-3 text-right">
                         {d.count === null ? (
-                          <span className="label-type text-ink/40">
+                          <span className="label-type text-ink/70">
                             {STORE_INFO.directoryEmpty}
                           </span>
                         ) : (
@@ -334,7 +334,7 @@ export default function AboutPage() {
                     <div className="h-7 w-0.5 bg-ink" aria-hidden="true" />
                   )}
                   <div className="w-full max-w-xs border-2 border-ink bg-linoleum px-5 py-4 text-center">
-                    <p className="label-type text-ink/50">{node.role}</p>
+                    <p className="label-type text-ink/70">{node.role}</p>
                     <p className="sign-type mt-1 text-lg">{node.name}</p>
                   </div>
                 </div>

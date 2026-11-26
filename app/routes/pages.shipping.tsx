@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = ({matches}) => {
     matches,
     title: 'Shipping & Returns',
     description:
-      'Printed to order in 2–5 business days, most US orders arrive 5–7 business days later. Free US shipping over $100. 30-day returns.',
+      'Printed to order in 2–5 business days, most US orders arrive 2–5 business days later. Free US shipping over $100. 30-day returns.',
     path: '/pages/shipping',
   });
 };
@@ -23,17 +23,17 @@ const GLANCE = [
 export default function ShippingPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">{SHIPPING.eyebrow}</p>
+      <p className="label-type text-ink/70">{SHIPPING.eyebrow}</p>
       <h1 className="sign-type mt-2 text-4xl">{SHIPPING.heading}</h1>
       <p className="mt-4 text-ink/70">{SHIPPING.sub}</p>
 
       {/* AT A GLANCE — dock facts */}
       <div className="mt-10">
-        <p className="label-type text-ink/50">AT A GLANCE</p>
+        <p className="label-type text-ink/70">AT A GLANCE</p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {GLANCE.map((fact) => (
             <div key={fact.label} className="border-2 border-ink bg-white p-4">
-              <p className="label-type text-ink/50">{fact.label}</p>
+              <p className="label-type text-ink/70">{fact.label}</p>
               <p className="sign-type mt-1.5 text-sm">{fact.value}</p>
             </div>
           ))}

@@ -26,7 +26,7 @@ export default function Policies() {
 
   return (
     <div className="policies">
-      <p className="label-type text-ink/50">POSTED AT THE RETURNS DESK</p>
+      <p className="label-type text-ink/70">POSTED AT THE RETURNS DESK</p>
       <h1>STORE POLICIES</h1>
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {policies.map((policy) => (

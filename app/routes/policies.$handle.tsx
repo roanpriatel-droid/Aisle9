@@ -77,7 +77,7 @@ export default function Policy() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
       <Link
-        className="label-type text-ink/50 hover:text-signage"
+        className="label-type text-ink/70 hover:text-signage"
         prefetch="intent"
         to="/policies"
       >

@@ -254,12 +254,13 @@ export default function Collection() {
       />
 
       <div className="collection-body mx-auto max-w-7xl px-4">
+        <h2 className="sr-only">Products in {title}</h2>
         {/* Toolbar: the ladder reminder + sort pills (tag aisles only) */}
         <div className="collection-toolbar">
           <DealStrip />
           {isAisle && !curated && !isEmpty && (
             <div className="sort-pills" role="group" aria-label="Sort">
-              <span className="eyebrow text-ink/50">SORT</span>
+              <span className="eyebrow text-ink/70">SORT</span>
               {SORT_OPTIONS.map((opt) => {
                 const active = data.currentSort === opt.value;
                 return (
@@ -267,7 +268,7 @@ export default function Collection() {
                     key={opt.value}
                     to={sortHref(opt.value)}
                     preventScrollReset
-                    aria-pressed={active}
+                    aria-current={active ? 'true' : undefined}
                     className={`sort-pill${active ? ' is-active' : ''}`}
                   >
                     {opt.label}

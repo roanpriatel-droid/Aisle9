@@ -16,7 +16,7 @@ export const meta: Route.MetaFunction = ({matches}) => {
 export default function CareersPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-24">
-      <p className="label-type text-ink/50">{CAREERS.eyebrow}</p>
+      <p className="label-type text-ink/70">{CAREERS.eyebrow}</p>
       <h1 className="sign-type mt-2 text-4xl">{CAREERS.heading}</h1>
 
       <div className="mt-10 border-2 border-ink bg-white p-10 text-center sm:p-16">

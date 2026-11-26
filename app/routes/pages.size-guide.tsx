@@ -1,5 +1,5 @@
 import type {Route} from './+types/pages.size-guide';
-import {BRAND, SIZE_CHART} from '~/lib/brand';
+import {BRAND, SIZE_CHART, SIZE_CHART_NOTE} from '~/lib/brand';
 import {seoMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({matches}) => {
@@ -18,7 +18,7 @@ const SIZES = SIZE_CHART;
 export default function SizeGuidePage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">MEASURE TWICE, ADMIT ONCE</p>
+      <p className="label-type text-ink/70">MEASURE TWICE, ADMIT ONCE</p>
       <h1 className="sign-type mt-2 text-4xl">SIZE GUIDE</h1>
       <p className="mt-4 text-ink/70">
         Unisex heavyweight tee. Garment measured laid flat, in inches. If you
@@ -35,7 +35,7 @@ export default function SizeGuidePage() {
               <th className="label-type p-3">SIZE</th>
               <th className="label-type p-3">CHEST (ACROSS)</th>
               <th className="label-type p-3">LENGTH</th>
-              <th className="label-type p-3">SLEEVE</th>
+              <th className="label-type p-3">SLEEVE (CENTRE BACK)</th>
             </tr>
           </thead>
           <tbody>
@@ -52,6 +52,7 @@ export default function SizeGuidePage() {
             ))}
           </tbody>
         </table>
+        <p className="mt-3 px-1 text-xs text-ink/60">{SIZE_CHART_NOTE}</p>
       </div>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2">

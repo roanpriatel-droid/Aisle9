@@ -98,7 +98,7 @@ export function RecentlyViewed({excludeHandle}: {excludeHandle?: string}) {
                     currencyCode: p.currencyCode as CurrencyCode,
                   }}
                 />
-                <span className="label-type text-ink/40">EACH</span>
+                <span className="label-type text-ink/70">EACH</span>
               </span>
             </div>
           </Link>

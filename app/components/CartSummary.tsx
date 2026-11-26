@@ -34,7 +34,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId} className="label-type text-ink/50">RECEIPT PREVIEW</h4>
+      <h4 id={summaryId} className="label-type text-ink/70">RECEIPT PREVIEW</h4>
       <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
       <dl className="receipt-lines">
         <div className="receipt-line">
@@ -167,7 +167,7 @@ function CartDiscounts({
       {/* Have existing discount, display it with a remove option */}
       <dl hidden={!codes.length}>
         <div>
-          <dt id={discountsHeadingId} className="label-type text-ink/50">DISCOUNTS</dt>
+          <dt id={discountsHeadingId} className="label-type text-ink/70">DISCOUNTS</dt>
           <UpdateDiscountForm>
             <div
               className="cart-discount"
@@ -289,7 +289,7 @@ function CartGiftCard({
     <section aria-label="Gift cards">
       {giftCardCodes && giftCardCodes.length > 0 && (
         <dl>
-          <dt id={giftCardHeadingId} className="label-type text-ink/50">GIFT CARDS</dt>
+          <dt id={giftCardHeadingId} className="label-type text-ink/70">GIFT CARDS</dt>
           {giftCardCodes.map((giftCard) => (
             <dd key={giftCard.id} className="cart-discount">
               <RemoveGiftCardForm

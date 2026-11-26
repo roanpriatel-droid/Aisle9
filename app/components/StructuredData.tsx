@@ -63,13 +63,13 @@ export function SiteJsonLd() {
                 handlingTime: {
                   '@type': 'QuantitativeValue',
                   minValue: 2,
-                  maxValue: 5,
+                  maxValue: 10,
                   unitCode: 'DAY',
                 },
                 transitTime: {
                   '@type': 'QuantitativeValue',
-                  minValue: 5,
-                  maxValue: 7,
+                  minValue: 2,
+                  maxValue: 5,
                   unitCode: 'DAY',
                 },
               },

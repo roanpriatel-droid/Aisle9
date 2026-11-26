@@ -243,7 +243,7 @@ export function ErrorBoundary() {
 
   return (
     <div className="route-error mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 py-20">
-      <p className="label-type text-ink/50">{`STORE ERROR · CODE ${errorStatus}`}</p>
+      <p className="label-type text-ink/70">{`STORE ERROR · CODE ${errorStatus}`}</p>
       <h1 className="sign-type text-4xl">SOMETHING FELL OFF A SHELF.</h1>
       <p className="text-ink/70">
         An associate has been notified. The associate is also us.

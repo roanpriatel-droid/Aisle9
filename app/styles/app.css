@@ -4424,3 +4424,21 @@ html.js [data-reveal].is-revealed {
     max-width: 34rem;
   }
 }
+
+/* Accessible "click outside to close": a real button behind dialog content.
+   z-index -1 keeps it under the dialog's in-flow content (the overlay is
+   fixed + z-indexed, so it forms the stacking context). */
+.dialog-scrim {
+  background: transparent;
+  border: 0;
+  cursor: default;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  z-index: -1;
+}
+.gallery-thumbs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

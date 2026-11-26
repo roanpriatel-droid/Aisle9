@@ -77,7 +77,7 @@ export function WeeklyCircularTeaser({
                                   withoutTrailingZeros
                                 />
                               </span>
-                              <span className="label-type text-ink/40">EA</span>
+                              <span className="label-type text-ink/70">EA</span>
                             </span>
                           </div>
                         ))}
@@ -102,7 +102,7 @@ function MailerFallback() {
           key={i}
           className="flex aspect-square items-center justify-center border border-ink/25 bg-linoleum"
         >
-          <span className="label-type text-ink/30">A9</span>
+          <span className="label-type text-ink/60">A9</span>
         </div>
       ))}
     </div>

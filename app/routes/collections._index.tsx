@@ -21,7 +21,7 @@ export const meta: Route.MetaFunction = ({matches}) => {
 export default function Collections() {
   return (
     <div className="collections">
-      <p className="label-type text-ink/50">OVERHEAD DIRECTORY</p>
+      <p className="label-type text-ink/70">OVERHEAD DIRECTORY</p>
       <h1>DEPARTMENTS</h1>
       <p className="collection-description">
         Every aisle in the store. There is currently one store.
@@ -47,7 +47,7 @@ export default function Collections() {
                     {aisle.title}
                   </span>
                 </span>
-                <span className="label-type text-ink/40">
+                <span className="label-type text-ink/70">
                   {aisle.kind === 'aisle' ? 'AISLE' : 'DEPT'} →
                 </span>
               </span>

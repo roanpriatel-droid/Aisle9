@@ -73,6 +73,6 @@ export function seoMeta({
     {name: 'twitter:title', content: fullTitleText},
     {name: 'twitter:description', content: desc},
     ...(noindex ? [{name: 'robots', content: 'noindex,follow'}] : []),
-    ...(path ? [{tagName: 'link', rel: 'canonical', href: path}] : []),
+    ...(path ? [{tagName: 'link', rel: 'canonical', href: abs(path)}] : []),
   ];
 }

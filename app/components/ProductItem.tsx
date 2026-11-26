@@ -130,7 +130,7 @@ export function ProductItem({
       </div>
 
       <Link className="shelf-talker" prefetch="intent" to={variantUrl}>
-        <h4 className="shelf-title">{product.title}</h4>
+        <h3 className="shelf-title">{product.title}</h3>
         <span className="shelf-price">
           <Money data={product.priceRange.minVariantPrice} />
           <span className="shelf-unit">EACH</span>

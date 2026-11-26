@@ -43,7 +43,7 @@ export default function SearchPage() {
 
   return (
     <div className="search">
-      <p className="label-type text-ink/50">ASK AN ASSOCIATE</p>
+      <p className="label-type text-ink/70">ASK AN ASSOCIATE</p>
       <h1>PRICE CHECK</h1>
       <SearchForm>
         {({inputRef}) => (

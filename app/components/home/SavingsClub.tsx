@@ -76,7 +76,7 @@ export function SavingsClub() {
             </p>
           )}
 
-          <p className="mt-3 max-w-md text-xs text-linoleum/40">
+          <p className="mt-3 max-w-md text-xs text-linoleum/70">
             {SAVINGS_CLUB.finePrint}
           </p>
         </div>
@@ -86,14 +86,14 @@ export function SavingsClub() {
           <div className="-rotate-2 border-2 border-linoleum bg-linoleum p-5 shadow-[8px_8px_0_rgba(204,34,41,1)]">
             <div className="flex items-center justify-between">
               <span className="sign-type text-lg text-ink">AISLE 9</span>
-              <span className="label-type text-ink/50">SAVINGS CLUB</span>
+              <span className="label-type text-ink/70">SAVINGS CLUB</span>
             </div>
             <div className="mt-6 flex items-end justify-between">
               <div>
-                <p className="label-type text-ink/40">MEMBER</p>
+                <p className="label-type text-ink/70">MEMBER</p>
                 <p className="sign-type text-base text-ink">VALUED SHOPPER</p>
               </div>
-              <span className="label-type text-ink/50">
+              <span className="label-type text-ink/70">
                 {SAVINGS_CLUB.cardHolder}
               </span>
             </div>

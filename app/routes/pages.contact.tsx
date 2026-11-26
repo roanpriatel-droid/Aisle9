@@ -36,7 +36,7 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <p className="label-type text-ink/50">{CONTACT.eyebrow}</p>
+      <p className="label-type text-ink/70">{CONTACT.eyebrow}</p>
       <h1 className="sign-type mt-2 text-4xl">{CONTACT.heading}</h1>
       <p className="mt-4 text-ink/70">{CONTACT.sub}</p>
 

@@ -302,7 +302,7 @@ export default function Product() {
 
         <div className="product-main">
           {/* 1 — breadcrumb + item number */}
-          <nav aria-label="Breadcrumb" className="label-type text-ink/50">
+          <nav aria-label="Breadcrumb" className="label-type text-ink/70">
             <Link className="hover:text-signage" to="/">
               AISLE 9
             </Link>
@@ -310,7 +310,7 @@ export default function Product() {
             <Link className="hover:text-signage" to={aisleTo}>
               {aisleLabel}
             </Link>
-            <span className="text-ink/30"> / {itemNo}</span>
+            <span className="text-ink/70"> / {itemNo}</span>
           </nav>
 
           {/* 2 — title, scaled per length */}
@@ -349,13 +349,15 @@ export default function Product() {
 
           {/* bulk ladder shelf-edge */}
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-2 border-ink bg-fluorescent px-4 py-2.5">
-            <span className="label-type text-signage">BUY MORE, PAY LESS</span>
+            <span className="label-type bg-signage px-1.5 py-0.5 text-white">
+              BUY MORE, PAY LESS
+            </span>
             <span className="label-type text-ink">
               {LADDER.filter((t) => t.discountPct > 0)
                 .map((t) => `${t.qty} −${t.discountPct}%`)
                 .join(' · ')}
             </span>
-            <span className="label-type text-ink/50">APPLIES ITSELF</span>
+            <span className="label-type text-ink/70">APPLIES ITSELF</span>
           </div>
 
           <DeliveryEstimate />
@@ -498,7 +500,7 @@ function BuyControls({
       {/* 5 — colorway swatches, labeled like inventory */}
       {colorOption && colorOption.optionValues.length > 1 && (
         <fieldset className="pdp-option">
-          <legend className="label-type text-ink/50">
+          <legend className="label-type text-ink/70">
             COLORWAY: {selectedColorLabel(colorOption)}
           </legend>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -538,7 +540,7 @@ function BuyControls({
       {sizeOption && sizeOption.optionValues.length > 1 && (
         <fieldset id="pdp-size" className="pdp-option mt-4">
           <div className="flex items-center justify-between gap-3">
-            <legend className="label-type text-ink/50">SIZE</legend>
+            <legend className="label-type text-ink/70">SIZE</legend>
             <SizeChartModal />
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -567,7 +569,7 @@ function BuyControls({
       {/* any other options fall back to buttons */}
       {otherOptions.map((opt) => (
         <fieldset key={opt.name} className="pdp-option mt-4">
-          <legend className="label-type text-ink/50">
+          <legend className="label-type text-ink/70">
             {opt.name.toUpperCase()}
           </legend>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -747,6 +749,8 @@ function StickyBuyBar({
     <div
       className={`pdp-sticky${shown ? ' is-shown' : ''}`}
       aria-hidden={!shown}
+      // inert while hidden: not focusable, not announced (React 18 needs a string)
+      {...(shown ? {} : {inert: ''})}
     >
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-bold uppercase tracking-wide">
@@ -811,8 +815,8 @@ function ProductAccordion({copy}: {copy: ReturnType<typeof describeProduct>}) {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-ink/50">{copy.disclosure}</p>
-          <p className="mt-3 text-xs text-ink/50">{copy.care.join(' ')}</p>
+          <p className="mt-3 text-xs text-ink/70">{copy.disclosure}</p>
+          <p className="mt-3 text-xs text-ink/70">{copy.care.join(' ')}</p>
         </div>
       </details>
 
@@ -869,8 +873,9 @@ function ProductAccordion({copy}: {copy: ReturnType<typeof describeProduct>}) {
         </summary>
         <div className="pdp-acc-body">
           <p className="text-sm text-ink/70">
-            Printed to order in 2–5 business days, then 5–7 in transit. US
-            orders over $100 ship free. 30-day returns, unworn and unwashed.
+            Printed to order in 2–5 business days (up to 10 at peak), then 2–5
+            in transit. US orders over $100 ship free. 30-day returns, unworn
+            and unwashed.
           </p>
           <Link
             className="label-type mt-3 inline-block text-signage underline"
@@ -916,7 +921,7 @@ function FrequentlyPaired({
             const partner = data?.products?.[0];
             if (!partner) {
               return (
-                <p className="mt-4 text-sm text-ink/50">
+                <p className="mt-4 text-sm text-ink/70">
                   Nothing to pair right now. The shirt stands alone.
                 </p>
               );
@@ -1084,7 +1089,7 @@ function FromTheSameAisle({siblings}: {siblings: Promise<SiblingData>}) {
                         </h3>
                         <span className="mt-1 flex items-baseline gap-1 text-sm font-bold">
                           <Money data={p.priceRange.minVariantPrice} />
-                          <span className="label-type text-ink/40">EACH</span>
+                          <span className="label-type text-ink/70">EACH</span>
                         </span>
                       </div>
                     </Link>
