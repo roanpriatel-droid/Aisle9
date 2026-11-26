@@ -4236,3 +4236,165 @@ html.js [data-reveal].is-revealed {
   background: var(--color-ink);
   border-color: var(--color-ink);
 }
+
+/* ===========================================================================
+ * Endcap v2 — shirts float on a lit display panel (no boxed photos).
+ * The mockups carry their own off-white backdrop; multiply-blending them onto
+ * a matching warm panel dissolves the square edges so only the shirts read.
+ * ========================================================================= */
+.endcap-stack {
+  aspect-ratio: 1 / 0.82;
+  background:
+    radial-gradient(
+      120% 90% at 50% 18%,
+      #ffffff 0%,
+      #f4f3ee 45%,
+      #e4e2da 100%
+    );
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.35),
+    0 40px 90px rgb(0 0 0 / 0.55);
+  isolation: isolate;
+  overflow: hidden;
+}
+.endcap-stack::before {
+  /* overhead spot */
+  background: radial-gradient(
+    50% 40% at 50% 0%,
+    rgb(255 255 255 / 0.9),
+    transparent 70%
+  );
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+.endcap-stack::after {
+  /* the floor the shirts stand on */
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.06));
+  bottom: 0;
+  content: '';
+  height: 26%;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 0;
+}
+.endcap-shelf {
+  display: none;
+}
+.endcap-item,
+.hero-stage .endcap-item,
+.aisle-hero .endcap-item {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  mix-blend-mode: multiply;
+  width: 54%;
+  z-index: 1;
+}
+.endcap-item img {
+  mix-blend-mode: multiply;
+}
+/* soft contact shadow under each shirt */
+.endcap-item::after {
+  background: radial-gradient(
+    closest-side,
+    rgb(0 0 0 / 0.28),
+    transparent
+  );
+  bottom: 6%;
+  content: '';
+  height: 9%;
+  left: 18%;
+  position: absolute;
+  right: 18%;
+  z-index: -1;
+}
+.endcap-item-0 {
+  left: -3%;
+  top: 16%;
+  transform: rotate(-7deg);
+}
+.endcap-item-1 {
+  left: 23%;
+  top: 6%;
+  transform: none;
+  width: 58%;
+  z-index: 2;
+}
+.endcap-item-2 {
+  right: -3%;
+  top: 18%;
+  transform: rotate(7deg);
+}
+@media (hover: hover) {
+  .endcap-stack:hover .endcap-item-0 {
+    transform: rotate(-9deg) translate(-3%, 1%);
+  }
+  .endcap-stack:hover .endcap-item-1 {
+    transform: translateY(-2%);
+  }
+  .endcap-stack:hover .endcap-item-2 {
+    transform: rotate(9deg) translate(3%, 1%);
+  }
+}
+/* price-gun stickers sit on the shirts, not the photo corners */
+.endcap-item .price-gun {
+  bottom: 22%;
+  font-size: 0.95rem;
+  mix-blend-mode: normal;
+  right: 14%;
+}
+.endcap-item-1 .price-gun {
+  bottom: 18%;
+  right: 12%;
+}
+.endcap-ghost {
+  background: rgb(26 26 26 / 0.06);
+  border-radius: 16px;
+}
+/* Endcap v2 layout: multiply has no stacking order, so shirts must not
+   overlap — sides smaller and outboard, the centre shirt raised. */
+.endcap-item-0 {
+  left: -4%;
+  top: 30%;
+  width: 46%;
+}
+.endcap-item-1 {
+  left: 24%;
+  top: 4%;
+  width: 52%;
+}
+.endcap-item-2 {
+  right: -4%;
+  top: 32%;
+  width: 46%;
+}
+.endcap-item .price-gun,
+.endcap-item-1 .price-gun {
+  bottom: auto;
+  right: auto;
+  left: 56%;
+  top: 56%;
+}
+.endcap-item-0 {
+  left: -3%;
+  top: 40%;
+  width: 42%;
+}
+.endcap-item-1 {
+  left: 25%;
+  top: 0;
+  width: 50%;
+}
+.endcap-item-2 {
+  right: -3%;
+  top: 41%;
+  width: 42%;
+}
+.endcap-item-1 .price-gun {
+  left: 18%;
+  top: 50%;
+}
