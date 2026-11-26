@@ -4442,3 +4442,13 @@ html.js [data-reveal].is-revealed {
   margin: 0;
   padding: 0;
 }
+
+/* Lightbox: empty space in the bar/stage falls through to the close scrim. */
+.gallery-lightbox-bar,
+.gallery-lightbox-stage {
+  pointer-events: none;
+}
+.gallery-lightbox-bar > *,
+.gallery-lightbox-stage > * {
+  pointer-events: auto;
+}
