@@ -35,7 +35,10 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   return (
     <div aria-labelledby={summaryId} className={className}>
       <h4 id={summaryId} className="label-type text-ink/70">RECEIPT PREVIEW</h4>
-      <FreeShippingMeter subtotal={cart?.cost?.subtotalAmount} />
+      <FreeShippingMeter
+        subtotal={cart?.cost?.subtotalAmount}
+        savings={savings}
+      />
       <dl className="receipt-lines">
         <div className="receipt-line">
           <dt>SUBTOTAL</dt>
@@ -102,12 +105,15 @@ const FREE_SHIPPING_THRESHOLD = 100;
  */
 function FreeShippingMeter({
   subtotal,
+  savings = 0,
 }: {
+  /** Bulk/code savings — Shopify checks the $100 minimum after these. */
+  savings?: number;
   // loose shape: optimistic carts make money fields optional
   subtotal?: {amount?: string | null; currencyCode?: string | null};
 }) {
   if (!subtotal?.amount || subtotal.currencyCode !== 'USD') return null;
-  const amount = parseFloat(subtotal.amount);
+  const amount = parseFloat(subtotal.amount) - savings;
   if (Number.isNaN(amount) || amount <= 0) return null;
 
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - amount);
