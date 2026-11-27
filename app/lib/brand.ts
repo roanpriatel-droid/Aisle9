@@ -771,11 +771,15 @@ export const SHIPPING = {
     },
     {
       title: 'TRANSIT',
-      body: 'Once printed, most US orders arrive within 2–5 business days. A tracking number is issued when the parcel leaves the facility. The parcel does not require encouragement.',
+      body: 'Once printed, most US orders arrive within 2–5 business days. Canada, Europe, Australia and everywhere else usually take 10–30 business days. A tracking number is issued when the parcel leaves the facility. The parcel does not require encouragement.',
     },
     {
       title: 'RATES',
-      body: 'Shipping is calculated at checkout by weight and destination. US orders over $100 ship free — achievable, given the bulk ladder, if you commit.',
+      body: 'Shipping is calculated at checkout by weight and destination. US orders over $100 ship free — achievable, given the bulk ladder, if you commit. All prices are in US dollars, everywhere; your bank handles the conversion.',
+    },
+    {
+      title: 'WHERE WE SHIP',
+      body: 'The United States, Canada, the European Union, Australia and most of the rest of the world. Not the United Kingdom yet. International orders may owe import duties or VAT on delivery; that is between the parcel and your customs office.',
     },
     {
       title: 'RECEIVING (RETURNS)',
@@ -925,7 +929,7 @@ export const POLICY_FALLBACKS: Record<
       <h2>RATES</h2>
       <p>Shipping is calculated at checkout by weight and destination. US orders over $100 ship free.</p>
       <h2>WHERE WE SHIP</h2>
-      <p>United States and select international destinations, as offered at checkout. Duties and taxes for international orders are the recipient's responsibility.</p>
+      <p>The United States, Canada, the European Union, Australia and most other countries (not the United Kingdom yet). All prices are in US dollars. International orders may owe import duties or VAT on delivery, payable by the recipient.</p>
       <p>Full details, including returns, live in <a href="/pages/shipping">Shipping &amp; Receiving</a>.</p>
     `,
   },
